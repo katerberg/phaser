@@ -3,13 +3,13 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io').listen(server);
 
-const players = {};
-
 app.use(express.static(`${__dirname}/public`));
 
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
+
+const players = {};
 
 io.on('connection', (socket) => {
   console.log('a user connected'); //eslint-disable-line no-console

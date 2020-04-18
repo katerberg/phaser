@@ -1,5 +1,6 @@
 import 'regenerator-runtime/runtime';
 import * as Phaser from 'phaser';
+import * as io from 'socket.io-client';
 
 
 function preload(): void {}
@@ -29,3 +30,6 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+
+const socket = io('http://127.0.0.1:8081');
+socket.on("currentPlayers", data => console.log(data));
