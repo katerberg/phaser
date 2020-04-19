@@ -1,0 +1,21 @@
+Characters
+  Melee character
+    Speed of attack
+    Power
+  Ranged
+    Cone
+    Instantaneous volt
+    Arrow
+Modifiers temp
+  Speed self
+  Slow them
+  Permanent
+  Increased width of cone
+  Slower but stronger
+  Faster
+
+Damage types
+  Fire (continuous DOT)
+  Psychic (pass through obstacles)
+  Cold (slow)
+  Normal
