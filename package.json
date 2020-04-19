@@ -10,11 +10,12 @@
   "scripts": {
     "build": "webpack --config ./webpack.config.js --mode production",
     "lint": "eslint --ext json,js,ts src",
-    "start:api": "node server.js",
+    "start:api": "nodemon server.js",
     "start:ui": "webpack-dev-server --config ./webpack.config.js --mode development"
   },
   "dependencies": {
     "express": "^4.17.1",
+    "nodemon": "^2.0.3",
     "phaser": "^3.22.0",
     "regenerator-runtime": "^0.13.5",
     "socket.io": "^2.3.0"
