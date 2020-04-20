@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Shows character on load
+- Shows enemies as they come and go
+
 ## [0.0.1] - 2020-04-16
 ### Added
 
