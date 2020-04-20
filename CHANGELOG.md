@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2020-04-18
+### Added
+
 - Shows character on load
 - Shows enemies as they come and go
+- Movement
 
 ## [0.0.1] - 2020-04-16
 ### Added
 
 - Initial commit
 
-[unreleased]: https://github.com/katerberg/7drl/compare/v0.0.1...HEAD
+[unreleased]: https://github.com/katerberg/7drl/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/katerberg/7drl/releases/tag/v0.0.2
 [0.0.1]: https://github.com/katerberg/7drl/releases/tag/v0.0.1
