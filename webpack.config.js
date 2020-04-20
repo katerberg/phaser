@@ -42,6 +42,9 @@ module.exports = () => ({
   },
   resolve: {
     extensions: ['*', '.tsx', '.ts', '.js'],
+    alias: {
+      assets: `${__dirname}/src/assets`,
+    },
   },
   devServer: {
     contentBase: './public',
