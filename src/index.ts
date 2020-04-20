@@ -6,14 +6,14 @@ import soldierImage from './assets/Soldier 1/soldier1_gun.png';
 
 
 interface ServerPlayer {
-  rotation: 0 | 90 | 180 | 270;
+  angle: number;
   x: number;
   y: number;
   playerId: string;
 }
 
 interface ClientPlayer {
-  rotation: 0 | 90 | 180 | 270;
+  angle: number;
   x: number;
   y: number;
   playerId: string;
@@ -30,7 +30,6 @@ function create(): void {
   self.otherPlayers = this.physics.add.group();
   self.socket = io('http://127.0.0.1:8081');
   self.socket.on('currentPlayers', (players: {['string']: ServerPlayer}) => {
-    console.log(JSON.stringify(players, null, 2));
     Object.values(players).forEach((player: ServerPlayer) => {
       if (player.playerId === self.socket.id) {
         addPlayer(self, player);
@@ -50,10 +49,30 @@ function create(): void {
         }
       });
     });
+    self.cursors = this.input.keyboard.createCursorKeys();
   });
 }
 
-function update(): void {}
+function update(): void {
+  if (this.player) {
+    if (this.cursors.left.isDown) {
+      this.player.setAngularVelocity(-250);
+    } else if (this.cursors.right.isDown) {
+      this.player.setAngularVelocity(250);
+    } else {
+      this.player.setAngularVelocity(0);
+    }
+
+    if (this.cursors.up.isDown) {
+      this.physics.velocityFromAngle(this.player.angle + 1.5, 1000, this.player.body.acceleration);
+    } else {
+      this.player.setVelocity(0);
+      this.player.setAcceleration(0);
+    }
+
+    this.physics.world.wrap(this.player, 5);
+  }
+}
 
 const config = {
   type: Phaser.AUTO,
@@ -64,7 +83,7 @@ const config = {
     default: 'arcade',
     arcade: {
       debug: false,
-      gravity: {y: 0},
+      gravity: {y: 0}
     },
   },
   scene: {
@@ -77,10 +96,9 @@ const config = {
 const game = new Phaser.Game(config);
 
 function addPlayer(self: any, playerInfo: ServerPlayer) {
-  self.hitman = self.physics.add.image(playerInfo.x, playerInfo.y, 'hitman').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
-  self.hitman.setDrag(100);
-  self.hitman.setAngularDrag(100);
-  self.hitman.setMaxVelocity(200);
+  self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'hitman').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+  self.player.setAngle(90)
+  self.player.setMaxVelocity(200);
 }
 
 function addOtherPlayer(self: any, playerInfo: ServerPlayer) {
