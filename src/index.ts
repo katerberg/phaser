@@ -5,37 +5,36 @@ import hitmanImage from './assets/images/hitman1_gun.png';
 import soldierImage from './assets/Soldier 1/soldier1_gun.png';
 
 
-interface ServerPlayer {
-  angle: number;
-  x: number;
-  y: number;
+interface ServerPlayer extends Phaser.Physics.Arcade.Image  {
   playerId: string;
-  setPosition: (x: number, y: number) => void;
-  setAngle: (angle: number) => void;
 }
 
-interface ClientPlayer {
-  angle: number;
-  x: number;
-  y: number;
-  playerId: string;
-  destroy: () => void;
-  oldPosition: {
+class ClientPlayer extends Phaser.GameObjects.Sprite {
+  playerId? : string;
+}
+
+interface PlayerCharacter extends Phaser.Physics.Arcade.Image {
+  oldPosition?: {
     x: number;
     y: number;
     angle: number;
   };
 }
 
-function addPlayer(self: any, playerInfo: ServerPlayer): void {
-  self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'hitman').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
-  self.player.oldPosition = {};
+class CombatScene extends Phaser.Scene {
+  player: PlayerCharacter;
+  otherPlayers: Phaser.Physics.Arcade.Group;
+
+}
+
+function addPlayer(self: CombatScene, playerInfo: ServerPlayer): void {
+  self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'hitman').setOrigin(0.5, 0.5).setDisplaySize(53, 40).setCollideWorldBounds(true);
   self.player.setAngle(90);
   self.player.setMaxVelocity(200);
 }
 
-function addOtherPlayer(self: any, playerInfo: ServerPlayer): void {
-  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'soldier').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+function addOtherPlayer(self: CombatScene, playerInfo: ServerPlayer): void {
+  const otherPlayer: ClientPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'soldier').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
   otherPlayer.playerId = playerInfo.playerId;
   self.otherPlayers.add(otherPlayer);
 }
@@ -53,6 +52,10 @@ function create(): void {
     Object.values(players).forEach((player: ServerPlayer) => {
       if (player.playerId === self.socket.id) {
         addPlayer(self, player);
+        this.physics.add.collider(self.otherPlayers, self.player, (other: ClientPlayer, player: ClientPlayer) => {
+          console.log(other)
+          console.log(player)
+        });
       } else {
         addOtherPlayer(self, player);
       }
@@ -100,6 +103,7 @@ function update(): void {
       this.player.setAcceleration(0);
     }
 
+
     this.physics.world.wrap(this.player, 5);
 
   const {x, y, angle} = this.player;
@@ -115,7 +119,7 @@ function update(): void {
   }
 }
 
-const config = {
+const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
   width: 800,
