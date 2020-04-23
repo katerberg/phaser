@@ -3,7 +3,10 @@
         "noImplicitAny": true,
         "outDir": "./public",
         "allowJs": true,
-        "target": "es5"
+        "target": "es5",
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true
     },
     "include": [
         "./src/**/*"
