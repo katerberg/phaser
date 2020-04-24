@@ -44,18 +44,18 @@ class GameScene extends Phaser.Scene {
     self.socket.on('currentPlayers', (players: {['string']: ServerPlayer}) => {
       Object.values(players).forEach((player: ServerPlayer) => {
         if (player.playerId === self.socket.id) {
-          addPlayer(self, player);
+          this.addPlayer(player);
           this.physics.add.collider(self.otherPlayers, self.player, (other: ClientPlayer, player: ClientPlayer) => {
             console.log(other)
             console.log(player)
           });
         } else {
-          addOtherPlayer(self, player);
+          this.addOtherPlayer(player);
         }
       });
 
       self.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
-        addOtherPlayer(self, playerInfo);
+        this.addOtherPlayer(playerInfo);
       });
 
       self.socket.on('disconnect', (playerId: string) => {
@@ -80,20 +80,23 @@ class GameScene extends Phaser.Scene {
   }
 
   update(): void {
-    if (this.player) {
-      if (this.cursors.left.isDown) {
-        this.player.setAngularVelocity(-250);
-      } else if (this.cursors.right.isDown) {
-        this.player.setAngularVelocity(250);
-      } else {
-        this.player.setAngularVelocity(0);
-      }
-
-      if (this.cursors.up.isDown && this.player.body instanceof Phaser.Physics.Arcade.Body) {
-        this.physics.velocityFromAngle(this.player.angle + 1.5, 1000, this.player.body.acceleration);
+    if (this.player && this.player.body instanceof Phaser.Physics.Arcade.Body) {
+      const {up,down,left,right} = this.cursors;
+      if (up.isDown || down.isDown || left.isDown || right.isDown) {
+        let speed = 200;
+        let keysCount = [up, down, right, left].reduce((prev, cur) => prev + (cur.isDown ? 1 : 0), 0);
+        if (keysCount > 1) {
+          speed /= Math.sqrt(2);
+        }
+        let xSpeed = 0;
+        let ySpeed = 0;
+        xSpeed -= left.isDown ? speed : 0;
+        xSpeed += right.isDown ? speed : 0;
+        ySpeed -= up.isDown ? speed : 0;
+        ySpeed += down.isDown ? speed : 0;
+        this.player.body.setVelocity(xSpeed,ySpeed)
       } else {
         this.player.setVelocity(0);
-        this.player.setAcceleration(0);
       }
 
 
@@ -111,18 +114,19 @@ class GameScene extends Phaser.Scene {
       };
     }
   }
-}
 
-function addPlayer(self: GameScene, playerInfo: ServerPlayer): void {
-  self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'hitman').setOrigin(0.5, 0.5).setDisplaySize(53, 40).setCollideWorldBounds(true);
-  self.player.setAngle(90);
-  self.player.setMaxVelocity(200);
-}
+  addPlayer(playerInfo: ServerPlayer): void {
+    this.player = this.physics.add.image(playerInfo.x, playerInfo.y, 'hitman').setOrigin(0.5, 0.5).setDisplaySize(53, 40).setCollideWorldBounds(true);
+    this.player.body.setMass(0);
+    this.player.setAngle(90);
+    console.log(this.player)
+  }
 
-function addOtherPlayer(self: GameScene, playerInfo: ServerPlayer): void {
-  const otherPlayer: ClientPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'soldier').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
-  otherPlayer.playerId = playerInfo.playerId;
-  self.otherPlayers.add(otherPlayer);
+  addOtherPlayer(playerInfo: ServerPlayer): void {
+    const otherPlayer: ClientPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'soldier').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+    otherPlayer.playerId = playerInfo.playerId;
+    this.otherPlayers.add(otherPlayer);
+  }
 }
 
 
