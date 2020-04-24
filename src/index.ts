@@ -19,6 +19,7 @@ interface PlayerCharacter extends Phaser.Physics.Arcade.Image {
     y: number;
     angle: number;
   };
+  getAngleFromSpeed?: (x:number, y:number) => number;
 }
 
 class GameScene extends Phaser.Scene {
@@ -95,6 +96,7 @@ class GameScene extends Phaser.Scene {
         ySpeed -= up.isDown ? speed : 0;
         ySpeed += down.isDown ? speed : 0;
         this.player.body.setVelocity(xSpeed,ySpeed)
+        this.player.setAngle(this.player.getAngleFromSpeed(xSpeed, ySpeed))
       } else {
         this.player.setVelocity(0);
       }
@@ -117,9 +119,35 @@ class GameScene extends Phaser.Scene {
 
   addPlayer(playerInfo: ServerPlayer): void {
     this.player = this.physics.add.image(playerInfo.x, playerInfo.y, 'hitman').setOrigin(0.5, 0.5).setDisplaySize(53, 40).setCollideWorldBounds(true);
-    this.player.body.setMass(0);
-    this.player.setAngle(90);
-    console.log(this.player)
+    this.player.setAngle(270); //Up
+    this.player.getAngleFromSpeed = (x: number, y: number) => {
+      const [north, south, west, east, northeast, southeast, southwest, northwest] = [270, 90, 180, 0, 315, 45, 135, 225];
+      if (y > 0) {
+        if (x > 0) {
+          return southeast;
+        } else if (x < 0) {
+          return southwest;
+        } else {
+          return south;
+        }
+      } else if (y < 0) {
+        if (x > 0) {
+          return northeast;
+        } else if (x < 0){
+          return northwest;
+        } else {
+          return north;
+        }
+      } else {
+        if (x > 0) {
+          return east;
+        } else if (x < 0){
+          return west;
+        } else {
+          return north;
+        }
+      }
+    }
   }
 
   addOtherPlayer(playerInfo: ServerPlayer): void {

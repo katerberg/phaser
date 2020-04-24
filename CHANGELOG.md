@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - README
+- Movement without rotations and acceleration issues
 
 ## [0.0.2] - 2020-04-18
 ### Added
