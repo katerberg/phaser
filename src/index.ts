@@ -9,7 +9,7 @@ interface ServerPlayer extends Phaser.Physics.Arcade.Sprite  {
   playerId: string;
 }
 
-class ClientPlayer extends Phaser.GameObjects.Sprite {
+class ClientPlayer extends Phaser.Physics.Arcade.Image {
   playerId? : string;
 }
 
@@ -70,6 +70,7 @@ class GameScene extends Phaser.Scene {
       self.socket.on('playerMoved', (playerInfo: ServerPlayer) => {
         self.otherPlayers.getChildren().forEach((otherPlayer: ServerPlayer) => {
           if (playerInfo.playerId === otherPlayer.playerId) {
+            otherPlayer.setImmovable();
             otherPlayer.setAngle(playerInfo.angle);
             otherPlayer.setPosition(playerInfo.x, playerInfo.y);
           }
@@ -151,7 +152,8 @@ class GameScene extends Phaser.Scene {
   }
 
   addOtherPlayer(playerInfo: ServerPlayer): void {
-    const otherPlayer: ClientPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'soldier').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+    const otherPlayer: ClientPlayer = this.physics.add.image(playerInfo.x, playerInfo.y, 'soldier').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+    otherPlayer.setImmovable();
     otherPlayer.playerId = playerInfo.playerId;
     this.otherPlayers.add(otherPlayer);
   }
