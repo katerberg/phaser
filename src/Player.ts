@@ -1,4 +1,3 @@
-
 export class Player extends Phaser.GameObjects.Image {
   public body: Phaser.Physics.Arcade.Body;
   private oldPosition: {
@@ -9,8 +8,8 @@ export class Player extends Phaser.GameObjects.Image {
   private socket: SocketIOClient.Socket;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
-  constructor(params: {scene: Phaser.Scene, x: number, y: number, key: string}, socket: SocketIOClient.Socket) {
-    super(params.scene, params.x, params.y, params.key);
+  constructor({scene, x, y, key}: {scene: Phaser.Scene, x: number, y: number, key: string}, socket: SocketIOClient.Socket) {
+    super(scene, x, y, key);
     this.cursors = this.scene.input.keyboard.createCursorKeys();
     this.oldPosition = {
       x: 0,
@@ -19,9 +18,9 @@ export class Player extends Phaser.GameObjects.Image {
     }
     this.setAngle(270).setOrigin(0.5, 0.5).setDisplaySize(53, 40);
     this.socket = socket;
-    params.scene.physics.world.enable(this);
-    params.scene.add.existing(this);
-    params.scene.physics.world.wrap(this, 5);
+    scene.physics.world.enable(this);
+    this.body.setCollideWorldBounds()
+    scene.add.existing(this);
   }
 
   update() {

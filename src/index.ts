@@ -3,15 +3,12 @@ import * as Phaser from 'phaser';
 import * as io from 'socket.io-client';
 import hitmanImage from './assets/images/hitman1_gun.png';
 import {Player} from './Player';
+import {Enemy} from './Enemy';
 import soldierImage from './assets/Soldier 1/soldier1_gun.png';
 
 
 interface ServerPlayer extends Phaser.Physics.Arcade.Sprite  {
   playerId: string;
-}
-
-class ClientPlayer extends Phaser.Physics.Arcade.Image {
-  playerId? : string;
 }
 
 class GameScene extends Phaser.Scene {
@@ -55,7 +52,7 @@ class GameScene extends Phaser.Scene {
       });
 
       self.socket.on('disconnect', (playerId: string) => {
-        self.otherPlayers.getChildren().forEach((otherPlayer: ClientPlayer) => {
+        self.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
           }
@@ -67,7 +64,6 @@ class GameScene extends Phaser.Scene {
           if (playerInfo.playerId === otherPlayer.playerId) {
             otherPlayer.setAngle(playerInfo.angle);
             otherPlayer.setPosition(playerInfo.x, playerInfo.y);
-            otherPlayer.setImmovable(true);
           }
         });
       });
@@ -90,8 +86,12 @@ class GameScene extends Phaser.Scene {
   }
 
   addOtherPlayer(playerInfo: ServerPlayer): void {
-    const otherPlayer: ClientPlayer = this.physics.add.image(playerInfo.x, playerInfo.y, 'soldier').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
-    otherPlayer.playerId = playerInfo.playerId;
+    const otherPlayer: Enemy = new Enemy({
+      scene: this,
+      x: playerInfo.x,
+      y: playerInfo.y,
+      key: 'soldier'
+    }, playerInfo.playerId);
     this.otherPlayers.add(otherPlayer);
   }
 }
