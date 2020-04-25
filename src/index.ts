@@ -27,40 +27,39 @@ class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    const self = this;
-    self.otherPlayers = this.physics.add.group({
+    this.otherPlayers = this.physics.add.group({
       createCallback: p => {
         if (p && p.body instanceof Phaser.Physics.Arcade.Body) {
            p.body.setImmovable(true);
         }
       }
     });
-    self.socket = io('http://127.0.0.1:8081');
+    this.socket = io('http://127.0.0.1:8081');
 
-    self.socket.on('currentPlayers', (players: {['string']: ServerPlayer}) => {
+    this.socket.on('currentPlayers', (players: {['string']: ServerPlayer}) => {
       Object.values(players).forEach((player: ServerPlayer) => {
-        if (player.playerId === self.socket.id) {
+        if (player.playerId === this.socket.id) {
           this.addPlayer(player);
         } else {
           this.addOtherPlayer(player);
         }
       });
-      this.physics.add.collider(self.otherPlayers, self.player);
+      this.physics.add.collider(this.otherPlayers, this.player);
 
-      self.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
+      this.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
         this.addOtherPlayer(playerInfo);
       });
 
-      self.socket.on('disconnect', (playerId: string) => {
-        self.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
+      this.socket.on('disconnect', (playerId: string) => {
+        this.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
           }
         });
       });
 
-      self.socket.on('playerMoved', (playerInfo: ServerPlayer) => {
-        self.otherPlayers.getChildren().forEach((otherPlayer: ServerPlayer) => {
+      this.socket.on('playerMoved', (playerInfo: ServerPlayer) => {
+        this.otherPlayers.getChildren().forEach((otherPlayer: ServerPlayer) => {
           if (playerInfo.playerId === otherPlayer.playerId) {
             otherPlayer.setAngle(playerInfo.angle);
             otherPlayer.setPosition(playerInfo.x, playerInfo.y);
