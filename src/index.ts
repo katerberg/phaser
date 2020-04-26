@@ -1,11 +1,12 @@
 import 'regenerator-runtime/runtime';
 import * as Phaser from 'phaser';
 import * as io from 'socket.io-client';
-import hitmanImage from './assets/images/hitman1_gun.png';
 import {Player} from './Player';
+import {Bullet} from './Bullet';
 import {Enemy} from './Enemy';
+import hitmanImage from './assets/Hitman/hitman1_gun.png';
 import soldierImage from './assets/Soldier 1/soldier1_gun.png';
-
+import bulletImage from './assets/Tiles/tile_360.png';
 
 interface ServerPlayer extends Phaser.Physics.Arcade.Sprite  {
   playerId: string;
@@ -24,6 +25,7 @@ class GameScene extends Phaser.Scene {
   preload(): void {
     this.load.image('hitman', hitmanImage);
     this.load.image('soldier', soldierImage);
+    this.load.image('bullet', bulletImage);
   }
 
   create(): void {
@@ -72,6 +74,13 @@ class GameScene extends Phaser.Scene {
   update(): void {
     if (this.player) {
       this.player.update();
+      this.physics.overlap(
+        this.player.getProjectiles(),
+        this.otherPlayers,
+        this.projectileHitEnemy,
+        null,
+        this
+      );
     }
   }
 
@@ -92,6 +101,10 @@ class GameScene extends Phaser.Scene {
       key: 'soldier'
     }, playerInfo.playerId);
     this.otherPlayers.add(otherPlayer);
+  }
+
+  projectileHitEnemy(projectile: Bullet, enemy: Enemy): void {
+    console.log('shots fired and hit')
   }
 }
 

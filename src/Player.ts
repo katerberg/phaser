@@ -1,3 +1,5 @@
+import {Bullet} from './Bullet';
+
 export class Player extends Phaser.GameObjects.Image {
   public body: Phaser.Physics.Arcade.Body;
   private oldPosition: {
@@ -5,17 +7,22 @@ export class Player extends Phaser.GameObjects.Image {
     y: number;
     angle: number;
   };
+  private projectiles: Phaser.GameObjects.Group;
   private socket: SocketIOClient.Socket;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private shoot: Phaser.Input.Keyboard.Key;
 
   constructor({scene, x, y, key}: {scene: Phaser.Scene, x: number, y: number, key: string}, socket: SocketIOClient.Socket) {
     super(scene, x, y, key);
-    this.cursors = this.scene.input.keyboard.createCursorKeys();
+    this.initInput();
     this.oldPosition = {
       x: 0,
       y: 0,
       angle: 0,
     }
+    this.projectiles = this.scene.add.group({
+      runChildUpdate: true
+    });
     this.setAngle(270).setOrigin(0.5, 0.5).setDisplaySize(53, 40);
     this.socket = socket;
     scene.physics.world.enable(this);
@@ -23,7 +30,30 @@ export class Player extends Phaser.GameObjects.Image {
     scene.add.existing(this);
   }
 
-  private handleMovement() {
+  public getProjectiles() {
+    return this.projectiles;
+  }
+
+  public handleShoot() {
+    if (this.shoot.isDown && this.projectiles.getLength() < 1) {
+      console.log('firing bullet')
+      this.projectiles.add(new Bullet({
+        x: this.x,
+        y: this.y,
+        scene: this.scene,
+        key: 'bullet',
+      }, this.angle));
+    }
+  }
+
+  private initInput(): void {
+    this.cursors = this.scene.input.keyboard.createCursorKeys();
+    this.shoot = this.scene.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
+    );
+  }
+
+  private handleMovement(): void {
     const {up,down,left,right} = this.cursors;
     if (up.isDown || down.isDown || left.isDown || right.isDown) {
       let speed = 200;
@@ -46,6 +76,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   public update() {
     this.handleMovement();
+    this.handleShoot();
 
     const {x, y, angle} = this;
     if (x !== this.oldPosition.x || y !== this.oldPosition.y || angle !== this.oldPosition.angle) {
