@@ -8,7 +8,7 @@ import hitmanImage from './assets/Hitman/hitman1_gun.png';
 import soldierImage from './assets/Soldier 1/soldier1_gun.png';
 import bulletImage from './assets/Tiles/tile_360.png';
 
-interface ServerPlayer extends Phaser.Physics.Arcade.Sprite  {
+interface ServerPlayer extends Phaser.Physics.Arcade.Sprite {
   playerId: string;
 }
 
@@ -17,10 +17,6 @@ class GameScene extends Phaser.Scene {
   public socket: SocketIOClient.Socket;
   player: Player;
   otherPlayers: Phaser.Physics.Arcade.Group;
-
-  constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
-    super(config);
-  }
 
   preload(): void {
     this.load.image('hitman', hitmanImage);
@@ -32,9 +28,9 @@ class GameScene extends Phaser.Scene {
     this.otherPlayers = this.physics.add.group({
       createCallback: p => {
         if (p && p.body instanceof Phaser.Physics.Arcade.Body) {
-           p.body.setImmovable(true);
+          p.body.setImmovable(true);
         }
-      }
+      },
     });
     this.socket = io('http://127.0.0.1:8081');
 
@@ -53,6 +49,9 @@ class GameScene extends Phaser.Scene {
       });
 
       this.socket.on('disconnect', (playerId: string) => {
+        if (this.player.playerId === playerId) {
+          alert('you died');
+        }
         this.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
@@ -79,7 +78,7 @@ class GameScene extends Phaser.Scene {
         this.otherPlayers,
         this.projectileHitEnemy,
         null,
-        this
+        this,
       );
     }
   }
@@ -90,6 +89,7 @@ class GameScene extends Phaser.Scene {
       x: playerInfo.x,
       y: playerInfo.y,
       key: 'hitman'},
+    playerInfo.playerId,
     this.socket);
   }
 
@@ -98,13 +98,15 @@ class GameScene extends Phaser.Scene {
       scene: this,
       x: playerInfo.x,
       y: playerInfo.y,
-      key: 'soldier'
+      key: 'soldier',
     }, playerInfo.playerId);
     this.otherPlayers.add(otherPlayer);
   }
 
   projectileHitEnemy(projectile: Bullet, enemy: Enemy): void {
-    console.log('shots fired and hit')
+    console.log('shots fired and hit');
+    this.socket.emit('projectileHit', {playerId: enemy.playerId});
+    projectile.destroy();
   }
 }
 
@@ -121,15 +123,11 @@ const config: Phaser.Types.Core.GameConfig = {
       gravity: {y: 0},
     },
   },
-  scene: GameScene
+  scene: GameScene,
 };
 
-export class Game extends Phaser.Game {
-  constructor(config: Phaser.Types.Core.GameConfig) {
-    super(config);
-  }
-}
+export class Game extends Phaser.Game {}
 
-window.addEventListener("load", () => {
+window.addEventListener('load', () => {
   new Game(config);
 });
