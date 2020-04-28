@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 const players = {};
 
 io.on('connection', (socket) => {
-  console.log('a user connected'); //eslint-disable-line no-console
+  console.log('a user connected', socket.id); //eslint-disable-line no-console
   // Create a new player and add it to our players object
   players[socket.id] = {
     angle: 0,
@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
   // Update all other players of the new player
   socket.broadcast.emit('newPlayer', players[socket.id]);
   socket.on('disconnect', () => {
-    console.log('user disconnected'); //eslint-disable-line no-console
+    console.log('user disconnected', socket.id); //eslint-disable-line no-console
     // Remove this player from our players object
     delete players[socket.id];
     // Emit a message to all players to remove this player
@@ -42,8 +42,8 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('projectileHit', ({playerId, projectileId}) => {
-    if (players[socket.id]) {
+  socket.on('projectileHit', ({playerId}) => {
+    if (players[playerId]) {
       delete players[playerId];
       io.emit('disconnect', playerId);
     }

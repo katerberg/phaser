@@ -40,7 +40,6 @@ export class Player extends Phaser.GameObjects.Image {
 
   public handleShoot(): void {
     if (this.shoot.isDown && this.projectiles.getLength() < 1) {
-      console.log('firing bullet');
       this.projectiles.add(new Bullet({
         x: this.x,
         y: this.y,

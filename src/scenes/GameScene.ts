@@ -20,6 +20,12 @@ export class GameScene extends Phaser.Scene {
   player: Player;
   otherPlayers: Phaser.Physics.Arcade.Group;
 
+  constructor() {
+    super({
+      key: 'GameScene',
+    });
+  }
+
   preload(): void {
     this.load.image('hitman', hitmanImage);
     this.load.image('soldier', soldierImage);
@@ -39,6 +45,7 @@ export class GameScene extends Phaser.Scene {
     this.socket.on('currentPlayers', (players: {['string']: ServerPlayer}) => {
       Object.values(players).forEach((player: ServerPlayer) => {
         if (player.playerId === this.socket.id) {
+          this.add.text(400 - 5 * 32, 300 - 32, player.playerId, {align: 'center', fontSize: '32px'});
           this.addPlayer(player);
         } else {
           this.addOtherPlayer(player);
@@ -52,7 +59,9 @@ export class GameScene extends Phaser.Scene {
 
       this.socket.on('disconnect', (playerId: string) => {
         if (this.player.playerId === playerId) {
-          alert('you died');
+          this.socket.disconnect();
+          delete this.player;
+          this.scene.start('MenuScene');
         }
         this.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
           if (playerId === otherPlayer.playerId) {
