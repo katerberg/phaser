@@ -40,12 +40,14 @@ export class Player extends Phaser.GameObjects.Image {
 
   public handleShoot(): void {
     if (this.shoot.isDown && this.projectiles.getLength() < 1) {
-      this.projectiles.add(new Bullet({
+      const bullet = new Bullet({
         x: this.x,
         y: this.y,
         scene: this.scene,
         key: 'bullet',
-      }, this.angle));
+      }, this.angle);
+      this.projectiles.add(bullet);
+      this.socket.emit('projectileFiring', {x: this.x, y: this.y, angle: this.angle, speed: bullet.speed});
     }
   }
 

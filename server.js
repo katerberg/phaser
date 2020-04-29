@@ -33,6 +33,12 @@ io.on('connection', (socket) => {
     io.emit('disconnect', socket.id);
   });
 
+  socket.on('projectileFiring', ({x, y, speed, angle}) => {
+    if (players[socket.id]) {
+      socket.broadcast.emit('projectileFired', {x, y, speed, angle, playerId: socket.id});
+    }
+  });
+
   socket.on('playerMovement', (movementData) => {
     if (players[socket.id]) {
       players[socket.id].x = movementData.x;

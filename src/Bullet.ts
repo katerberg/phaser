@@ -1,12 +1,12 @@
 import * as Phaser from 'phaser';
 
 export class Bullet extends Phaser.GameObjects.Image {
-  private speed: number;
+  public speed: number;
 
-  constructor({x, y, scene, key}: {x: number; y: number; scene: Phaser.Scene; key: string}, angle: number) {
+  constructor({x, y, scene, key}: {x: number; y: number; scene: Phaser.Scene; key: string}, angle: number, speed?: number) {
     super(scene, x, y, key);
     this.scene.physics.world.enable(this);
-    this.speed = 400;
+    this.speed = speed || 400;
     this.setAngle(angle).setOrigin(0.5, 0.5).setDisplaySize(10, 10);
     if (this.body instanceof Phaser.Physics.Arcade.Body) {
       const xVelocity = Math.cos(angle * Math.PI / 180) * this.speed;

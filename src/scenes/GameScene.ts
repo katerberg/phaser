@@ -14,6 +14,14 @@ interface ServerPlayer {
   angle: number;
 }
 
+export interface ServerProjectile {
+  x: number;
+  y: number;
+  playerId: string;
+  angle: number;
+  speed: number;
+}
+
 export class GameScene extends Phaser.Scene {
 
   public socket: SocketIOClient.Socket;
@@ -66,6 +74,14 @@ export class GameScene extends Phaser.Scene {
         this.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
+          }
+        });
+      });
+
+      this.socket.on('projectileFired', (projectileInfo: ServerProjectile) => {
+        this.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
+          if (otherPlayer.playerId === projectileInfo.playerId) {
+            otherPlayer.addProjectile(projectileInfo);
           }
         });
       });
