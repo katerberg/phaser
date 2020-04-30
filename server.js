@@ -39,6 +39,12 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('playerDamage', ({playerId, damage}) => {
+    if (players[socket.id]) {
+      socket.broadcast.emit('playerDamaged', {playerId, damage});
+    }
+  });
+
   socket.on('playerMovement', (movementData) => {
     if (players[socket.id]) {
       players[socket.id].x = movementData.x;
@@ -48,10 +54,11 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('projectileHit', ({playerId}) => {
+  socket.on('projectileHit', ({playerId, damage}) => {
     if (players[playerId]) {
-      delete players[playerId];
-      io.emit('disconnect', playerId);
+      socket.broadcast.emit('playerDamaged', {playerId, damage});
+      // delete players[playerId];
+      // io.emit('disconnect', playerId);
     }
   });
 });

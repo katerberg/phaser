@@ -9,6 +9,7 @@ export class Player extends Phaser.GameObjects.Image {
     y: number;
     angle: number;
   };
+  private hp: number;
   private projectiles: Phaser.GameObjects.Group;
   public playerId: string;
   private socket: SocketIOClient.Socket;
@@ -23,6 +24,7 @@ export class Player extends Phaser.GameObjects.Image {
       y: 0,
       angle: 0,
     };
+    this.hp = 3;
     this.playerId = playerId;
     this.projectiles = this.scene.add.group({
       runChildUpdate: true,
@@ -36,6 +38,12 @@ export class Player extends Phaser.GameObjects.Image {
 
   public getProjectiles(): Phaser.GameObjects.Group {
     return this.projectiles;
+  }
+
+  public handleDamage(damage: number): void {
+    this.hp -= damage;
+    this.scene.registry.set('playerHp', this.hp);
+    this.scene.events.emit('hpChanged');
   }
 
   public handleShoot(): void {

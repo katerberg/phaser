@@ -16,12 +16,14 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.add.text(400 - 5 * 32, 300 - 32, 'Press S to Start', {align: 'center', fontSize: '32px'});
+    this.add.text(400 - 5 * 32, 300 - 32, 'Press S to Start', {fontSize: '32px'});
   }
 
   update(): void {
     if (this.startKey.isDown) {
+      this.scene.start('HudScene');
       this.scene.start('GameScene');
+      this.scene.bringToTop('HudScene');
     }
   }
 }

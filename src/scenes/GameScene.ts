@@ -7,6 +7,11 @@ import hitmanImage from '../assets/Hitman/hitman1_gun.png';
 import soldierImage from '../assets/Soldier 1/soldier1_gun.png';
 import bulletImage from '../assets/Tiles/tile_360.png';
 
+interface ServerDamage {
+  playerId: string;
+  damage: number;
+}
+
 interface ServerPlayer {
   x: number;
   y: number;
@@ -94,6 +99,12 @@ export class GameScene extends Phaser.Scene {
           }
         });
       });
+
+      this.socket.on('playerDamaged', ({playerId, damage}: ServerDamage) => {
+        if (this.player.playerId === playerId) {
+          this.player.handleDamage(damage);
+        }
+      });
     });
   }
 
@@ -131,7 +142,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   projectileHitEnemy(projectile: Bullet, enemy: Enemy): void {
-    this.socket.emit('projectileHit', {playerId: enemy.playerId});
+    this.socket.emit('projectileHit', {playerId: enemy.playerId, damage: projectile.damage});
     projectile.destroy();
   }
 }
