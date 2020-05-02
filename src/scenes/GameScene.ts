@@ -98,9 +98,7 @@ export class GameScene extends Phaser.Scene {
             .getProjectiles()
             .getChildren()
             .forEach((projectile: Bullet) => {
-              console.log(`comparing ${projectile.id} to ${projectileId}`);
               if (projectile.id === projectileId) {
-                console.log('found a match');
                 projectile.destroy();
               }
             });
