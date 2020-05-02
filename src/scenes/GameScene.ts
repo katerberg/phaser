@@ -21,6 +21,10 @@ interface ServerPlayer {
   angle: number;
 }
 
+interface ServerProjectileDestroy {
+  projectileId: string;
+}
+
 export class GameScene extends Phaser.Scene {
   public socket: SocketIOClient.Socket;
 
@@ -88,6 +92,21 @@ export class GameScene extends Phaser.Scene {
         });
       });
 
+      this.socket.on('projectileDestroyed', ({projectileId}: ServerProjectileDestroy) => {
+        this.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
+          otherPlayer
+            .getProjectiles()
+            .getChildren()
+            .forEach((projectile: Bullet) => {
+              console.log(`comparing ${projectile.id} to ${projectileId}`);
+              if (projectile.id === projectileId) {
+                console.log('found a match');
+                projectile.destroy();
+              }
+            });
+        });
+      });
+
       this.socket.on('playerMoved', (playerInfo: ServerPlayer) => {
         this.otherPlayers.getChildren().forEach((otherPlayer: Enemy) => {
           if (playerInfo.playerId === otherPlayer.playerId) {
@@ -139,7 +158,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   projectileHitEnemy(projectile: Bullet, enemy: Enemy): void {
-    this.socket.emit('projectileHit', {playerId: enemy.playerId, damage: projectile.damage});
+    this.socket.emit('projectileHit', {
+      playerId: enemy.playerId,
+      damage: projectile.damage,
+      projectileId: projectile.id,
+    });
     projectile.destroy();
   }
 }

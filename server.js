@@ -33,9 +33,9 @@ io.on('connection', (socket) => {
     io.emit('disconnect', socket.id);
   });
 
-  socket.on('projectileFiring', ({x, y, speed, angle}) => {
+  socket.on('projectileFiring', ({x, y, speed, angle, id}) => {
     if (players[socket.id]) {
-      socket.broadcast.emit('projectileFired', {x, y, speed, angle, playerId: socket.id});
+      socket.broadcast.emit('projectileFired', {x, y, speed, angle, playerId: socket.id, id});
     }
   });
 
@@ -48,9 +48,10 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('projectileHit', ({playerId, damage}) => {
+  socket.on('projectileHit', ({playerId, damage, projectileId}) => {
     if (players[playerId]) {
       socket.broadcast.emit('playerDamaged', {playerId, damage});
+      socket.broadcast.emit('projectileDestroyed', {projectileId});
     }
   });
 

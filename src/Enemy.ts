@@ -27,6 +27,7 @@ export class Enemy extends Phaser.GameObjects.Image {
         key: 'bullet',
       },
       projectile.angle,
+      projectile.id,
       projectile.speed,
     );
     this.projectiles.add(bullet);

@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import {v4 as uuid} from 'uuid';
 import {Bullet} from './Bullet';
 import {getAngleFromSpeed} from './utils/trig';
 
@@ -94,10 +95,17 @@ export class Player extends Phaser.GameObjects.Image {
           key: 'bullet',
         },
         this.angle,
+        uuid() as string,
       );
       this.updateMana(this.mana - this.spellCost);
       this.projectiles.add(bullet);
-      this.socket.emit('projectileFiring', {x: this.x, y: this.y, angle: this.angle, speed: bullet.speed});
+      this.socket.emit('projectileFiring', {
+        x: this.x,
+        y: this.y,
+        angle: this.angle,
+        speed: bullet.speed,
+        id: bullet.id,
+      });
       this.nextShot = this.scene.time.now + 200;
     }
   }

@@ -19,3 +19,8 @@ To actually build the ui package, which creates a `public` folder that houses th
 ```
 npm build
 ```
+
+
+## Known Issues
+
+- Projectiles don't load for new players if they were in motion prior to joining

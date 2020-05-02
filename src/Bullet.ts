@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 
 export class Bullet extends Phaser.GameObjects.Image {
+  public id: string;
+
   public speed: number;
 
   public damage: number;
@@ -8,10 +10,12 @@ export class Bullet extends Phaser.GameObjects.Image {
   constructor(
     {x, y, scene, key}: {x: number; y: number; scene: Phaser.Scene; key: string},
     angle: number,
+    id: string,
     speed?: number,
   ) {
     super(scene, x, y, key);
     this.scene.physics.world.enable(this);
+    this.id = id;
     this.speed = speed || 400;
     this.damage = 1;
     this.setAngle(angle).setOrigin(0.5, 0.5).setDisplaySize(10, 10);
