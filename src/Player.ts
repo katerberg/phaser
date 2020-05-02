@@ -44,6 +44,9 @@ export class Player extends Phaser.GameObjects.Image {
     this.hp -= damage;
     this.scene.registry.set('playerHp', this.hp);
     this.scene.events.emit('hpChanged');
+    if (this.hp <= 0) {
+      this.socket.emit('playerDying', {playerId: this.playerId});
+    }
   }
 
   public handleShoot(): void {

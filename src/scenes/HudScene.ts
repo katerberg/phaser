@@ -1,7 +1,6 @@
 import * as Phaser from 'phaser';
 
 export class HudScene extends Phaser.Scene {
-  private startKey: Phaser.Input.Keyboard.Key;
   private text: Phaser.GameObjects.Text;
 
   constructor() {
@@ -11,9 +10,6 @@ export class HudScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.startKey = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.S,
-    );
     this.registry.set('playerHp', 3);
   }
 
@@ -25,12 +21,6 @@ export class HudScene extends Phaser.Scene {
       0,
       `HP: ${this.registry.get('playerHp')}`,
     );
-  }
-
-  update(): void {
-    if (this.startKey.isDown) {
-      this.scene.start('GameScene');
-    }
   }
 
   updateHp(): void {
