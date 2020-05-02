@@ -2,6 +2,11 @@ import * as Phaser from 'phaser';
 import {Bullet} from './Bullet';
 import {getAngleFromSpeed} from './utils/trig';
 
+interface Maximums {
+  mana: number;
+  hp: number;
+}
+
 export class Player extends Phaser.GameObjects.Image {
   public body: Phaser.Physics.Arcade.Body;
   private oldPosition: {
@@ -9,8 +14,12 @@ export class Player extends Phaser.GameObjects.Image {
     y: number;
     angle: number;
   };
+  private max: Maximums;
   private hp: number;
+  private mana: number;
+  private spellCost: number;
   private projectiles: Phaser.GameObjects.Group;
+  private nextShot: number;
   public playerId: string;
   private socket: SocketIOClient.Socket;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -24,11 +33,22 @@ export class Player extends Phaser.GameObjects.Image {
       y: 0,
       angle: 0,
     };
-    this.hp = 3;
+    this.max = {mana: 100, hp: 3};
+    this.spellCost = 10;
+    this.nextShot = 0;
+    this.hp = this.max.hp;
+    this.mana = this.spellCost;
     this.playerId = playerId;
     this.projectiles = this.scene.add.group({
       runChildUpdate: true,
     });
+    this.scene.time.addEvent({
+      delay: 100,
+      callback: this.handleManaUpdate,
+      callbackScope: this,
+      loop: true,
+    });
+
     this.setAngle(270).setOrigin(0.5, 0.5).setDisplaySize(53, 40);
     this.socket = socket;
     scene.physics.world.enable(this);
@@ -50,15 +70,23 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   public handleShoot(): void {
-    if (this.shoot.isDown && this.projectiles.getLength() < 1) {
+    if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.mana >= this.spellCost) {
       const bullet = new Bullet({
         x: this.x,
         y: this.y,
         scene: this.scene,
         key: 'bullet',
       }, this.angle);
+      this.updateMana(this.mana - this.spellCost);
       this.projectiles.add(bullet);
       this.socket.emit('projectileFiring', {x: this.x, y: this.y, angle: this.angle, speed: bullet.speed});
+      this.nextShot = this.scene.time.now + 200;
+    }
+  }
+
+  private handleManaUpdate(): void {
+    if (this.mana < this.max.mana) {
+      this.updateMana(this.mana + 1);
     }
   }
 
@@ -88,6 +116,12 @@ export class Player extends Phaser.GameObjects.Image {
     } else {
       this.body.setVelocity(0);
     }
+  }
+
+  private updateMana(newMana: number): void {
+    this.mana = newMana;
+    this.scene.registry.set('playerMana', this.mana);
+    this.scene.events.emit('manaChanged');
   }
 
   public update(): void {

@@ -6,6 +6,7 @@ import {Enemy} from '../Enemy';
 import hitmanImage from '../assets/Hitman/hitman1_gun.png';
 import soldierImage from '../assets/Soldier 1/soldier1_gun.png';
 import bulletImage from '../assets/Tiles/tile_360.png';
+import {isDebug} from '../utils/environments';
 
 interface ServerDamage {
   playerId: string;
@@ -58,7 +59,9 @@ export class GameScene extends Phaser.Scene {
     this.socket.on('currentPlayers', (players: {['string']: ServerPlayer}) => {
       Object.values(players).forEach((player: ServerPlayer) => {
         if (player.playerId === this.socket.id) {
-          this.add.text(400 - 5 * 32, 300 - 32, player.playerId, {align: 'center', fontSize: '32px'});
+          if (isDebug()) {
+            this.add.text(400 - 5 * 32, 300 - 32, player.playerId, {align: 'center', fontSize: '32px'});
+          }
           this.addPlayer(player);
         } else {
           this.addOtherPlayer(player);
