@@ -10,9 +10,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.startKey = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.S,
-    );
+    this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
   }
 
   create(): void {

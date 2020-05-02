@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "noImplicitAny": true,
+        "noEmit": true,
         "outDir": "./public",
         "allowJs": true,
         "target": "es5",

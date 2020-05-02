@@ -9,23 +9,38 @@ interface Maximums {
 
 export class Player extends Phaser.GameObjects.Image {
   public body: Phaser.Physics.Arcade.Body;
+
   private oldPosition: {
     x: number;
     y: number;
     angle: number;
   };
+
   private max: Maximums;
+
   private hp: number;
+
   private mana: number;
+
   private spellCost: number;
+
   private projectiles: Phaser.GameObjects.Group;
+
   private nextShot: number;
+
   public playerId: string;
+
   private socket: SocketIOClient.Socket;
+
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+
   private shoot: Phaser.Input.Keyboard.Key;
 
-  constructor({scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string}, playerId: string, socket: SocketIOClient.Socket) {
+  constructor(
+    {scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string},
+    playerId: string,
+    socket: SocketIOClient.Socket,
+  ) {
     super(scene, x, y, key);
     this.initInput();
     this.oldPosition = {
@@ -71,12 +86,15 @@ export class Player extends Phaser.GameObjects.Image {
 
   public handleShoot(): void {
     if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.mana >= this.spellCost) {
-      const bullet = new Bullet({
-        x: this.x,
-        y: this.y,
-        scene: this.scene,
-        key: 'bullet',
-      }, this.angle);
+      const bullet = new Bullet(
+        {
+          x: this.x,
+          y: this.y,
+          scene: this.scene,
+          key: 'bullet',
+        },
+        this.angle,
+      );
       this.updateMana(this.mana - this.spellCost);
       this.projectiles.add(bullet);
       this.socket.emit('projectileFiring', {x: this.x, y: this.y, angle: this.angle, speed: bullet.speed});
@@ -92,9 +110,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   private initInput(): void {
     this.cursors = this.scene.input.keyboard.createCursorKeys();
-    this.shoot = this.scene.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.SPACE,
-    );
+    this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
   }
 
   private handleMovement(): void {

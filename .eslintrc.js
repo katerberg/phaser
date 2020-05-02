@@ -1,13 +1,52 @@
-{
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+module.exports = {
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: 'tsconfig.json',
+    "ecmaVersion": 2018,
+    sourceType: 'module',
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
+  },
+  plugins: ['@typescript-eslint', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'airbnb-typescript/base',
+    'prettier',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
-  "plugins": ["mocha"],
-  "parser": "@typescript-eslint/parser",
-  "rules": {
+  rules: {
+    '@typescript-eslint/no-use-before-define': 'error',
+    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-unused-expressions': 'error',
+    '@typescript-eslint/no-var-requires': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/explicit-function-return-type': 'error',
+    '@typescript-eslint/ban-ts-ignore': 'error',
+    'global-require': 'error',
+    'import/no-default-export': 'error',
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'import/order': [
+      'error',
+      {
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
+    'import/prefer-default-export': 'off',
+    'no-await-in-loop': 'error',
     "no-console": "error",
     "no-extra-parens":  "error",
+    'no-shadow': 'error',
     "no-template-curly-in-string": "error",
     "class-methods-use-this": ["error", {"exceptMethods": ["render"]}],
     "array-callback-return": "error",
@@ -91,7 +130,7 @@
     "no-tabs": "error",
     "no-trailing-spaces": "error",
     "no-unneeded-ternary": "error",
-    "object-curly-spacing": "error",
+    "object-curly-spacing": ["error", "never"],
     "operator-assignment": "error",
     "operator-linebreak": ["error", "after"],
     "quote-props": ["error", "as-needed"],
@@ -124,25 +163,4 @@
     "template-curly-spacing": "error",
     "yield-star-spacing": "error"
   },
-  "env": {
-    "node": true,
-    "es6": true
-  },
-  "globals": {
-    "it": true,
-    "describe": true,
-    "sinon": true,
-    "beforeEach": true,
-    "afterEach": true,
-    "document": true,
-    "window": true
-  },
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2018,
-    "ecmaFeatures": {
-      "jsx": true,
-      "modules": true
-    }
-  }
-}
+};

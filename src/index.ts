@@ -1,7 +1,7 @@
 import 'regenerator-runtime/runtime';
 import * as Phaser from 'phaser';
-import {HudScene} from './scenes/HudScene';
 import {GameScene} from './scenes/GameScene';
+import {HudScene} from './scenes/HudScene';
 import {MenuScene} from './scenes/MenuScene';
 
 const config: Phaser.Types.Core.GameConfig = {

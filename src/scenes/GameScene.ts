@@ -1,11 +1,12 @@
 import * as Phaser from 'phaser';
 import * as io from 'socket.io-client';
-import {Player} from '../Player';
-import {Bullet} from '../Bullet';
-import {Enemy} from '../Enemy';
 import hitmanImage from '../assets/Hitman/hitman1_gun.png';
 import soldierImage from '../assets/Soldier 1/soldier1_gun.png';
 import bulletImage from '../assets/Tiles/tile_360.png';
+import {Bullet} from '../Bullet';
+import {Enemy} from '../Enemy';
+import {ServerProjectile} from '../interfaces/Shared';
+import {Player} from '../Player';
 import {isDebug} from '../utils/environments';
 
 interface ServerDamage {
@@ -20,18 +21,11 @@ interface ServerPlayer {
   angle: number;
 }
 
-export interface ServerProjectile {
-  x: number;
-  y: number;
-  playerId: string;
-  angle: number;
-  speed: number;
-}
-
 export class GameScene extends Phaser.Scene {
-
   public socket: SocketIOClient.Socket;
+
   player: Player;
+
   otherPlayers: Phaser.Physics.Arcade.Group;
 
   constructor() {
@@ -48,7 +42,7 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.otherPlayers = this.physics.add.group({
-      createCallback: p => {
+      createCallback: (p) => {
         if (p && p.body instanceof Phaser.Physics.Arcade.Body) {
           p.body.setImmovable(true);
         }
@@ -114,33 +108,33 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     if (this.player) {
       this.player.update();
-      this.physics.overlap(
-        this.player.getProjectiles(),
-        this.otherPlayers,
-        this.projectileHitEnemy,
-        null,
-        this,
-      );
+      this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, null, this);
     }
   }
 
   addPlayer(playerInfo: ServerPlayer): void {
-    this.player = new Player({
-      scene: this,
-      x: playerInfo.x,
-      y: playerInfo.y,
-      key: 'hitman'},
-    playerInfo.playerId,
-    this.socket);
+    this.player = new Player(
+      {
+        scene: this,
+        x: playerInfo.x,
+        y: playerInfo.y,
+        key: 'hitman',
+      },
+      playerInfo.playerId,
+      this.socket,
+    );
   }
 
   addOtherPlayer(playerInfo: ServerPlayer): void {
-    const otherPlayer: Enemy = new Enemy({
-      scene: this,
-      x: playerInfo.x,
-      y: playerInfo.y,
-      key: 'soldier',
-    }, playerInfo.playerId);
+    const otherPlayer: Enemy = new Enemy(
+      {
+        scene: this,
+        x: playerInfo.x,
+        y: playerInfo.y,
+        key: 'soldier',
+      },
+      playerInfo.playerId,
+    );
     this.otherPlayers.add(otherPlayer);
   }
 
