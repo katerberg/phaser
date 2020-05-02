@@ -1,11 +1,18 @@
-Characters
-  Melee character
-    Speed of attack
-    Power
-  Ranged
-    Cone
-    Instantaneous volt
-    Arrow
+Melee character
+  Speed of attack?
+  damage output
+  poison? DOT
+
+
+
+Ranged character
+  Cone
+  Instantaneous volt
+  Arrow
+  distance with AOE radius
+  reverberating? distance with square rule of advancement
+
+
 Modifiers temp
   Speed self
   Slow them
@@ -19,3 +26,8 @@ Damage types
   Psychic (pass through obstacles)
   Cold (slow)
   Normal
+
+Combining cards into triangle?
+  Has to include 4 types?
+  maybe each one affects a different region?
+Potentially schematics for different weapon types?
