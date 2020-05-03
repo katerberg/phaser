@@ -3,8 +3,8 @@ import * as io from 'socket.io-client';
 import * as tilemap from '../assets/grass-map.json';
 import grassTileset from '../assets/grass-tileset.png';
 import hitmanImage from '../assets/Hitman/hitman1_gun.png';
-import soldierImage from '../assets/Soldier 1/soldier1_gun.png';
 import bulletImage from '../assets/Tiles/tile_360.png';
+import soldierImage from '../assets/Zombie 1/zoimbie1_hold.png';
 import {Bullet} from '../Bullet';
 import {Enemy} from '../Enemy';
 import {ServerProjectile} from '../interfaces/Shared';
@@ -60,7 +60,7 @@ export class GameScene extends Phaser.Scene {
 
     const map = this.make.tilemap({key: 'map'});
     const tileset = map.addTilesetImage('grass-tileset');
-    map.createStaticLayer('GameScene', tileset);
+    map.createStaticLayer('Tile Layer 1', tileset);
 
     this.socket = io('http://127.0.0.1:8081');
 

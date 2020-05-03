@@ -7,8 +7,8 @@ import {MenuScene} from './scenes/MenuScene';
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
-  width: 832,
-  height: 768,
+  width: 1088,
+  height: 640,
   physics: {
     default: 'arcade',
     arcade: {
