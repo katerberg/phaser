@@ -9,7 +9,7 @@ interface Maximums {
 }
 
 export class Player extends Phaser.GameObjects.Image {
-  public body: Phaser.Physics.Arcade.Body;
+  public body!: Phaser.Physics.Arcade.Body; // handled by world.enable
 
   private oldPosition: {
     x: number;
@@ -43,7 +43,8 @@ export class Player extends Phaser.GameObjects.Image {
     socket: SocketIOClient.Socket,
   ) {
     super(scene, x, y, key);
-    this.initInput();
+    this.cursors = this.scene.input.keyboard.createCursorKeys();
+    this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.oldPosition = {
       x: 0,
       y: 0,
@@ -116,25 +117,20 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
-  private initInput(): void {
-    this.cursors = this.scene.input.keyboard.createCursorKeys();
-    this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-  }
-
   private handleMovement(): void {
     const {up, down, left, right} = this.cursors;
-    if (up.isDown || down.isDown || left.isDown || right.isDown) {
+    if (up?.isDown || down?.isDown || left?.isDown || right?.isDown) {
       let speed = 200;
-      const keysCount = [up, down, right, left].reduce((prev, cur) => prev + (cur.isDown ? 1 : 0), 0);
+      const keysCount = [up, down, right, left].reduce((prev, cur) => prev + (cur?.isDown ? 1 : 0), 0);
       if (keysCount > 1) {
         speed /= Math.sqrt(2);
       }
       let xSpeed = 0;
       let ySpeed = 0;
-      xSpeed -= left.isDown ? speed : 0;
-      xSpeed += right.isDown ? speed : 0;
-      ySpeed -= up.isDown ? speed : 0;
-      ySpeed += down.isDown ? speed : 0;
+      xSpeed -= left?.isDown ? speed : 0;
+      xSpeed += right?.isDown ? speed : 0;
+      ySpeed -= up?.isDown ? speed : 0;
+      ySpeed += down?.isDown ? speed : 0;
       this.body.setVelocity(xSpeed, ySpeed);
       this.setAngle(getAngleFromSpeed(xSpeed, ySpeed));
     } else {

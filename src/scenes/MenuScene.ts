@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 
 export class MenuScene extends Phaser.Scene {
-  private startKey: Phaser.Input.Keyboard.Key;
+  private startKey: Phaser.Input.Keyboard.Key | undefined;
 
   constructor() {
     super({
@@ -18,7 +18,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   update(): void {
-    if (this.startKey.isDown) {
+    if (this.startKey && this.startKey.isDown) {
       this.scene.start('HudScene');
       this.scene.start('GameScene');
       this.scene.bringToTop('HudScene');
