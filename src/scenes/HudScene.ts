@@ -9,7 +9,7 @@ export class HudScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: 'HudScene',
+      key: constants.scenes.hud,
     });
   }
 
@@ -34,7 +34,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   create(): void {
-    const level = this.scene.get('GameScene');
+    const level = this.scene.get(constants.scenes.game);
     level.events.on('hpChanged', this.updateHp, this);
     level.events.on('manaChanged', this.updateMana, this);
     this.add.image(8, 32, 'blueprint-arrow').setOrigin(0, 0).setScale(1.15);

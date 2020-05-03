@@ -39,7 +39,7 @@ export class GameScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: 'GameScene',
+      key: constants.scenes.game,
     });
   }
 
@@ -147,7 +147,7 @@ export class GameScene extends Phaser.Scene {
     if (this.socket && this.player?.playerId === playerId) {
       this.socket.disconnect();
       delete this.player;
-      this.scene.start('MenuScene');
+      this.scene.start(constants.scenes.menu);
     }
     this.otherPlayers.getChildren().forEach((otherPlayer) => {
       if (otherPlayer instanceof Enemy && playerId === otherPlayer.playerId) {

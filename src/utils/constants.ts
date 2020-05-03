@@ -9,4 +9,10 @@ export const constants = {
     xOffset: 150,
     yOffset: 0,
   },
+  scenes: {
+    game: 'GameScene',
+    hud: 'HudScene',
+    loading: 'LoadingScene',
+    menu: 'MenuScene',
+  },
 };

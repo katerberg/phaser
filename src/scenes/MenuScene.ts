@@ -6,7 +6,7 @@ export class MenuScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: 'MenuScene',
+      key: constants.scenes.menu,
     });
   }
 
@@ -22,7 +22,7 @@ export class MenuScene extends Phaser.Scene {
 
   update(): void {
     if (this.startKey && this.startKey.isDown) {
-      this.scene.start('LoadingScene');
+      this.scene.start(constants.scenes.loading);
     }
   }
 }
