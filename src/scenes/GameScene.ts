@@ -58,88 +58,10 @@ export class GameScene extends Phaser.Scene {
       },
     });
 
-    const map = this.make.tilemap({key: 'map'});
-    const tileset = map.addTilesetImage('grass-tileset');
-    map.createStaticLayer('Tile Layer 1', tileset);
-
+    this.buildPlayArea();
     this.socket = io('http://127.0.0.1:8081');
 
-    this.socket.on('currentPlayers', (players: {['string']: ServerPlayer}) => {
-      if (!this.socket) {
-        return;
-      }
-      Object.values(players).forEach((player: ServerPlayer) => {
-        if (this.socket && player.playerId === this.socket.id) {
-          if (isDebug()) {
-            this.add.text(400 - 5 * 32, 300 - 32, player.playerId, {align: 'center', fontSize: '32px'});
-          }
-          this.addPlayer(player);
-        } else {
-          this.addOtherPlayer(player);
-        }
-      });
-      if (!this.player) {
-        return;
-      }
-      this.physics.add.collider(this.otherPlayers, this.player);
-
-      this.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
-        this.addOtherPlayer(playerInfo);
-      });
-
-      this.socket.on('disconnect', (playerId: string) => {
-        if (this.socket && this.player?.playerId === playerId) {
-          this.socket.disconnect();
-          delete this.player;
-          this.scene.start('MenuScene');
-        }
-        this.otherPlayers.getChildren().forEach((otherPlayer) => {
-          if (otherPlayer instanceof Enemy && playerId === otherPlayer.playerId) {
-            otherPlayer.destroy();
-          }
-        });
-      });
-
-      this.socket.on('projectileFired', (projectileInfo: ServerProjectile) => {
-        this.otherPlayers.getChildren().forEach((otherPlayer) => {
-          if (otherPlayer instanceof Enemy) {
-            if (otherPlayer.playerId === projectileInfo.playerId) {
-              otherPlayer.addProjectile(projectileInfo);
-            }
-          }
-        });
-      });
-
-      this.socket.on('projectileDestroyed', ({projectileId}: ServerProjectileDestroy) => {
-        this.otherPlayers.getChildren().forEach((otherPlayer) => {
-          if (otherPlayer instanceof Enemy) {
-            otherPlayer
-              .getProjectiles()
-              .getChildren()
-              .forEach((projectile) => {
-                if (projectile instanceof Bullet && projectile.id === projectileId) {
-                  projectile.destroy();
-                }
-              });
-          }
-        });
-      });
-
-      this.socket.on('playerMoved', (playerInfo: ServerPlayer) => {
-        this.otherPlayers.getChildren().forEach((otherPlayer) => {
-          if (otherPlayer instanceof Enemy && playerInfo.playerId === otherPlayer.playerId) {
-            otherPlayer.setAngle(playerInfo.angle);
-            otherPlayer.setPosition(playerInfo.x, playerInfo.y);
-          }
-        });
-      });
-
-      this.socket.on('playerDamaged', ({playerId, damage}: ServerDamage) => {
-        if (this.player?.playerId === playerId) {
-          this.player.handleDamage(damage);
-        }
-      });
-    });
+    this.socket.on('currentPlayers', this.handlePlayerList.bind(this));
   }
 
   update(): void {
@@ -147,6 +69,82 @@ export class GameScene extends Phaser.Scene {
       this.player.update();
       this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
     }
+  }
+
+  handlePlayerList(players: {['string']: ServerPlayer}): void {
+    if (!this.socket) {
+      return;
+    }
+    Object.values(players).forEach((player: ServerPlayer) => {
+      if (player.playerId === this.socket?.id) {
+        this.addPlayer(player);
+      } else {
+        this.addOtherPlayer(player);
+      }
+    });
+    if (!this.player) {
+      return;
+    }
+    this.physics.add.collider(this.otherPlayers, this.player);
+
+    this.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
+      this.addOtherPlayer(playerInfo);
+    });
+
+    this.socket.on('disconnect', this.handleDisconnect.bind(this));
+
+    this.socket.on('projectileFired', (projectileInfo: ServerProjectile) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (otherPlayer instanceof Enemy) {
+          if (otherPlayer.playerId === projectileInfo.playerId) {
+            otherPlayer.addProjectile(projectileInfo);
+          }
+        }
+      });
+    });
+
+    this.socket.on('projectileDestroyed', ({projectileId}: ServerProjectileDestroy) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (otherPlayer instanceof Enemy) {
+          otherPlayer
+            .getProjectiles()
+            .getChildren()
+            .forEach((projectile) => {
+              if (projectile instanceof Bullet && projectile.id === projectileId) {
+                projectile.destroy();
+              }
+            });
+        }
+      });
+    });
+
+    this.socket.on('playerMoved', (playerInfo: ServerPlayer) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (otherPlayer instanceof Enemy && playerInfo.playerId === otherPlayer.playerId) {
+          otherPlayer.setAngle(playerInfo.angle);
+          otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+        }
+      });
+    });
+
+    this.socket.on('playerDamaged', ({playerId, damage}: ServerDamage) => {
+      if (this.player?.playerId === playerId) {
+        this.player.handleDamage(damage);
+      }
+    });
+  }
+
+  handleDisconnect(playerId: string): void {
+    if (this.socket && this.player?.playerId === playerId) {
+      this.socket.disconnect();
+      delete this.player;
+      this.scene.start('MenuScene');
+    }
+    this.otherPlayers.getChildren().forEach((otherPlayer) => {
+      if (otherPlayer instanceof Enemy && playerId === otherPlayer.playerId) {
+        otherPlayer.destroy();
+      }
+    });
   }
 
   addPlayer(playerInfo: ServerPlayer): void {
@@ -163,6 +161,9 @@ export class GameScene extends Phaser.Scene {
       playerInfo.playerId,
       this.socket,
     );
+    if (isDebug()) {
+      this.add.text(400 - 5 * 32, 300 - 32, this.player.playerId, {align: 'center', fontSize: '32px'});
+    }
   }
 
   addOtherPlayer(playerInfo: ServerPlayer): void {
@@ -176,6 +177,12 @@ export class GameScene extends Phaser.Scene {
       playerInfo.playerId,
     );
     this.otherPlayers.add(otherPlayer);
+  }
+
+  buildPlayArea(): void {
+    const map = this.make.tilemap({key: 'map'});
+    const tileset = map.addTilesetImage('grass-tileset');
+    map.createStaticLayer('Tile Layer 1', tileset);
   }
 
   projectileHitEnemy(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {

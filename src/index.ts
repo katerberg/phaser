@@ -3,12 +3,13 @@ import * as Phaser from 'phaser';
 import {GameScene} from './scenes/GameScene';
 import {HudScene} from './scenes/HudScene';
 import {MenuScene} from './scenes/MenuScene';
+import {constants} from './utils/constants';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
-  width: 1088,
-  height: 640,
+  width: constants.game.width,
+  height: constants.game.height,
   physics: {
     default: 'arcade',
     arcade: {

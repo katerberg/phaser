@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import {constants} from '../utils/constants';
 
 export class HudScene extends Phaser.Scene {
   private hpText: Phaser.GameObjects.Text | undefined;
@@ -14,8 +15,10 @@ export class HudScene extends Phaser.Scene {
   preload(): void {
     this.registry.set('playerHp', 3);
     this.registry.set('playerMana', 10);
-    this.hpText = this.add.text(10, 5, `HP: ${this.registry.get('playerHp')}`, {fontSize: '32px'});
-    this.manaText = this.add.text(700, 5, `Mana: ${this.registry.get('playerMana')}`);
+    this.hpText = this.add.text(10, 8, `HP: ${this.registry.get('playerHp')}`, {fontSize: '32px'});
+    this.manaText = this.add.text(constants.game.width - 32 * 6, 8, `Mana: ${this.registry.get('playerMana')}`, {
+      fontSize: '32px',
+    });
   }
 
   create(): void {
