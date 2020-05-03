@@ -22,9 +22,7 @@ export class MenuScene extends Phaser.Scene {
 
   update(): void {
     if (this.startKey && this.startKey.isDown) {
-      this.scene.start('HudScene');
-      this.scene.start('GameScene');
-      this.scene.bringToTop('HudScene');
+      this.scene.start('LoadingScene');
     }
   }
 }

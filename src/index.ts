@@ -1,8 +1,6 @@
 import 'regenerator-runtime/runtime';
 import * as Phaser from 'phaser';
-import {GameScene} from './scenes/GameScene';
-import {HudScene} from './scenes/HudScene';
-import {MenuScene} from './scenes/MenuScene';
+import {GameScene, HudScene, LoadingScene, MenuScene} from './scenes';
 import {constants} from './utils/constants';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -17,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
       gravity: {y: 0},
     },
   },
-  scene: [MenuScene, GameScene, HudScene],
+  scene: [LoadingScene, MenuScene, GameScene, HudScene],
 };
 
 export class Game extends Phaser.Game {}
