@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import {constants} from './utils/constants';
 
 export class Bullet extends Phaser.GameObjects.Image {
   public id: string;
@@ -28,7 +29,12 @@ export class Bullet extends Phaser.GameObjects.Image {
   }
 
   public update(): void {
-    if (this.y < 0 || this.y > this.scene.sys.canvas.height || this.x < 0 || this.x > this.scene.sys.canvas.width) {
+    if (
+      this.y < constants.playArea.yOffset ||
+      this.y > this.scene.sys.canvas.height ||
+      this.x < 0 ||
+      this.x > this.scene.sys.canvas.width
+    ) {
       this.destroy();
     }
   }

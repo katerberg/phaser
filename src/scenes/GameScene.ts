@@ -9,6 +9,7 @@ import {Bullet} from '../Bullet';
 import {Enemy} from '../Enemy';
 import {ServerProjectile} from '../interfaces/Shared';
 import {Player} from '../Player';
+import {constants} from '../utils/constants';
 import {isDebug} from '../utils/environments';
 
 interface ServerDamage {
@@ -182,7 +183,7 @@ export class GameScene extends Phaser.Scene {
   buildPlayArea(): void {
     const map = this.make.tilemap({key: 'map'});
     const tileset = map.addTilesetImage('grass-tileset');
-    map.createStaticLayer('Tile Layer 1', tileset);
+    map.createStaticLayer('Tile Layer 1', tileset, constants.playArea.xOffset, constants.playArea.yOffset);
   }
 
   projectileHitEnemy(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {
