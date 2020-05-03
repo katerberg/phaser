@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import arrowImage from '../assets/blueprint-arrow.png';
 import {constants} from '../utils/constants';
 
 export class HudScene extends Phaser.Scene {
@@ -16,7 +17,7 @@ export class HudScene extends Phaser.Scene {
     this.registry.set('playerHp', 3);
     this.registry.set('playerMana', 10);
     this.hpText = this.add.text(
-      constants.playArea.xOffset + 10,
+      constants.playArea.xOffset + 12,
       constants.playArea.yOffset + 8,
       `HP: ${this.registry.get('playerHp')}`,
       {fontSize: '32px'},
@@ -29,12 +30,14 @@ export class HudScene extends Phaser.Scene {
         fontSize: '32px',
       },
     );
+    this.load.image('blueprint-arrow', arrowImage);
   }
 
   create(): void {
     const level = this.scene.get('GameScene');
     level.events.on('hpChanged', this.updateHp, this);
     level.events.on('manaChanged', this.updateMana, this);
+    this.add.image(8, 32, 'blueprint-arrow').setOrigin(0, 0).setScale(1.15);
   }
 
   updateHp(): void {
