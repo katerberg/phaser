@@ -24,3 +24,7 @@ npm build
 ## Known Issues
 
 - Projectiles don't load for new players if they were in motion prior to joining
+
+## Credits
+
+- Image packs courtesy of [Kenney](https://kenney.nl/assets/)

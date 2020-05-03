@@ -11,7 +11,7 @@
     "build": "webpack --config ./webpack.config.js --mode production",
     "lint": "npm run lint:base -- --fix",
     "lint:ci": "npm run lint:base",
-    "lint:base": "eslint --ext json,js,ts src",
+    "lint:base": "eslint --ext js,ts src",
     "start:api": "nodemon server.js",
     "start:ui": "webpack-dev-server --config ./webpack.config.js --mode development"
   },

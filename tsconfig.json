@@ -5,6 +5,7 @@
         "allowJs": true,
         "target": "es5",
         "removeComments": true,
+        "resolveJsonModule": true,
         "preserveConstEnums": true,
         "sourceMap": true
     },

@@ -20,8 +20,8 @@ export class HudScene extends Phaser.Scene {
     const level = this.scene.get('GameScene');
     level.events.on('hpChanged', this.updateHp, this);
     level.events.on('manaChanged', this.updateMana, this);
-    this.hpText = this.add.text(10, 0, `HP: ${this.registry.get('playerHp')}`);
-    this.manaText = this.add.text(700, 0, `Mana: ${this.registry.get('playerMana')}`);
+    this.hpText = this.add.text(10, 5, `HP: ${this.registry.get('playerHp')}`, {fontSize: '32px'});
+    this.manaText = this.add.text(700, 5, `Mana: ${this.registry.get('playerMana')}`);
   }
 
   updateHp(): void {
