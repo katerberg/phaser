@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import * as io from 'socket.io-client';
 import * as tilemap from '../assets/grass-map.json';
 import grassTileset from '../assets/grass-tileset.png';
-import hitmanImage from '../assets/Hitman/hitman1_gun.png';
+import hitmanImage from '../assets/Hitman/hitman1_hold.png';
 import bulletImage from '../assets/Tiles/tile_360.png';
 import soldierImage from '../assets/Zombie 1/zoimbie1_hold.png';
 import {Bullet} from '../Bullet';
@@ -35,6 +35,8 @@ export class GameScene extends Phaser.Scene {
 
   otherPlayers!: Phaser.Physics.Arcade.Group;
 
+  walls!: Phaser.Physics.Arcade.Group;
+
   constructor() {
     super({
       key: 'GameScene',
@@ -51,6 +53,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.physics.world.setBounds(
+      constants.playArea.xOffset,
+      constants.playArea.yOffset,
+      constants.playArea.width,
+      constants.playArea.height,
+    );
     this.otherPlayers = this.physics.add.group({
       createCallback: (p) => {
         if (p && p.body instanceof Phaser.Physics.Arcade.Body) {

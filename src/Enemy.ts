@@ -13,7 +13,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.projectiles = this.scene.add.group({
       runChildUpdate: true,
     });
-    this.setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+    this.setOrigin(0.5, 0.5).setDisplaySize(35, 43);
     scene.physics.world.enable(this);
     scene.add.existing(this);
   }

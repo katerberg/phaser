@@ -16,8 +16,8 @@ io.on('connection', (socket) => {
   // Create a new player and add it to our players object
   players[socket.id] = {
     angle: 0,
-    x: Math.floor(Math.random() * 700) + 50,
-    y: Math.floor(Math.random() * 500) + 50,
+    x: Math.floor(Math.random() * 988) + 200,
+    y: Math.floor(Math.random() * 540) + 100,
     playerId: socket.id,
     team: Math.floor(Math.random() * 2) === 0 ? 'red' : 'blue',
   };
