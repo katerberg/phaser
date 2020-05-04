@@ -53,6 +53,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cameras.main.setBackgroundColor('#FFFFFF');
     this.physics.world.setBounds(
       constants.playArea.xOffset,
       constants.playArea.yOffset,

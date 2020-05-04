@@ -14,5 +14,6 @@ export const constants = {
     hud: 'HudScene',
     loading: 'LoadingScene',
     menu: 'MenuScene',
+    cards: 'CardsScene',
   },
 };

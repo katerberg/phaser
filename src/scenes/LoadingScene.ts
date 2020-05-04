@@ -9,8 +9,11 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   update(): void {
+    this.cameras.main.setBackgroundColor('#FFFFFF');
+    this.scene.start(constants.scenes.cards);
     this.scene.start(constants.scenes.hud);
     this.scene.start(constants.scenes.game);
     this.scene.bringToTop(constants.scenes.hud);
+    this.scene.bringToTop(constants.scenes.cards);
   }
 }
