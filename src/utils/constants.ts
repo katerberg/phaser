@@ -2,6 +2,7 @@ export const constants = {
   game: {
     width: 1388,
     height: 900,
+    cardWidth: 174,
   },
   playArea: {
     width: 1088,
