@@ -3,16 +3,17 @@ import anvilImage from '../assets/anvil.png';
 import cardImage from '../assets/card.png';
 import deckImage from '../assets/deck.png';
 import {Card} from '../Card';
+import {Hand} from '../Hand';
 import {constants} from '../utils/constants';
 
 export class CardsScene extends Phaser.Scene {
-  hand: Card[];
+  hand: Hand;
 
   constructor() {
     super({
       key: constants.scenes.cards,
     });
-    this.hand = [new Card(), new Card(), new Card(), new Card(), new Card()];
+    this.hand = new Hand();
   }
 
   preload(): void {
@@ -30,7 +31,12 @@ export class CardsScene extends Phaser.Scene {
       .image(constants.game.width - 10, constants.game.height - 10, 'icon-deck')
       .setOrigin(1, 1)
       .setScale(0.55);
-    this.hand.forEach((card, i) => {
+
+    this.hand.add(new Card());
+    this.hand.add(new Card());
+    this.hand.add(new Card());
+
+    this.hand.getCards().forEach((card, i) => {
       const cardX = 408 + (i - 1) * (constants.game.cardWidth + 20);
       this.add.image(cardX, constants.game.height + 40, 'card').setOrigin(0, 1);
       this.add
