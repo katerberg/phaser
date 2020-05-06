@@ -3,11 +3,14 @@ import anvilImage from '../assets/anvil.png';
 import cardImage from '../assets/card.png';
 import deckImage from '../assets/deck.png';
 import {Card} from '../Card';
+import {Deck} from '../Deck';
 import {Hand} from '../Hand';
 import {constants} from '../utils/constants';
 
 export class CardsScene extends Phaser.Scene {
   hand: Hand;
+
+  deck!: Deck;
 
   constructor() {
     super({
@@ -23,18 +26,22 @@ export class CardsScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.deck = new Deck({scene: this, x: constants.game.width - 10, y: constants.game.height - 10, key: 'icon-deck'});
     this.add
       .image(8, constants.game.height - 10, 'icon-anvil')
       .setOrigin(0, 1)
       .setScale(0.55);
-    this.add
-      .image(constants.game.width - 10, constants.game.height - 10, 'icon-deck')
-      .setOrigin(1, 1)
-      .setScale(0.55);
 
-    this.hand.add(new Card());
-    this.hand.add(new Card());
-    this.hand.add(new Card());
+    Array(4)
+      .fill('')
+      .forEach(() => {
+        this.hand.add(new Card());
+      });
+    Array(20)
+      .fill('')
+      .forEach(() => {
+        this.deck.add(new Card());
+      });
 
     this.hand.getCards().forEach((card, i) => {
       const cardX = 408 + (i - 1) * (constants.game.cardWidth + 20);
