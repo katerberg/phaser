@@ -16,20 +16,19 @@ export class HudScene extends Phaser.Scene {
   preload(): void {
     this.registry.set('playerHp', 3);
     this.registry.set('playerMana', 10);
-    this.hpText = this.add.text(
-      constants.playArea.xOffset + 12,
-      constants.playArea.yOffset + 8,
-      `HP: ${this.registry.get('playerHp')}`,
-      {fontSize: '32px'},
-    );
-    this.manaText = this.add.text(
-      constants.playArea.xOffset + constants.playArea.width - 32 * 6,
-      constants.playArea.yOffset + 8,
-      `Mana: ${this.registry.get('playerMana')}`,
-      {
-        fontSize: '32px',
-      },
-    );
+    this.hpText = this.add.text(constants.playArea.xOffset + 12, constants.playArea.yOffset + 8, this.getHPText(), {
+      fontSize: '32px',
+    });
+    this.manaText = this.add
+      .text(
+        constants.playArea.xOffset + constants.playArea.width - 12,
+        constants.playArea.yOffset + 8,
+        this.getManaText(),
+        {
+          fontSize: '32px',
+        },
+      )
+      .setOrigin(1, 0);
     this.load.image('blueprint-arrow', arrowImage);
   }
 
@@ -44,13 +43,21 @@ export class HudScene extends Phaser.Scene {
     if (!this.hpText) {
       return;
     }
-    this.hpText.setText(`HP: ${this.registry.get('playerHp')}`);
+    this.hpText.setText(this.getHPText());
   }
 
   updateMana(): void {
     if (!this.manaText) {
       return;
     }
-    this.manaText.setText(`Mana: ${this.registry.get('playerMana')}`);
+    this.manaText.setText(this.getManaText());
+  }
+
+  getManaText(): string {
+    return `${constants.symbols.energy}:${`${this.registry.get('playerMana')}`.padStart(3, '  ')}`;
+  }
+
+  getHPText(): string {
+    return `HP: ${this.registry.get('playerHp')}`;
   }
 }

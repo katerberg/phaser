@@ -34,12 +34,17 @@ export class CardsScene extends Phaser.Scene {
       const cardX = 408 + (i - 1) * (constants.game.cardWidth + 20);
       this.add.image(cardX, constants.game.height + 40, 'card').setOrigin(0, 1);
       this.add
-        .text(cardX + constants.game.cardWidth / 2, constants.game.height - 100, `${card.benefit}☾`, {
-          fontSize: '72px',
-        })
+        .text(
+          cardX + constants.game.cardWidth / 2,
+          constants.game.height - 100,
+          `${card.benefit}${constants.symbols.moon}`,
+          {
+            fontSize: '72px',
+          },
+        )
         .setOrigin(0.5, 0);
       this.add
-        .text(cardX + 169, constants.game.height - 200, `${card.cost}⚛`, {
+        .text(cardX + 169, constants.game.height - 200, `${card.cost}${constants.symbols.energy}`, {
           fontSize: '32px',
         })
         .setOrigin(1, 0);

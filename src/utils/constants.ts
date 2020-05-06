@@ -17,4 +17,8 @@ export const constants = {
     menu: 'MenuScene',
     cards: 'CardsScene',
   },
+  symbols: {
+    energy: '⚛',
+    moon: '☾',
+  },
 };
