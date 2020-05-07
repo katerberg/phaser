@@ -15,6 +15,8 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.scene.stop(constants.scenes.hud);
+    this.scene.stop(constants.scenes.cards);
     this.add.text(constants.game.width / 2 - 5 * 32, constants.game.height / 2 - 32, 'Press S to Start', {
       fontSize: '32px',
     });

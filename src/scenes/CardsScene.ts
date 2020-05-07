@@ -8,7 +8,7 @@ import {Hand} from '../Hand';
 import {constants} from '../utils/constants';
 
 export class CardsScene extends Phaser.Scene {
-  hand: Hand;
+  hand!: Hand;
 
   deck!: Deck;
 
@@ -16,7 +16,6 @@ export class CardsScene extends Phaser.Scene {
     super({
       key: constants.scenes.cards,
     });
-    this.hand = new Hand();
   }
 
   preload(): void {
@@ -26,6 +25,7 @@ export class CardsScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.hand = new Hand();
     this.deck = new Deck({scene: this, x: constants.game.width - 10, y: constants.game.height - 10, key: 'icon-deck'});
     this.add
       .image(8, constants.game.height - 10, 'icon-anvil')
