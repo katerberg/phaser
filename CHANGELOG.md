@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Basic card layout
+## [0.0.5] - 2020-05-06
+### Added
+- Deck and hand
+- Drawing cards
 
 ## [0.0.4] - 2020-05-02
 ### Added
@@ -33,8 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial commit
 
-[unreleased]: https://github.com/katerberg/7drl/compare/v0.0.4...HEAD
-[0.0.4]: https://github.com/katerberg/7drl/releases/tag/v0.0.4
-[0.0.3]: https://github.com/katerberg/7drl/releases/tag/v0.0.3
-[0.0.2]: https://github.com/katerberg/7drl/releases/tag/v0.0.2
-[0.0.1]: https://github.com/katerberg/7drl/releases/tag/v0.0.1
+[unreleased]: https://github.com/katerberg/phaser/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/katerberg/phaser/releases/tag/v0.0.5
+[0.0.4]: https://github.com/katerberg/phaser/releases/tag/v0.0.4
+[0.0.3]: https://github.com/katerberg/phaser/releases/tag/v0.0.3
+[0.0.2]: https://github.com/katerberg/phaser/releases/tag/v0.0.2
+[0.0.1]: https://github.com/katerberg/phaser/releases/tag/v0.0.1

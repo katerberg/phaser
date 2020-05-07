@@ -29,6 +29,8 @@ export class Player extends Phaser.GameObjects.Image {
 
   private nextShot: number;
 
+  private nextDraw: number;
+
   public playerId: string;
 
   private socket: SocketIOClient.Socket;
@@ -36,6 +38,8 @@ export class Player extends Phaser.GameObjects.Image {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
   private shoot: Phaser.Input.Keyboard.Key;
+
+  private draw: Phaser.Input.Keyboard.Key;
 
   constructor(
     {scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string},
@@ -45,6 +49,7 @@ export class Player extends Phaser.GameObjects.Image {
     super(scene, x, y, key);
     this.cursors = this.scene.input.keyboard.createCursorKeys();
     this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.draw = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.oldPosition = {
       x: 0,
       y: 0,
@@ -53,6 +58,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.max = {mana: 100, hp: 3};
     this.spellCost = 10;
     this.nextShot = 0;
+    this.nextDraw = 0;
     this.hp = this.max.hp;
     this.mana = this.spellCost;
     this.playerId = playerId;
@@ -111,6 +117,13 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
+  public handleDraw(): void {
+    if (this.draw.isDown && this.nextDraw < this.scene.time.now) {
+      this.scene.events.emit('drawCard');
+      this.nextDraw = this.scene.time.now + 200;
+    }
+  }
+
   private handleManaUpdate(): void {
     if (this.mana < this.max.mana) {
       this.updateMana(this.mana + 1);
@@ -147,6 +160,7 @@ export class Player extends Phaser.GameObjects.Image {
   public update(): void {
     this.handleMovement();
     this.handleShoot();
+    this.handleDraw();
 
     const {x, y, angle} = this;
     if (x !== this.oldPosition.x || y !== this.oldPosition.y || angle !== this.oldPosition.angle) {

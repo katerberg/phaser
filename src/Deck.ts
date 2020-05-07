@@ -1,4 +1,5 @@
-import {Card} from './Card';
+import * as Phaser from 'phaser';
+import {Card} from './interfaces/Shared';
 
 export class Deck extends Phaser.GameObjects.Image {
   private cards: Card[];

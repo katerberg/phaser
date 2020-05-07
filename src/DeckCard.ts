@@ -1,7 +1,8 @@
 import {v4 as uuid} from 'uuid';
+import {Card} from './interfaces/Shared';
 import {ResourceType} from './ResourceType';
 
-export class Card {
+export class DeckCard implements Card {
   public id: string;
 
   public cost: number;
