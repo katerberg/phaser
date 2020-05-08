@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
+import {ResourceType} from './interfaces/ResourceType';
 import {Card} from './interfaces/Shared';
-import {ResourceType} from './ResourceType';
 import {constants} from './utils/constants';
 
 export class HandCard extends Phaser.GameObjects.Image implements Card {

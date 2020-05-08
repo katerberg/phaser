@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
-import {Bullet} from './Bullet';
 import {ServerProjectile} from './interfaces/Shared';
+import {getProjectile} from './projectiles';
 
 export class Enemy extends Phaser.GameObjects.Image {
   public playerId: string;
@@ -19,18 +19,7 @@ export class Enemy extends Phaser.GameObjects.Image {
   }
 
   public addProjectile(projectile: ServerProjectile): void {
-    const bullet = new Bullet(
-      {
-        x: projectile.x,
-        y: projectile.y,
-        scene: this.scene,
-        key: 'bullet',
-      },
-      projectile.angle,
-      projectile.id,
-      projectile.speed,
-    );
-    this.projectiles.add(bullet);
+    this.projectiles.add(getProjectile(projectile, this.scene));
   }
 
   public getProjectiles(): Phaser.GameObjects.Group {

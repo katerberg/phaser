@@ -4,11 +4,12 @@ import * as tilemap from '../assets/grass-map.json';
 import grassTileset from '../assets/grass-tileset.png';
 import hitmanImage from '../assets/Hitman/hitman1_hold.png';
 import bulletImage from '../assets/Tiles/tile_360.png';
+import arrowImage from '../assets/Tiles/tile_446.png';
 import soldierImage from '../assets/Zombie 1/zoimbie1_hold.png';
-import {Bullet} from '../Bullet';
 import {Enemy} from '../Enemy';
 import {ServerProjectile} from '../interfaces/Shared';
 import {Player} from '../Player';
+import {Bullet} from '../projectiles';
 import {constants} from '../utils/constants';
 import {isDebug} from '../utils/environments';
 
@@ -47,6 +48,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('hitman', hitmanImage);
     this.load.image('soldier', soldierImage);
     this.load.image('bullet', bulletImage);
+    this.load.image('arrow', arrowImage);
 
     this.load.image('grass-tileset', grassTileset);
     this.load.tilemapTiledJSON('map', tilemap as any); //eslint-disable-line

@@ -1,4 +1,5 @@
-import {ResourceType} from '../ResourceType';
+import {ProjectileType} from './ProjectileType';
+import {ResourceType} from './ResourceType';
 
 export interface ServerProjectile {
   id: string;
@@ -7,6 +8,7 @@ export interface ServerProjectile {
   playerId: string;
   angle: number;
   speed: number;
+  projectileType: ProjectileType;
 }
 
 export interface Card {
@@ -14,4 +16,11 @@ export interface Card {
   cost: number;
   benefit: number;
   resourceType: ResourceType;
+}
+
+export interface Projectile extends Phaser.GameObjects.Image {
+  speed: number;
+  damage: number;
+  id: string;
+  projectileType: ProjectileType;
 }

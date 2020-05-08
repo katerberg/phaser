@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
-import {Bullet} from './Bullet';
+import {Bullet} from './projectiles';
 import {getAngleFromSpeed} from './utils/trig';
 
 interface Maximums {
@@ -111,6 +111,7 @@ export class Player extends Phaser.GameObjects.Image {
         y: this.y,
         angle: this.angle,
         speed: bullet.speed,
+        projectileType: bullet.projectileType,
         id: bullet.id,
       });
       this.nextShot = this.scene.time.now + 200;
