@@ -10,6 +10,11 @@ export const constants = {
     xOffset: 150,
     yOffset: 0,
   },
+  speed: {
+    player: 150,
+    arrow: 250,
+    bullet: 400,
+  },
   scenes: {
     game: 'GameScene',
     hud: 'HudScene',

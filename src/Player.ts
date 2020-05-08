@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
-import {Bullet} from './projectiles';
+import {Arrow} from './projectiles';
+import {constants} from './utils/constants';
 import {getAngleFromSpeed} from './utils/trig';
 
 interface Maximums {
@@ -94,12 +95,12 @@ export class Player extends Phaser.GameObjects.Image {
 
   public handleShoot(): void {
     if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.mana >= this.spellCost) {
-      const bullet = new Bullet(
+      const bullet = new Arrow(
         {
           x: this.x,
           y: this.y,
           scene: this.scene,
-          key: 'bullet',
+          key: 'arrow',
         },
         this.angle,
         uuid() as string,
@@ -134,7 +135,7 @@ export class Player extends Phaser.GameObjects.Image {
   private handleMovement(): void {
     const {up, down, left, right} = this.cursors;
     if (up?.isDown || down?.isDown || left?.isDown || right?.isDown) {
-      let speed = 200;
+      let speed = constants.speed.player;
       const keysCount = [up, down, right, left].reduce((prev, cur) => prev + (cur?.isDown ? 1 : 0), 0);
       if (keysCount > 1) {
         speed /= Math.sqrt(2);
