@@ -14,6 +14,7 @@ export const constants = {
   speed: {
     player: 150,
     arrow: 250,
+    laser: 2500,
     bullet: 400,
   },
   scenes: {

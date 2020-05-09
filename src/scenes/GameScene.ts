@@ -1,11 +1,12 @@
 import * as Phaser from 'phaser';
 import * as io from 'socket.io-client';
+import soldierImage from '../assets/characters/enemy.png';
+import hitmanImage from '../assets/characters/hitman.png';
 import * as tilemap from '../assets/grass-map.json';
 import grassTileset from '../assets/grass-tileset.png';
-import hitmanImage from '../assets/Hitman/hitman1_hold.png';
-import bulletImage from '../assets/Tiles/tile_360.png';
-import arrowImage from '../assets/Tiles/tile_446.png';
-import soldierImage from '../assets/Zombie 1/zoimbie1_hold.png';
+import arrowImage from '../assets/projectiles/arrow.png';
+import bulletImage from '../assets/projectiles/bullet.png';
+import laserImage from '../assets/projectiles/laser.png';
 import {Enemy} from '../Enemy';
 import {ServerProjectile} from '../interfaces/Shared';
 import {Player} from '../Player';
@@ -48,6 +49,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('hitman', hitmanImage);
     this.load.image('soldier', soldierImage);
     this.load.image('bullet', bulletImage);
+    this.load.image('laser', laserImage);
     this.load.image('arrow', arrowImage);
 
     this.load.image('grass-tileset', grassTileset);

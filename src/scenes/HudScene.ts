@@ -1,8 +1,10 @@
 import * as Phaser from 'phaser';
 import arrowImage from '../assets/blueprint-arrow.png';
 import bulletImage from '../assets/blueprint-bullet.png';
+import laserImage from '../assets/blueprint-laser.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
 import weaponArrowImage from '../assets/weapon-dart.png';
+import weaponLaserImage from '../assets/weapon-laser.png';
 import weaponSelector from '../assets/weapon-selector.png';
 import {constants} from '../utils/constants';
 
@@ -48,8 +50,10 @@ export class HudScene extends Phaser.Scene {
       .setOrigin(1, 0);
     this.load.image('blueprint-arrow', arrowImage);
     this.load.image('blueprint-bullet', bulletImage);
+    this.load.image('blueprint-laser', laserImage);
     this.load.image('weapon-arrow', weaponArrowImage);
     this.load.image('weapon-bullet', weaponBulletImage);
+    this.load.image('weapon-laser', weaponLaserImage);
     this.load.image('weapon-selector', weaponSelector);
   }
 

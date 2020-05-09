@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
 import {Projectile} from './interfaces/Shared';
-import {Arrow, Bullet} from './projectiles';
+import {Arrow, Bullet, Laser} from './projectiles';
 import {constants} from './utils/constants';
 import {getAngleFromSpeed} from './utils/trig';
 
@@ -60,7 +60,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.cursors = this.scene.input.keyboard.createCursorKeys();
     this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.draw = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    this.blueprints = ['blueprint-arrow', 'blueprint-bullet'];
+    this.blueprints = ['blueprint-arrow', 'blueprint-bullet', 'blueprint-laser'];
     this.blueprintNext = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     this.blueprintPrevious = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
     this.oldPosition = {
@@ -137,6 +137,8 @@ export class Player extends Phaser.GameObjects.Image {
         return new Arrow({...opts, key: 'arrow'}, this.angle, uuid());
       case 'bullet':
         return new Bullet({...opts, key: 'bullet'}, this.angle, uuid());
+      case 'laser':
+        return new Laser({...opts, key: 'laser'}, this.angle, uuid());
       default:
         throw new Error();
     }
@@ -150,7 +152,7 @@ export class Player extends Phaser.GameObjects.Image {
         this.scene.registry.set('weapon', 'bullet');
       } else {
         this.scene.registry.set('blueprint', this.blueprints[0]);
-        this.scene.registry.set('weapon', 'arrow');
+        this.scene.registry.set('weapon', 'laser');
       }
       this.scene.events.emit('weaponChanged');
       this.scene.events.emit('blueprintChanged');
