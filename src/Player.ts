@@ -106,7 +106,7 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
-  public handleShoot(): void {
+  private handleShoot(): void {
     if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.mana >= this.spellCost) {
       const bullet = this.createProjectile();
       this.updateMana(this.mana - this.spellCost);
@@ -123,7 +123,7 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
-  public handleDraw(): void {
+  private handleDraw(): void {
     if (this.draw.isDown && this.nextDraw < this.scene.time.now) {
       this.scene.events.emit('drawCard');
       this.nextDraw = this.scene.time.now + 200;
@@ -134,16 +134,9 @@ export class Player extends Phaser.GameObjects.Image {
     const opts = {x: this.x, y: this.y, scene: this.scene};
     switch (this.scene.registry.get('weapon')) {
       case 'arrow':
-        return new Arrow(
-          {
-            ...opts,
-            key: 'arrow',
-          },
-          this.angle,
-          uuid() as string,
-        );
+        return new Arrow({...opts, key: 'arrow'}, this.angle, uuid());
       case 'bullet':
-        return new Bullet({...opts, key: 'bullet'}, this.angle, uuid() as string);
+        return new Bullet({...opts, key: 'bullet'}, this.angle, uuid());
       default:
         throw new Error();
     }
@@ -198,11 +191,15 @@ export class Player extends Phaser.GameObjects.Image {
     this.scene.events.emit('manaChanged');
   }
 
-  public update(): void {
+  private handleInput(): void {
     this.handleMovement();
     this.handleShoot();
     this.handleDraw();
     this.handleBlueprintSwap();
+  }
+
+  public update(): void {
+    this.handleInput();
 
     const {x, y, angle} = this;
     if (x !== this.oldPosition.x || y !== this.oldPosition.y || angle !== this.oldPosition.angle) {
