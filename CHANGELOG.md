@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Weapon swapping
+
 ## [0.0.5] - 2020-05-06
 ### Added
 - Deck and hand

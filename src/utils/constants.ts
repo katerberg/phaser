@@ -3,6 +3,7 @@ export const constants = {
     width: 1388,
     height: 900,
     cardWidth: 174,
+    weaponHeight: 174,
   },
   playArea: {
     width: 1088,

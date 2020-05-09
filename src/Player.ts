@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
-import {Arrow} from './projectiles';
+import {Projectile} from './interfaces/Shared';
+import {Arrow, Bullet} from './projectiles';
 import {constants} from './utils/constants';
 import {getAngleFromSpeed} from './utils/trig';
 
@@ -107,16 +108,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   public handleShoot(): void {
     if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.mana >= this.spellCost) {
-      const bullet = new Arrow(
-        {
-          x: this.x,
-          y: this.y,
-          scene: this.scene,
-          key: 'arrow',
-        },
-        this.angle,
-        uuid() as string,
-      );
+      const bullet = this.createProjectile();
       this.updateMana(this.mana - this.spellCost);
       this.projectiles.add(bullet);
       this.socket.emit('projectileFiring', {
@@ -138,14 +130,36 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
+  private createProjectile(): Projectile {
+    const opts = {x: this.x, y: this.y, scene: this.scene};
+    switch (this.scene.registry.get('weapon')) {
+      case 'arrow':
+        return new Arrow(
+          {
+            ...opts,
+            key: 'arrow',
+          },
+          this.angle,
+          uuid() as string,
+        );
+      case 'bullet':
+        return new Bullet({...opts, key: 'bullet'}, this.angle, uuid() as string);
+      default:
+        throw new Error();
+    }
+  }
+
   private handleBlueprintSwap(): void {
     if ((this.blueprintNext.isDown || this.blueprintPrevious.isDown) && this.nextBlueprint < this.scene.time.now) {
       const currentBlueprint = this.scene.registry.get('blueprint');
       if (currentBlueprint === this.blueprints[0]) {
         this.scene.registry.set('blueprint', this.blueprints[1]);
+        this.scene.registry.set('weapon', 'bullet');
       } else {
         this.scene.registry.set('blueprint', this.blueprints[0]);
+        this.scene.registry.set('weapon', 'arrow');
       }
+      this.scene.events.emit('weaponChanged');
       this.scene.events.emit('blueprintChanged');
       this.nextBlueprint = this.scene.time.now + 200;
     }
