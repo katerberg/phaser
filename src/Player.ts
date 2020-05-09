@@ -32,6 +32,8 @@ export class Player extends Phaser.GameObjects.Image {
 
   private nextDraw: number;
 
+  private nextBlueprint: number;
+
   public playerId: string;
 
   private socket: SocketIOClient.Socket;
@@ -42,6 +44,12 @@ export class Player extends Phaser.GameObjects.Image {
 
   private draw: Phaser.Input.Keyboard.Key;
 
+  private blueprintNext: Phaser.Input.Keyboard.Key;
+
+  private blueprintPrevious: Phaser.Input.Keyboard.Key;
+
+  private blueprints: string[];
+
   constructor(
     {scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string},
     playerId: string,
@@ -51,6 +59,9 @@ export class Player extends Phaser.GameObjects.Image {
     this.cursors = this.scene.input.keyboard.createCursorKeys();
     this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.draw = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.blueprints = ['blueprint-arrow', 'blueprint-bullet'];
+    this.blueprintNext = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+    this.blueprintPrevious = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
     this.oldPosition = {
       x: 0,
       y: 0,
@@ -60,6 +71,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.spellCost = 10;
     this.nextShot = 0;
     this.nextDraw = 0;
+    this.nextBlueprint = 0;
     this.hp = this.max.hp;
     this.mana = this.spellCost;
     this.playerId = playerId;
@@ -126,6 +138,19 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
+  private handleBlueprintSwap(): void {
+    if ((this.blueprintNext.isDown || this.blueprintPrevious.isDown) && this.nextBlueprint < this.scene.time.now) {
+      const currentBlueprint = this.scene.registry.get('blueprint');
+      if (currentBlueprint === this.blueprints[0]) {
+        this.scene.registry.set('blueprint', this.blueprints[1]);
+      } else {
+        this.scene.registry.set('blueprint', this.blueprints[0]);
+      }
+      this.scene.events.emit('blueprintChanged');
+      this.nextBlueprint = this.scene.time.now + 200;
+    }
+  }
+
   private handleManaUpdate(): void {
     if (this.mana < this.max.mana) {
       this.updateMana(this.mana + 1);
@@ -163,6 +188,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.handleMovement();
     this.handleShoot();
     this.handleDraw();
+    this.handleBlueprintSwap();
 
     const {x, y, angle} = this;
     if (x !== this.oldPosition.x || y !== this.oldPosition.y || angle !== this.oldPosition.angle) {
