@@ -8,6 +8,8 @@ export class Inventory {
 
   private blueprints: string[];
 
+  private weapons: string[];
+
   private nextBlueprint: number;
 
   private nextWeaponSelect: number;
@@ -20,7 +22,8 @@ export class Inventory {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.blueprints = ['blueprint-arrow', 'blueprint-bullet', 'blueprint-laser'];
+    this.blueprints = ['blueprint-bullet', 'blueprint-laser'];
+    this.weapons = ['arrow'];
 
     const {KeyCodes} = Phaser.Input.Keyboard;
     this.blueprintNext = this.scene.input.keyboard.addKey(KeyCodes.Q);
@@ -34,6 +37,9 @@ export class Inventory {
 
     this.nextBlueprint = 0;
     this.nextWeaponSelect = 0;
+    this.scene.registry.set('weapon', 'arrow');
+    this.scene.events.emit('weaponAdded');
+    this.scene.events.emit('weaponChanged');
   }
 
   private handleBlueprintSwap(): void {
@@ -54,13 +60,13 @@ export class Inventory {
     const [one, two, three, four] = this.weaponInputs;
     if (this.nextWeaponSelect < this.scene.time.now && (one.isDown || two.isDown || three.isDown || four.isDown)) {
       if (one.isDown) {
-        this.scene.registry.set('weapon', 'arrow');
-      } else if (two.isDown) {
-        this.scene.registry.set('weapon', 'bullet');
-      } else if (three.isDown) {
-        this.scene.registry.set('weapon', 'laser');
-      } else if (four.isDown) {
-        this.scene.registry.set('weapon', 'laser');
+        this.scene.registry.set('weapon', this.weapons[0]);
+      } else if (two.isDown && this.weapons.length > 1) {
+        this.scene.registry.set('weapon', this.weapons[1]);
+      } else if (three.isDown && this.weapons.length > 2) {
+        this.scene.registry.set('weapon', this.weapons[2]);
+      } else if (four.isDown && this.weapons.length > 3) {
+        this.scene.registry.set('weapon', this.weapons[3]);
       }
       this.scene.events.emit('weaponChanged');
       this.nextWeaponSelect = this.scene.time.now + 100;
