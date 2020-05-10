@@ -35,11 +35,15 @@ export class Player extends Phaser.GameObjects.Image {
 
   private nextBlueprint: number;
 
+  private nextWeaponSelect: number;
+
   public playerId: string;
 
   private socket: SocketIOClient.Socket;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+
+  private weaponInputs: Phaser.Input.Keyboard.Key[];
 
   private shoot: Phaser.Input.Keyboard.Key;
 
@@ -57,12 +61,19 @@ export class Player extends Phaser.GameObjects.Image {
     socket: SocketIOClient.Socket,
   ) {
     super(scene, x, y, key);
+    const {KeyCodes} = Phaser.Input.Keyboard;
     this.cursors = this.scene.input.keyboard.createCursorKeys();
-    this.shoot = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this.draw = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.shoot = this.scene.input.keyboard.addKey(KeyCodes.SPACE);
+    this.draw = this.scene.input.keyboard.addKey(KeyCodes.D);
     this.blueprints = ['blueprint-arrow', 'blueprint-bullet', 'blueprint-laser'];
-    this.blueprintNext = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-    this.blueprintPrevious = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+    this.blueprintNext = this.scene.input.keyboard.addKey(KeyCodes.Q);
+    this.blueprintPrevious = this.scene.input.keyboard.addKey(KeyCodes.E);
+    this.weaponInputs = [
+      this.scene.input.keyboard.addKey(KeyCodes.ONE),
+      this.scene.input.keyboard.addKey(KeyCodes.TWO),
+      this.scene.input.keyboard.addKey(KeyCodes.THREE),
+      this.scene.input.keyboard.addKey(KeyCodes.FOUR),
+    ];
     this.oldPosition = {
       x: 0,
       y: 0,
@@ -73,6 +84,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.nextShot = 0;
     this.nextDraw = 0;
     this.nextBlueprint = 0;
+    this.nextWeaponSelect = 0;
     this.hp = this.max.hp;
     this.mana = this.spellCost;
     this.playerId = playerId;
@@ -149,12 +161,10 @@ export class Player extends Phaser.GameObjects.Image {
       const currentBlueprint = this.scene.registry.get('blueprint');
       if (currentBlueprint === this.blueprints[0]) {
         this.scene.registry.set('blueprint', this.blueprints[1]);
-        this.scene.registry.set('weapon', 'bullet');
       } else {
         this.scene.registry.set('blueprint', this.blueprints[0]);
         this.scene.registry.set('weapon', 'laser');
       }
-      this.scene.events.emit('weaponChanged');
       this.scene.events.emit('blueprintChanged');
       this.nextBlueprint = this.scene.time.now + 200;
     }
@@ -187,6 +197,23 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
+  private handleWeaponSelect(): void {
+    const [one, two, three, four] = this.weaponInputs;
+    if (this.nextWeaponSelect < this.scene.time.now && (one.isDown || two.isDown || three.isDown || four.isDown)) {
+      if (one.isDown) {
+        this.scene.registry.set('weapon', 'arrow');
+      } else if (two.isDown) {
+        this.scene.registry.set('weapon', 'bullet');
+      } else if (three.isDown) {
+        this.scene.registry.set('weapon', 'laser');
+      } else if (four.isDown) {
+        this.scene.registry.set('weapon', 'laser');
+      }
+      this.scene.events.emit('weaponChanged');
+      this.nextWeaponSelect = this.scene.time.now + 100;
+    }
+  }
+
   private updateMana(newMana: number): void {
     this.mana = newMana;
     this.scene.registry.set('playerMana', this.mana);
@@ -198,6 +225,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.handleShoot();
     this.handleDraw();
     this.handleBlueprintSwap();
+    this.handleWeaponSelect();
   }
 
   public update(): void {
