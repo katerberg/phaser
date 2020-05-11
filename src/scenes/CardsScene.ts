@@ -2,10 +2,14 @@ import * as Phaser from 'phaser';
 import anvilImage from '../assets/anvil.png';
 import cardImage from '../assets/card.png';
 import deckImage from '../assets/deck.png';
+import ironImage from '../assets/resources/iron.png';
+import poisonImage from '../assets/resources/poison.png';
+import waterImage from '../assets/resources/water.png';
+import woodImage from '../assets/resources/wood.png';
 import {Deck} from '../Deck';
-import {DeckCard} from '../DeckCard';
 import {Hand} from '../Hand';
 import {constants} from '../utils/constants';
+import {getStartingDeck} from '../utils/starting';
 
 export class CardsScene extends Phaser.Scene {
   hand!: Hand;
@@ -21,6 +25,10 @@ export class CardsScene extends Phaser.Scene {
   preload(): void {
     this.load.image('icon-anvil', anvilImage);
     this.load.image('icon-deck', deckImage);
+    this.load.image('resource-wood', woodImage);
+    this.load.image('resource-water', waterImage);
+    this.load.image('resource-iron', ironImage);
+    this.load.image('resource-poison', poisonImage);
     this.load.image('card', cardImage);
   }
 
@@ -33,11 +41,11 @@ export class CardsScene extends Phaser.Scene {
       .image(8, constants.game.height - 10, 'icon-anvil')
       .setOrigin(0, 1)
       .setScale(0.55);
-    Array(20)
-      .fill('')
-      .forEach(() => {
-        this.deck.add(new DeckCard());
-      });
+
+    getStartingDeck().forEach((card) => {
+      this.deck.add(card);
+    });
+    this.deck.shuffle();
 
     Array(2)
       .fill('')

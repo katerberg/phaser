@@ -11,10 +11,10 @@ export class DeckCard implements Card {
 
   public resourceType: ResourceType;
 
-  constructor() {
+  constructor(cost: number, benefit: number, resourceType: ResourceType) {
     this.id = uuid();
-    this.cost = Math.floor(Math.random() * 90) + 1;
-    this.benefit = Math.floor(Math.random() * 9) + 1;
-    this.resourceType = 'moon';
+    this.cost = cost;
+    this.benefit = benefit;
+    this.resourceType = resourceType;
   }
 }

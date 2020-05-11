@@ -23,10 +23,11 @@ export class HandCard extends Phaser.GameObjects.Image implements Card {
     scene.add.existing(this);
     const center = this.getCenter();
     scene.add
-      .text(center.x, center.y, `${this.benefit}${constants.symbols.moon}`, {
+      .text(center.x, center.y, `${this.benefit}`, {
         fontSize: '72px',
       })
-      .setOrigin(0.5, 0.5);
+      .setOrigin(1, 0.5);
+    scene.add.image(center.x, center.y, `resource-${card.resourceType}`).setOrigin(0, 0.6).setScale(0.05);
 
     scene.add
       .text(x, y - 200, `${card.cost}${constants.symbols.energy}`, {
