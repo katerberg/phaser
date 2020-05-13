@@ -22,7 +22,7 @@ export class Inventory {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.blueprints = ['blueprint-bullet', 'blueprint-laser'];
+    this.blueprints = ['blueprint-bullet', 'blueprint-laser', 'blueprint-arrow'];
     this.weapons = ['arrow'];
 
     const {KeyCodes} = Phaser.Input.Keyboard;
@@ -45,11 +45,18 @@ export class Inventory {
   private handleBlueprintSwap(): void {
     if ((this.blueprintNext.isDown || this.blueprintPrevious.isDown) && this.nextBlueprint < this.scene.time.now) {
       const currentBlueprint = this.scene.registry.get('blueprint');
-      if (currentBlueprint === this.blueprints[0]) {
-        this.scene.registry.set('blueprint', this.blueprints[1]);
+      const blueprintIndex = this.blueprints.indexOf(currentBlueprint);
+      if (blueprintIndex !== -1) {
+        const numberOfBlueprints = this.blueprints.length;
+        if (this.blueprintNext.isDown) {
+          const newBlueprint = blueprintIndex === numberOfBlueprints - 1 ? 0 : blueprintIndex + 1;
+          this.scene.registry.set('blueprint', this.blueprints[newBlueprint]);
+        } else {
+          const newBlueprint = blueprintIndex === 0 ? numberOfBlueprints - 1 : blueprintIndex - 1;
+          this.scene.registry.set('blueprint', this.blueprints[newBlueprint]);
+        }
       } else {
         this.scene.registry.set('blueprint', this.blueprints[0]);
-        this.scene.registry.set('weapon', 'laser');
       }
       this.scene.events.emit('blueprintChanged');
       this.nextBlueprint = this.scene.time.now + 200;
