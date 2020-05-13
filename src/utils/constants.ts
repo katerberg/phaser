@@ -17,6 +17,9 @@ export const constants = {
     laser: 2500,
     bullet: 400,
   },
+  player: {
+    height: 34,
+  },
   scenes: {
     game: 'GameScene',
     hud: 'HudScene',

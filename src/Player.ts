@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import {Inventory} from './Inventory';
 import {constants} from './utils/constants';
-import {getAngleFromSpeed} from './utils/trig';
+import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
 
 interface Maximums {
   mana: number;
@@ -98,7 +98,8 @@ export class Player extends Phaser.GameObjects.Image {
 
   private handleShoot(): void {
     if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.mana >= this.spellCost) {
-      const bullet = this.inventory.createProjectile(this.x, this.y, this.angle);
+      const {x, y} = getProjectilePosition(this.x, this.y, this.angle);
+      const bullet = this.inventory.createProjectile(x, y, this.angle);
       this.updateMana(this.mana - this.spellCost);
       this.projectiles.add(bullet);
       this.socket.emit('projectileFiring', {

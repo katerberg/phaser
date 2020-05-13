@@ -1,3 +1,5 @@
+import {constants} from './constants';
+
 export function getAngleFromSpeed(x: number, y: number): number {
   const [north, south, west, east, northeast, southeast, southwest, northwest] = [270, 90, 180, 0, 315, 45, 135, 225];
   if (y > 0) {
@@ -25,4 +27,11 @@ export function getAngleFromSpeed(x: number, y: number): number {
     return west;
   }
   return north;
+}
+
+export function getProjectilePosition(x: number, y: number, angle: number): {x: number; y: number} {
+  const playerOffset = constants.player.height / 2;
+  const xSpeed = Math.cos((angle * Math.PI) / 180) * playerOffset;
+  const ySpeed = Math.sin((angle * Math.PI) / 180) * playerOffset;
+  return {x: x + xSpeed, y: y + ySpeed};
 }
