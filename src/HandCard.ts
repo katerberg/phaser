@@ -1,8 +1,13 @@
 import * as Phaser from 'phaser';
+import {BlueprintCard} from './BlueprintCard';
 import {ResourceType} from './interfaces/ResourceType';
 import {Card} from './interfaces/Shared';
 import {ResourceCard} from './ResourceCard';
 import {constants} from './utils/constants';
+
+function getCardTexture(card: Card): string {
+  return card instanceof ResourceCard ? 'darkCard' : 'lightCard';
+}
 
 export class HandCard extends Phaser.GameObjects.Image implements Card {
   public id: string;
@@ -13,8 +18,8 @@ export class HandCard extends Phaser.GameObjects.Image implements Card {
 
   public resourceType?: ResourceType;
 
-  constructor({scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string}, card: Card) {
-    super(scene, x, y, key);
+  constructor({scene, x, y}: {scene: Phaser.Scene; x: number; y: number}, card: Card) {
+    super(scene, x, y, getCardTexture(card));
     this.id = card.id;
     this.cost = card.cost;
     if (card instanceof ResourceCard) {
@@ -25,14 +30,18 @@ export class HandCard extends Phaser.GameObjects.Image implements Card {
     this.setOrigin(1, 1);
     scene.add.existing(this);
 
+    const center = this.getCenter();
     if (card instanceof ResourceCard) {
-      const center = this.getCenter();
       scene.add
         .text(center.x, center.y, `${card.benefit}`, {
           fontSize: '72px',
         })
         .setOrigin(1, 0.5);
       scene.add.image(center.x, center.y, `resource-${card.resourceType}`).setOrigin(0, 0.6).setScale(0.05);
+    }
+
+    if (card instanceof BlueprintCard) {
+      scene.add.image(center.x, center.y, `card-${card.image}`).setOrigin(0.5, 0.6).setScale(0.3);
     }
 
     scene.add

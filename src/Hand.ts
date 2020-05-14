@@ -25,10 +25,7 @@ export class Hand {
   add(card: Card): void {
     const cardPosition = this.cards.length;
     this.cards.push(
-      new HandCard(
-        {scene: this.scene, x: this.x + cardPosition * (constants.game.cardWidth + 20), y: this.y, key: 'card'},
-        card,
-      ),
+      new HandCard({scene: this.scene, x: this.x + cardPosition * (constants.game.cardWidth + 20), y: this.y}, card),
     );
   }
 }
