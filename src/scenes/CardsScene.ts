@@ -8,6 +8,7 @@ import poisonImage from '../assets/resources/poison.png';
 import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
+import {BlueprintCard} from '../BlueprintCard';
 import {Deck} from '../Deck';
 import {Hand} from '../Hand';
 import {constants} from '../utils/constants';
@@ -41,6 +42,7 @@ export class CardsScene extends Phaser.Scene {
     this.deck = new Deck({scene: this, x: constants.game.width - 10, y: constants.game.height - 10, key: 'icon-deck'});
     const level = this.scene.get(constants.scenes.game);
     level.events.on('drawCard', this.drawCardFromDeckToHand, this);
+    level.events.on('playCard', this.playCard, this);
     this.add
       .image(8, constants.game.height - 10, 'icon-anvil')
       .setOrigin(0, 1)
@@ -63,5 +65,10 @@ export class CardsScene extends Phaser.Scene {
     if (draw) {
       this.hand.add(draw);
     }
+  }
+
+  playCard(cardNumber: number): void {
+    const card = this.hand.getCard(cardNumber);
+    console.log(card);
   }
 }

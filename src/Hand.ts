@@ -22,6 +22,10 @@ export class Hand {
     return this.cards;
   }
 
+  getCard(number: number): Card | undefined {
+    return this.cards[number];
+  }
+
   add(card: Card): void {
     const cardPosition = this.cards.length;
     this.cards.push(

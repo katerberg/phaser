@@ -30,6 +30,8 @@ export class Player extends Phaser.GameObjects.Image {
 
   private nextDraw: number;
 
+  private nextPlayCard: number;
+
   public playerId: string;
 
   private socket: SocketIOClient.Socket;
@@ -41,6 +43,8 @@ export class Player extends Phaser.GameObjects.Image {
   private draw: Phaser.Input.Keyboard.Key;
 
   private inventory: Inventory;
+
+  private handInputs: Phaser.Input.Keyboard.Key[];
 
   private costs: {
     draw: number;
@@ -57,7 +61,7 @@ export class Player extends Phaser.GameObjects.Image {
     const {KeyCodes} = Phaser.Input.Keyboard;
     this.cursors = this.scene.input.keyboard.createCursorKeys();
     this.shoot = this.scene.input.keyboard.addKey(KeyCodes.SPACE);
-    this.draw = this.scene.input.keyboard.addKey(KeyCodes.D);
+    this.draw = this.scene.input.keyboard.addKey(KeyCodes.W);
     this.oldPosition = {
       x: 0,
       y: 0,
@@ -70,12 +74,20 @@ export class Player extends Phaser.GameObjects.Image {
     };
     this.nextShot = 0;
     this.nextDraw = 0;
+    this.nextPlayCard = 0;
     this.hp = this.max.hp;
     this.mana = 10;
     this.playerId = playerId;
     this.projectiles = this.scene.add.group({
       runChildUpdate: true,
     });
+    this.handInputs = [
+      this.scene.input.keyboard.addKey(KeyCodes.A),
+      this.scene.input.keyboard.addKey(KeyCodes.S),
+      this.scene.input.keyboard.addKey(KeyCodes.D),
+      this.scene.input.keyboard.addKey(KeyCodes.F),
+      this.scene.input.keyboard.addKey(KeyCodes.G),
+    ];
     this.scene.time.addEvent({
       delay: isDebug() ? 1 : 100,
       callback: this.handleManaUpdate,
@@ -129,6 +141,27 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
+  private handlePlayCard(): void {
+    const [one, two, three, four, five] = this.handInputs;
+    if (
+      this.nextPlayCard < this.scene.time.now &&
+      (one.isDown || two.isDown || three.isDown || four.isDown || five.isDown)
+    ) {
+      if (one.isDown) {
+        this.scene.events.emit('playCard', 0);
+      } else if (two.isDown) {
+        this.scene.events.emit('playCard', 1);
+      } else if (three.isDown) {
+        this.scene.events.emit('playCard', 2);
+      } else if (four.isDown) {
+        this.scene.events.emit('playCard', 3);
+      } else if (five.isDown) {
+        this.scene.events.emit('playCard', 4);
+      }
+      this.nextPlayCard = this.scene.time.now + 100;
+    }
+  }
+
   private handleManaUpdate(): void {
     if (this.mana < this.max.mana) {
       this.updateMana(this.mana + 1);
@@ -166,6 +199,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.handleMovement();
     this.handleShoot();
     this.handleDraw();
+    this.handlePlayCard();
   }
 
   public update(): void {
