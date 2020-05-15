@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import {Inventory} from './Inventory';
 import {constants} from './utils/constants';
+import {isDebug} from './utils/environments';
 import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
 
 interface Maximums {
@@ -76,7 +77,7 @@ export class Player extends Phaser.GameObjects.Image {
       runChildUpdate: true,
     });
     this.scene.time.addEvent({
-      delay: 100,
+      delay: isDebug() ? 1 : 100,
       callback: this.handleManaUpdate,
       callbackScope: this,
       loop: true,
@@ -122,8 +123,8 @@ export class Player extends Phaser.GameObjects.Image {
 
   private handleDraw(): void {
     if (this.draw.isDown && this.nextDraw < this.scene.time.now && this.mana >= this.costs.draw) {
-      this.updateMana(this.mana - this.costs.draw);
       this.scene.events.emit('drawCard');
+      this.updateMana(this.mana - this.costs.draw);
       this.nextDraw = this.scene.time.now + 200;
     }
   }
