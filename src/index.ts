@@ -1,7 +1,6 @@
 import 'regenerator-runtime/runtime';
 import * as Phaser from 'phaser';
 import {GameScene, HudScene, CardsScene, LoadingScene, MenuScene} from './scenes';
-import '../node_modules/@fortawesome/fontawesome-free/css/all.css';
 import {constants} from './utils/constants';
 
 const config: Phaser.Types.Core.GameConfig = {
