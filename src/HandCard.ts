@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
 import {BlueprintCard} from './BlueprintCard';
-import {ResourceType} from './interfaces/ResourceType';
 import {Card} from './interfaces/Shared';
 import {ResourceCard} from './ResourceCard';
 import {constants} from './utils/constants';
@@ -9,45 +8,67 @@ function getCardTexture(card: Card): string {
   return card instanceof ResourceCard ? 'darkCard' : 'lightCard';
 }
 
-export class HandCard extends Phaser.GameObjects.Image implements Card {
+export class HandCard extends Phaser.GameObjects.Image {
   public id: string;
 
   public cost: number;
 
-  public benefit?: number;
+  private card: Card;
 
-  public resourceType?: ResourceType;
+  private benefitText: Phaser.GameObjects.Text | undefined;
+
+  private energyText: Phaser.GameObjects.Text;
+
+  private image: Phaser.GameObjects.Image | undefined;
 
   constructor({scene, x, y}: {scene: Phaser.Scene; x: number; y: number}, card: Card) {
     super(scene, x, y, getCardTexture(card));
     this.id = card.id;
     this.cost = card.cost;
-    if (card instanceof ResourceCard) {
-      this.benefit = card.benefit;
-      this.resourceType = card.resourceType;
-    }
+    this.card = card;
 
     this.setOrigin(1, 1);
     scene.add.existing(this);
 
     const center = this.getCenter();
-    if (card instanceof ResourceCard) {
-      scene.add
-        .text(center.x, center.y, `${card.benefit}`, {
+    if (this.card instanceof ResourceCard) {
+      this.benefitText = this.scene.add
+        .text(center.x, center.y, `${this.card.benefit}`, {
           fontSize: '72px',
         })
         .setOrigin(1, 0.5);
-      scene.add.image(center.x, center.y, `resource-${card.resourceType}`).setOrigin(0, 0.6).setScale(0.05);
+      this.image = this.scene.add
+        .image(center.x, center.y, `resource-${this.card.resourceType}`)
+        .setOrigin(0, 0.6)
+        .setScale(0.05);
     }
 
-    if (card instanceof BlueprintCard) {
-      scene.add.image(center.x, center.y, `card-${card.image}`).setOrigin(0.5, 0.6).setScale(0.3);
+    if (this.card instanceof BlueprintCard) {
+      this.image = this.scene.add
+        .image(center.x, center.y, `card-${this.card.image}`)
+        .setOrigin(0.5, 0.6)
+        .setScale(0.3);
     }
 
-    scene.add
-      .text(x, y - 200, `${card.cost}${constants.symbols.energy}`, {
+    this.energyText = this.scene.add
+      .text(this.x, this.y - 200, `${this.card.cost}${constants.symbols.energy}`, {
         fontSize: '32px',
       })
       .setOrigin(1, 1);
+  }
+
+  public getCard(): Card {
+    return this.card;
+  }
+
+  public destroy(): void {
+    super.destroy();
+    this.energyText.destroy();
+    if (this.image) {
+      this.image.destroy();
+    }
+    if (this.benefitText) {
+      this.benefitText.destroy();
+    }
   }
 }

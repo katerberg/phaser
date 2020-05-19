@@ -8,7 +8,6 @@ import poisonImage from '../assets/resources/poison.png';
 import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
-import {BlueprintCard} from '../BlueprintCard';
 import {Deck} from '../Deck';
 import {Hand} from '../Hand';
 import {constants} from '../utils/constants';
@@ -68,7 +67,10 @@ export class CardsScene extends Phaser.Scene {
   }
 
   playCard(cardNumber: number): void {
-    const card = this.hand.getCard(cardNumber);
+    const card = this.hand.removeCard(cardNumber);
+    if (!card) {
+      return;
+    }
     console.log(card);
   }
 }
