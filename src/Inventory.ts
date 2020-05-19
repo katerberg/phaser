@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
 import {Projectile} from './interfaces/Shared';
 import {Arrow, Bullet, Laser} from './projectiles';
+import {constants} from './utils/constants';
 
 export class Inventory {
   private scene: Phaser.Scene;
@@ -40,6 +41,9 @@ export class Inventory {
     this.scene.registry.set('weapon', 'arrow');
     this.scene.events.emit('weaponAdded');
     this.scene.events.emit('weaponChanged');
+
+    const cardsLevel = this.scene.scene.get(constants.scenes.cards);
+    cardsLevel.events.on('blueprintPlayed', this.handleBlueprintPlay, this);
   }
 
   private handleBlueprintSwap(): void {
@@ -61,6 +65,11 @@ export class Inventory {
       this.scene.events.emit('blueprintChanged');
       this.nextBlueprint = this.scene.time.now + 200;
     }
+  }
+
+  private handleBlueprintPlay(): void {
+    this.scene.registry.set('blueprint', this.scene.registry.get('blueprintPlayed'));
+    this.scene.events.emit('blueprintAdded');
   }
 
   private handleWeaponSelect(): void {

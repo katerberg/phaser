@@ -6,6 +6,7 @@ import weaponBulletImage from '../assets/weapon-bullet.png';
 import weaponArrowImage from '../assets/weapon-dart.png';
 import weaponLaserImage from '../assets/weapon-laser.png';
 import weaponSelector from '../assets/weapon-selector.png';
+import {BlueprintCard} from '../BlueprintCard';
 import {constants} from '../utils/constants';
 
 export class HudScene extends Phaser.Scene {
@@ -58,12 +59,13 @@ export class HudScene extends Phaser.Scene {
   }
 
   create(): void {
-    const level = this.scene.get(constants.scenes.game);
-    level.events.on('hpChanged', this.updateHp, this);
-    level.events.on('manaChanged', this.updateMana, this);
-    level.events.on('blueprintChanged', this.updateBlueprint, this);
-    level.events.on('weaponChanged', this.updateWeapon, this);
-    level.events.on('weaponAdded', this.addWeapon, this);
+    const gameLevel = this.scene.get(constants.scenes.game);
+    gameLevel.events.on('hpChanged', this.updateHp, this);
+    gameLevel.events.on('manaChanged', this.updateMana, this);
+    gameLevel.events.on('blueprintChanged', this.updateBlueprint, this);
+    gameLevel.events.on('weaponChanged', this.updateWeapon, this);
+    gameLevel.events.on('weaponAdded', this.addWeapon, this);
+    gameLevel.events.on('blueprintAdded', this.addBlueprint, this);
     this.updateBlueprint();
   }
 
@@ -73,6 +75,12 @@ export class HudScene extends Phaser.Scene {
     }
     const image = this.registry.get('blueprint');
     this.blueprint = this.add.image(8, 32, image).setOrigin(0, 0);
+  }
+
+  addBlueprint(): void {
+    const gameLevel = this.scene.get(constants.scenes.game);
+    const blueprint = gameLevel.registry.get('blueprint') as BlueprintCard;
+    console.log('adding blueprint to display', blueprint.id);
   }
 
   updateWeapon(): void {

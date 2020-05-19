@@ -158,7 +158,7 @@ export class Player extends Phaser.GameObjects.Image {
       } else if (five.isDown) {
         this.scene.events.emit('playCard', 4);
       }
-      this.nextPlayCard = this.scene.time.now + 100;
+      this.nextPlayCard = this.scene.time.now + 300;
     }
   }
 

@@ -8,6 +8,7 @@ import poisonImage from '../assets/resources/poison.png';
 import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
+import {BlueprintCard} from '../BlueprintCard';
 import {Deck} from '../Deck';
 import {Hand} from '../Hand';
 import {constants} from '../utils/constants';
@@ -71,6 +72,10 @@ export class CardsScene extends Phaser.Scene {
     if (!card) {
       return;
     }
-    console.log(card);
+    if (card instanceof BlueprintCard) {
+      const level = this.scene.get(constants.scenes.game);
+      level.registry.set('blueprintPlayed', card);
+      this.events.emit('blueprintPlayed');
+    }
   }
 }
