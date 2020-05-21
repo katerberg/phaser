@@ -100,6 +100,9 @@ export class Player extends Phaser.GameObjects.Image {
     scene.physics.world.enable(this);
     this.body.setCollideWorldBounds();
     scene.add.existing(this);
+
+    const cardsLevel = this.scene.scene.get(constants.scenes.cards);
+    cardsLevel.events.on('resourcePlayed', this.handleResourcePlay, this);
   }
 
   public getProjectiles(): Phaser.GameObjects.Group {
@@ -200,6 +203,12 @@ export class Player extends Phaser.GameObjects.Image {
     this.handleShoot();
     this.handleDraw();
     this.handlePlayCard();
+  }
+
+  private handleResourcePlay(): void {
+    const resource = this.scene.registry.get('resourcePlayed');
+    this.scene.registry.set('resource', resource);
+    this.scene.events.emit('resourceAdded');
   }
 
   public update(): void {

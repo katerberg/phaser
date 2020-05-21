@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
-import {BlueprintCard} from './BlueprintCard';
+import {BlueprintCard} from './cards';
 import {Projectile} from './interfaces/Shared';
 import {Arrow, Bullet, Laser} from './projectiles';
 import {constants} from './utils/constants';
@@ -24,7 +24,7 @@ export class Inventory {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.blueprints = [new BlueprintCard(50, 'projectile', 10, 'bullet')];
+    this.blueprints = [new BlueprintCard(50, 'projectile', 10, 'bullet', 2)];
     this.weapons = ['arrow'];
 
     const {KeyCodes} = Phaser.Input.Keyboard;

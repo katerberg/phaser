@@ -1,7 +1,6 @@
 import * as Phaser from 'phaser';
-import {BlueprintCard} from './BlueprintCard';
+import {BlueprintCard, ResourceCard} from './cards';
 import {Card} from './interfaces/Shared';
-import {ResourceCard} from './ResourceCard';
 import {constants} from './utils/constants';
 
 function getCardTexture(card: Card): string {

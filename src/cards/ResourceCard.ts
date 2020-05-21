@@ -1,6 +1,5 @@
 import {v4 as uuid} from 'uuid';
-import {ResourceType} from './interfaces/ResourceType';
-import {Card} from './interfaces/Shared';
+import {ResourceType, Card} from '../interfaces';
 
 export class ResourceCard implements Card {
   public id: string;
