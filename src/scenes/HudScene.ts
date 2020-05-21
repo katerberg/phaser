@@ -1,7 +1,4 @@
 import * as Phaser from 'phaser';
-import arrowImage from '../assets/blueprint-arrow.png';
-import bulletImage from '../assets/blueprint-bullet.png';
-import laserImage from '../assets/blueprint-laser.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
 import weaponArrowImage from '../assets/weapon-dart.png';
 import weaponLaserImage from '../assets/weapon-laser.png';
@@ -14,11 +11,15 @@ export class HudScene extends Phaser.Scene {
 
   private manaText: Phaser.GameObjects.Text | undefined;
 
-  private blueprint: Phaser.GameObjects.Image | undefined;
+  private blueprintImages: Phaser.GameObjects.Image[];
+
+  private blueprintSelection: Phaser.GameObjects.Image | undefined;
+
+  private blueprintList: BlueprintCard[];
+
+  private weaponImages: Phaser.GameObjects.Image[];
 
   private weaponSelection: Phaser.GameObjects.Image | undefined;
-
-  private weapons: Phaser.GameObjects.Image[];
 
   private weaponList: string[];
 
@@ -27,12 +28,14 @@ export class HudScene extends Phaser.Scene {
       key: constants.scenes.hud,
     });
 
-    this.weapons = [];
+    this.weaponImages = [];
     this.weaponList = [];
+    this.blueprintImages = [];
+    this.blueprintList = [];
   }
 
   preload(): void {
-    this.registry.set('blueprint', 'blueprint-bullet');
+    this.registry.set('blueprint', 'arrow');
     this.registry.set('weapon', 'arrow');
     this.registry.set('playerHp', 3);
     this.registry.set('playerMana', 10);
@@ -49,9 +52,6 @@ export class HudScene extends Phaser.Scene {
         },
       )
       .setOrigin(1, 0);
-    this.load.image('blueprint-arrow', arrowImage);
-    this.load.image('blueprint-bullet', bulletImage);
-    this.load.image('blueprint-laser', laserImage);
     this.load.image('weapon-arrow', weaponArrowImage);
     this.load.image('weapon-bullet', weaponBulletImage);
     this.load.image('weapon-laser', weaponLaserImage);
@@ -63,27 +63,40 @@ export class HudScene extends Phaser.Scene {
     gameLevel.events.on('hpChanged', this.updateHp, this);
     gameLevel.events.on('manaChanged', this.updateMana, this);
     gameLevel.events.on('blueprintChanged', this.updateBlueprint, this);
+    gameLevel.events.on('blueprintAdded', this.addBlueprint, this);
     gameLevel.events.on('weaponChanged', this.updateWeapon, this);
     gameLevel.events.on('weaponAdded', this.addWeapon, this);
-    gameLevel.events.on('blueprintAdded', this.addBlueprint, this);
     this.updateBlueprint();
   }
 
-  updateBlueprint(): void {
-    if (this.blueprint) {
-      this.blueprint.destroy();
+  private getCurrentBlueprint(): BlueprintCard {
+    return this.registry.get('blueprint') as BlueprintCard;
+  }
+
+  private updateBlueprint(): void {
+    if (this.blueprintSelection) {
+      this.blueprintSelection.destroy();
     }
-    const image = this.registry.get('blueprint');
-    this.blueprint = this.add.image(8, 32, image).setOrigin(0, 0);
+    const currentBlueprint = this.getCurrentBlueprint();
+    const index = this.blueprintList.findIndex((value) => value.id === currentBlueprint.id);
+    this.blueprintSelection = this.add
+      .image(8, 30 + constants.game.weaponHeight * index, 'weapon-selector')
+      .setOrigin(0, 0)
+      .setScale(0.3);
   }
 
-  addBlueprint(): void {
-    const gameLevel = this.scene.get(constants.scenes.game);
-    const blueprint = gameLevel.registry.get('blueprint') as BlueprintCard;
-    console.log('adding blueprint to display', blueprint.id);
+  private addBlueprint(): void {
+    const blueprint = this.getCurrentBlueprint();
+    this.blueprintList.push(blueprint);
+    this.blueprintImages.push(
+      this.add
+        .image(8, 32 + constants.game.weaponHeight * this.blueprintImages.length, `weapon-${blueprint.image}`)
+        .setOrigin(0, 0)
+        .setScale(0.3),
+    );
   }
 
-  updateWeapon(): void {
+  private updateWeapon(): void {
     if (this.weaponSelection) {
       this.weaponSelection.destroy();
     }
@@ -95,36 +108,36 @@ export class HudScene extends Phaser.Scene {
       .setScale(0.3);
   }
 
-  addWeapon(): void {
+  private addWeapon(): void {
     const weapon = `weapon-${this.registry.get('weapon')}`;
     this.weaponList.push(weapon);
-    this.weapons.push(
+    this.weaponImages.push(
       this.add
-        .image(constants.game.width - 8, 32 + constants.game.weaponHeight * this.weapons.length, weapon)
+        .image(constants.game.width - 8, 32 + constants.game.weaponHeight * this.weaponImages.length, weapon)
         .setOrigin(1, 0)
         .setScale(0.3),
     );
   }
 
-  updateHp(): void {
+  private updateHp(): void {
     if (!this.hpText) {
       return;
     }
     this.hpText.setText(this.getHPText());
   }
 
-  updateMana(): void {
+  private updateMana(): void {
     if (!this.manaText) {
       return;
     }
     this.manaText.setText(this.getManaText());
   }
 
-  getManaText(): string {
+  private getManaText(): string {
     return `${constants.symbols.energy}:${`${this.registry.get('playerMana')}`.padStart(3, '  ')}`;
   }
 
-  getHPText(): string {
+  private getHPText(): string {
     return `HP: ${this.registry.get('playerHp')}`;
   }
 }

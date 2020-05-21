@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
+import {BlueprintCard} from './BlueprintCard';
 import {Projectile} from './interfaces/Shared';
 import {Arrow, Bullet, Laser} from './projectiles';
 import {constants} from './utils/constants';
@@ -7,7 +8,7 @@ import {constants} from './utils/constants';
 export class Inventory {
   private scene: Phaser.Scene;
 
-  private blueprints: string[];
+  private blueprints: BlueprintCard[];
 
   private weapons: string[];
 
@@ -23,7 +24,7 @@ export class Inventory {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.blueprints = ['blueprint-bullet', 'blueprint-laser', 'blueprint-arrow'];
+    this.blueprints = [new BlueprintCard(50, 'projectile', 10, 'bullet')];
     this.weapons = ['arrow'];
 
     const {KeyCodes} = Phaser.Input.Keyboard;
@@ -41,6 +42,9 @@ export class Inventory {
     this.scene.registry.set('weapon', 'arrow');
     this.scene.events.emit('weaponAdded');
     this.scene.events.emit('weaponChanged');
+    this.scene.registry.set('blueprint', this.blueprints[0]);
+    this.scene.events.emit('blueprintAdded');
+    this.scene.events.emit('blueprintChanged');
 
     const cardsLevel = this.scene.scene.get(constants.scenes.cards);
     cardsLevel.events.on('blueprintPlayed', this.handleBlueprintPlay, this);
@@ -48,8 +52,8 @@ export class Inventory {
 
   private handleBlueprintSwap(): void {
     if ((this.blueprintNext.isDown || this.blueprintPrevious.isDown) && this.nextBlueprint < this.scene.time.now) {
-      const currentBlueprint = this.scene.registry.get('blueprint');
-      const blueprintIndex = this.blueprints.indexOf(currentBlueprint);
+      const currentBlueprint = this.scene.registry.get('blueprint') as BlueprintCard;
+      const blueprintIndex = this.blueprints.findIndex((value) => value.id === currentBlueprint.id);
       if (blueprintIndex !== -1) {
         const numberOfBlueprints = this.blueprints.length;
         if (this.blueprintNext.isDown) {
@@ -68,8 +72,11 @@ export class Inventory {
   }
 
   private handleBlueprintPlay(): void {
-    this.scene.registry.set('blueprint', this.scene.registry.get('blueprintPlayed'));
+    const newBlueprint = this.scene.registry.get('blueprintPlayed');
+    this.blueprints.push(newBlueprint);
+    this.scene.registry.set('blueprint', newBlueprint);
     this.scene.events.emit('blueprintAdded');
+    this.scene.events.emit('blueprintChanged');
   }
 
   private handleWeaponSelect(): void {
