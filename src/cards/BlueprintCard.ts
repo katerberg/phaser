@@ -1,6 +1,6 @@
 import {v4 as uuid} from 'uuid';
 import {WeaponType, Card} from '../interfaces';
-import {ResourceCard} from './index';
+import {ResourceCard} from './ResourceCard';
 
 export class BlueprintCard implements Card {
   public id: string;

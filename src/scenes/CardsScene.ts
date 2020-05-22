@@ -11,6 +11,7 @@ import weaponBulletImage from '../assets/weapon-bullet.png';
 import {ResourceCard, BlueprintCard} from '../cards';
 import {Deck} from '../Deck';
 import {Hand} from '../Hand';
+import {Card} from '../interfaces';
 import {constants} from '../utils/constants';
 import {getStartingDeck} from '../utils/starting';
 
@@ -43,6 +44,7 @@ export class CardsScene extends Phaser.Scene {
     const level = this.scene.get(constants.scenes.game);
     level.events.on('drawCard', this.drawCardFromDeckToHand, this);
     level.events.on('playCard', this.playCard, this);
+    this.events.on('cardAddedToDeck', this.addCardToDeck, this);
     this.add
       .image(8, constants.game.height - 10, 'icon-anvil')
       .setOrigin(0, 1)
@@ -65,6 +67,11 @@ export class CardsScene extends Phaser.Scene {
     if (draw) {
       this.hand.add(draw);
     }
+  }
+
+  addCardToDeck(card: Card): void {
+    this.deck.add(card);
+    this.deck.shuffle();
   }
 
   playCard(cardNumber: number): void {

@@ -45,6 +45,7 @@ export class Inventory {
     this.scene.registry.set('blueprint', this.blueprints[0]);
     this.scene.events.emit('blueprintAdded');
     this.scene.events.emit('blueprintChanged');
+    this.scene.events.on('removeCurrentBlueprint', this.handleRemoveCurrentBlueprint, this);
 
     const cardsLevel = this.scene.scene.get(constants.scenes.cards);
     cardsLevel.events.on('blueprintPlayed', this.handleBlueprintPlay, this);
@@ -94,6 +95,12 @@ export class Inventory {
       this.scene.events.emit('weaponChanged');
       this.nextWeaponSelect = this.scene.time.now + 100;
     }
+  }
+
+  private handleRemoveCurrentBlueprint(): void {
+    this.blueprints.pop();
+    this.scene.registry.set('blueprint', this.blueprints[this.blueprints.length - 1]);
+    this.scene.events.emit('blueprintChanged');
   }
 
   public update(): void {

@@ -95,12 +95,16 @@ export class HudScene extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(0.3) as BlueprintImage;
     blueprintImage.resourceImages = [];
+    this.populatePlaceholders(blueprintImage);
+    this.blueprintImages.push(blueprintImage);
+  }
+
+  private populatePlaceholders(blueprintImage: BlueprintImage): void {
     Array.from(Array(this.currentBlueprint.resourceCost)).forEach((_, i) => {
       const x = 24 + i * 30;
-      const y = 110 + constants.game.weaponHeight * this.blueprintImages.length + 1;
+      const y = blueprintImage.y + 72;
       blueprintImage.resourceImages.push(this.add.image(x, y, 'placeholder-resource').setScale(0.03));
     });
-    this.blueprintImages.push(blueprintImage);
   }
 
   private updateWeapon(): void {
@@ -133,10 +137,30 @@ export class HudScene extends Phaser.Scene {
     const resourcePosition = this.currentBlueprint.resources.length - 1;
     this.blueprintImages[blueprintPosition].resourceImages[resourcePosition].destroy();
     const x = 24 + resourcePosition * 30;
-    const y = 110 + constants.game.weaponHeight * blueprintPosition + 1;
+    const y = this.blueprintImages[blueprintPosition].y + 72;
     this.blueprintImages[blueprintPosition].resourceImages[resourcePosition] = this.add
       .image(x, y, `resource-${resource.resourceType}`)
       .setScale(0.03);
+
+    if (this.currentBlueprint.resources.length === this.currentBlueprint.resourceCost) {
+      const cardsLevel = this.scene.get(constants.scenes.cards);
+      this.currentBlueprint.resources.forEach((blueprintResource) => {
+        cardsLevel.events.emit('cardAddedToDeck', blueprintResource);
+        this.blueprintImages[blueprintPosition].resourceImages.forEach((resourceImage) => resourceImage.destroy());
+      });
+      this.currentBlueprint.resources = [];
+      if (blueprintPosition !== 0) {
+        cardsLevel.events.emit('cardAddedToDeck', this.currentBlueprint);
+        this.blueprintList.splice(blueprintPosition, 1);
+        this.blueprintImages.splice(blueprintPosition, 1)[0].destroy();
+        const gameLevel = this.scene.get(constants.scenes.game);
+        gameLevel.events.emit('removeCurrentBlueprint');
+      } else {
+        const image = this.blueprintImages[blueprintPosition];
+        image.resourceImages.forEach((resourceImage) => resourceImage.destroy());
+        this.populatePlaceholders(image);
+      }
+    }
   }
 
   private updateHp(): void {
