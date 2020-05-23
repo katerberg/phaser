@@ -39,6 +39,7 @@ export class Hand {
       displayCard.destroy();
       return new HandCard({scene: this.scene, x: this.x + i * (constants.game.cardWidth + 20), y: this.y}, card);
     });
+    this.scene.registry.set('numberOfCards', this.displayCards.length);
   }
 
   public add(card: Card): void {
@@ -46,5 +47,6 @@ export class Hand {
     this.displayCards.push(
       new HandCard({scene: this.scene, x: this.x + cardPosition * (constants.game.cardWidth + 20), y: this.y}, card),
     );
+    this.scene.registry.set('numberOfCards', this.displayCards.length);
   }
 }
