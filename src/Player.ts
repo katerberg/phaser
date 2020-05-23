@@ -141,7 +141,8 @@ export class Player extends Phaser.GameObjects.Image {
       this.draw.isDown &&
       this.nextDraw < this.scene.time.now &&
       this.mana >= this.costs.draw &&
-      this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCards') !== constants.rules.maxHand
+      this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInHand') !== constants.rules.maxHand &&
+      this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInDeck') !== 0
     ) {
       this.scene.events.emit('drawCard');
       this.updateMana(this.mana - this.costs.draw);

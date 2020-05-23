@@ -28,6 +28,7 @@ export class Deck extends Phaser.GameObjects.Image {
 
   public draw(): Card | undefined {
     const card = this.cards.shift();
+    this.scene.registry.set('numberOfCardsInDeck', this.cards.length);
     this.updateText();
     return card;
   }
@@ -38,6 +39,7 @@ export class Deck extends Phaser.GameObjects.Image {
     } else {
       this.cards.unshift(card);
     }
+    this.scene.registry.set('numberOfCardsInDeck', this.cards.length);
     this.updateText();
   }
 
