@@ -7,6 +7,7 @@ import weaponSelectorImage from '../assets/weapon-selector.png';
 import {BlueprintCard, ResourceCard} from '../cards';
 import {BlueprintImage} from '../interfaces';
 import {constants} from '../utils/constants';
+import {Weapon} from '../Weapon';
 
 export class HudScene extends Phaser.Scene {
   private hpText: Phaser.GameObjects.Text | undefined;
@@ -111,20 +112,21 @@ export class HudScene extends Phaser.Scene {
     if (this.weaponSelection) {
       this.weaponSelection.destroy();
     }
-    const weapon = `weapon-${this.registry.get('weapon')}`;
-    const index = this.weaponList.indexOf(weapon);
+    const currentWeapon = this.registry.get('weapon');
+    const index = this.weaponList.indexOf(currentWeapon);
     this.weaponSelection = this.add
       .image(constants.game.width - 8, 30 + constants.game.weaponHeight * index, 'weapon-selector')
       .setOrigin(1, 0)
       .setScale(0.3);
   }
 
-  private addWeapon(): void {
-    const weapon = `weapon-${this.registry.get('weapon')}`;
-    this.weaponList.push(weapon);
+  private addWeapon(weapon?: Weapon): void {
+    const weaponTag = weapon && weapon.weaponImage ? weapon.weaponImage : this.registry.get('weapon');
+    const weaponName = `weapon-${weaponTag}`;
+    this.weaponList.push(weaponTag);
     this.weaponImages.push(
       this.add
-        .image(constants.game.width - 8, 32 + constants.game.weaponHeight * this.weaponImages.length, weapon)
+        .image(constants.game.width - 8, 32 + constants.game.weaponHeight * this.weaponImages.length, weaponName)
         .setOrigin(1, 0)
         .setScale(0.3),
     );
@@ -149,11 +151,13 @@ export class HudScene extends Phaser.Scene {
         this.blueprintImages[blueprintPosition].resourceImages.forEach((resourceImage) => resourceImage.destroy());
       });
       this.currentBlueprint.resources = [];
+      const gameLevel = this.scene.get(constants.scenes.game);
+      this.addWeapon(this.currentBlueprint.weapon);
+      gameLevel.events.emit('newWeaponPlayed', this.currentBlueprint.weapon);
       if (blueprintPosition !== 0) {
         cardsLevel.events.emit('cardAddedToDeck', this.currentBlueprint);
         this.blueprintList.splice(blueprintPosition, 1);
         this.blueprintImages.splice(blueprintPosition, 1)[0].destroy();
-        const gameLevel = this.scene.get(constants.scenes.game);
         gameLevel.events.emit('removeCurrentBlueprint');
       } else {
         const image = this.blueprintImages[blueprintPosition];

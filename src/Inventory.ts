@@ -4,6 +4,7 @@ import {BlueprintCard} from './cards';
 import {Projectile} from './interfaces/Shared';
 import {Arrow, Bullet, Laser} from './projectiles';
 import {constants} from './utils/constants';
+import {Weapon} from './Weapon';
 
 export class Inventory {
   private scene: Phaser.Scene;
@@ -46,6 +47,7 @@ export class Inventory {
     this.scene.events.emit('blueprintAdded');
     this.scene.events.emit('blueprintChanged');
     this.scene.events.on('removeCurrentBlueprint', this.handleRemoveCurrentBlueprint, this);
+    this.scene.events.on('newWeaponPlayed', this.handleNewWeapon, this);
 
     const cardsLevel = this.scene.scene.get(constants.scenes.cards);
     cardsLevel.events.on('blueprintPlayed', this.handleBlueprintPlay, this);
@@ -95,6 +97,10 @@ export class Inventory {
       this.scene.events.emit('weaponChanged');
       this.nextWeaponSelect = this.scene.time.now + 100;
     }
+  }
+
+  private handleNewWeapon(newWeapon: Weapon): void {
+    this.weapons.push(newWeapon.weaponImage);
   }
 
   private handleRemoveCurrentBlueprint(): void {

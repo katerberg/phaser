@@ -1,5 +1,6 @@
 import {v4 as uuid} from 'uuid';
 import {WeaponType, Card} from '../interfaces';
+import {Weapon} from '../Weapon';
 import {ResourceCard} from './ResourceCard';
 
 export class BlueprintCard implements Card {
@@ -17,6 +18,8 @@ export class BlueprintCard implements Card {
 
   public resourceCost: number;
 
+  public weapon: Weapon;
+
   constructor(cost: number, weaponType: WeaponType, buildTime: number, image: string, resourceCost: number) {
     this.id = uuid();
     this.cost = cost;
@@ -25,5 +28,6 @@ export class BlueprintCard implements Card {
     this.buildTime = buildTime;
     this.resources = [];
     this.resourceCost = resourceCost;
+    this.weapon = new Weapon(image);
   }
 }
