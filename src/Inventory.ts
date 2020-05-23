@@ -29,8 +29,8 @@ export class Inventory {
     this.weapons = ['arrow'];
 
     const {KeyCodes} = Phaser.Input.Keyboard;
-    this.blueprintNext = this.scene.input.keyboard.addKey(KeyCodes.Q);
-    this.blueprintPrevious = this.scene.input.keyboard.addKey(KeyCodes.E);
+    this.blueprintNext = this.scene.input.keyboard.addKey(KeyCodes.E);
+    this.blueprintPrevious = this.scene.input.keyboard.addKey(KeyCodes.Q);
     this.weaponInputs = [
       this.scene.input.keyboard.addKey(KeyCodes.ONE),
       this.scene.input.keyboard.addKey(KeyCodes.TWO),
@@ -78,6 +78,7 @@ export class Inventory {
     const newBlueprint = this.scene.registry.get('blueprintPlayed');
     this.blueprints.push(newBlueprint);
     this.scene.registry.set('blueprint', newBlueprint);
+    this.scene.registry.set('blueprintCount', this.blueprints.length);
     this.scene.events.emit('blueprintAdded');
     this.scene.events.emit('blueprintChanged');
   }
@@ -105,6 +106,7 @@ export class Inventory {
 
   private handleRemoveCurrentBlueprint(): void {
     this.blueprints.pop();
+    this.scene.registry.set('blueprintCount', this.blueprints.length);
     this.scene.registry.set('blueprint', this.blueprints[this.blueprints.length - 1]);
     this.scene.events.emit('blueprintChanged');
   }

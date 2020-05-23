@@ -18,7 +18,11 @@ export class Hand {
     this.scene = scene;
   }
 
-  removeCard(number: number): Card | undefined {
+  public getCard(number: number): Card | undefined {
+    return this.displayCards[number]?.getCard();
+  }
+
+  public removeCard(number: number): Card | undefined {
     const cards = this.displayCards.splice(number, 1);
     if (cards.length === 0) {
       return undefined;
@@ -37,7 +41,7 @@ export class Hand {
     });
   }
 
-  add(card: Card): void {
+  public add(card: Card): void {
     const cardPosition = this.displayCards.length;
     this.displayCards.push(
       new HandCard({scene: this.scene, x: this.x + cardPosition * (constants.game.cardWidth + 20), y: this.y}, card),

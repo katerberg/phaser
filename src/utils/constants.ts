@@ -17,6 +17,10 @@ export const constants = {
     laser: 2500,
     bullet: 400,
   },
+  rules: {
+    maxBlueprints: 4,
+    maxWeapons: 4,
+  },
   player: {
     height: 34,
   },
