@@ -176,7 +176,12 @@ export class GameScene extends Phaser.Scene {
       this.socket,
     );
     if (isDebug()) {
-      this.add.text(400 - 5 * 32, 300 - 32, this.player.playerId, {align: 'center', fontSize: '32px'});
+      this.add
+        .text(constants.game.width / 2, constants.game.height / 2, this.player.playerId, {
+          align: 'center',
+          fontSize: '32px',
+        })
+        .setOrigin(0.5, 0.5);
     }
   }
 
