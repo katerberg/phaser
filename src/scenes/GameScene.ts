@@ -8,6 +8,7 @@ import grassTileset from '../assets/grass-tileset.png';
 import arrowImage from '../assets/projectiles/arrow.png';
 import bulletImage from '../assets/projectiles/bullet.png';
 import laserImage from '../assets/projectiles/laser.png';
+import {Bot} from '../Bot';
 import {Enemy} from '../Enemy';
 import {ServerProjectile, instanceOfProjectile} from '../interfaces';
 import {Player} from '../Player';
@@ -18,6 +19,7 @@ import {isDebug} from '../utils/environments';
 interface ServerDamage {
   playerId: string;
   damage: number;
+  botId?: string;
 }
 
 interface ServerPlayer {
@@ -33,6 +35,11 @@ interface ServerBot {
   playerId: string;
   botId: string;
   angle: number;
+}
+
+interface ServerBotDisconnect {
+  botId: string;
+  playerId: string;
 }
 
 interface ServerProjectileDestroy {
@@ -97,12 +104,15 @@ export class GameScene extends Phaser.Scene {
 
     this.socket.on('currentPlayers', this.handlePlayerList.bind(this));
     this.socket.on('currentBots', this.handleBotList.bind(this));
+
+    this.events.on(constants.events.BOT_DESTROYED, this.handleBotDestroyed, this);
   }
 
   update(): void {
     if (this.player) {
       this.player.update();
       this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
+      this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
     }
   }
 
@@ -184,6 +194,26 @@ export class GameScene extends Phaser.Scene {
         this.player.handleDamage(damage);
       }
     });
+
+    this.socket.on('botDamaged', ({botId, playerId, damage}: ServerDamage) => {
+      if (this.player?.playerId === playerId) {
+        this.bots.getChildren().forEach((bot) => {
+          if (bot instanceof Bot && bot.botId === botId) {
+            bot.handleDamage(damage);
+          }
+        });
+      }
+    });
+
+    this.socket.on('botRemoved', this.handleBotRemoval.bind(this));
+  }
+
+  handleBotRemoval({botId}: ServerBotDisconnect): void {
+    this.bots.getChildren().forEach((bot) => {
+      if (bot instanceof Bot && botId === bot.botId) {
+        bot.destroy();
+      }
+    });
   }
 
   handleDisconnect(playerId: string): void {
@@ -224,7 +254,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addBot(botInfo: ServerBot): void {
-    const bot: Enemy = new Enemy(
+    const bot: Bot = new Bot(
       {
         scene: this,
         x: botInfo.x,
@@ -232,6 +262,7 @@ export class GameScene extends Phaser.Scene {
         key: 'robot',
       },
       botInfo.playerId,
+      botInfo.botId,
     );
     this.bots.add(bot);
   }
@@ -263,7 +294,14 @@ export class GameScene extends Phaser.Scene {
       playerId: enemy.playerId,
       damage: projectile.damage,
       projectileId: projectile.id,
+      botId: enemy instanceof Bot ? enemy.botId : undefined,
     });
     projectile.destroy();
+  }
+
+  private handleBotDestroyed({botId, playerId}: {botId: number; playerId: number}): void {
+    if (this.socket) {
+      this.socket.emit('destroyBot', {playerId, botId});
+    }
   }
 }

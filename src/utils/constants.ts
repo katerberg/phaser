@@ -53,5 +53,6 @@ export const constants = {
     WEAPON_REMOVED: 'weaponRemoved',
     RESOURCE_ADDED: 'resourceAdded',
     ADD_CARD_TO_DECK: 'addCardToDeck',
+    BOT_DESTROYED: 'botDestroyed',
   },
 };
