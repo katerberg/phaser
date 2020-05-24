@@ -24,7 +24,7 @@ export class HudScene extends Phaser.Scene {
 
   private weaponSelection: Phaser.GameObjects.Image | undefined;
 
-  private weaponList: string[];
+  private weaponList: Weapon[];
 
   constructor() {
     super({
@@ -70,6 +70,7 @@ export class HudScene extends Phaser.Scene {
     gameLevel.events.on('blueprintAdded', this.addBlueprint, this);
     gameLevel.events.on('weaponChanged', this.updateWeapon, this);
     gameLevel.events.on('weaponAdded', this.addWeapon, this);
+    gameLevel.events.on('weaponRemoved', this.removeWeapon, this);
     gameLevel.events.on('resourceAdded', this.addResource, this);
     this.updateBlueprint();
   }
@@ -113,23 +114,32 @@ export class HudScene extends Phaser.Scene {
       this.weaponSelection.destroy();
     }
     const currentWeapon = this.registry.get('weapon');
-    const index = this.weaponList.indexOf(currentWeapon);
+    const index = this.weaponList.findIndex((weapon) => weapon.id === currentWeapon.id);
     this.weaponSelection = this.add
       .image(constants.game.width - 8, 30 + constants.game.weaponHeight * index, 'weapon-selector')
       .setOrigin(1, 0)
       .setScale(0.3);
   }
 
-  private addWeapon(weapon?: Weapon): void {
-    const weaponTag = weapon && weapon.weaponImage ? weapon.weaponImage : this.registry.get('weapon');
-    const weaponName = `weapon-${weaponTag}`;
-    this.weaponList.push(weaponTag);
+  private addWeapon(weapon: Weapon): void {
+    const weaponTag = weapon.weaponImage;
+    this.weaponList.push(weapon);
     this.weaponImages.push(
       this.add
-        .image(constants.game.width - 8, 32 + constants.game.weaponHeight * this.weaponImages.length, weaponName)
+        .image(
+          constants.game.width - 8,
+          32 + constants.game.weaponHeight * this.weaponImages.length,
+          `weapon-${weaponTag}`,
+        )
         .setOrigin(1, 0)
         .setScale(0.3),
     );
+  }
+
+  private removeWeapon(weapon: Weapon): void {
+    const index = this.weaponList.findIndex((current) => current.id === weapon.id);
+    this.weaponList.splice(index, 1);
+    this.weaponImages.splice(index, 1)[0].destroy();
   }
 
   private addResource(): void {

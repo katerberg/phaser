@@ -11,7 +11,7 @@ export class Inventory {
 
   private blueprints: BlueprintCard[];
 
-  private weapons: string[];
+  private weapons: Weapon[];
 
   private nextBlueprint: number;
 
@@ -26,7 +26,7 @@ export class Inventory {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.blueprints = [new BlueprintCard(50, 'projectile', 10, 'bullet', 2)];
-    this.weapons = ['arrow'];
+    this.weapons = [new Weapon('arrow')];
 
     const {KeyCodes} = Phaser.Input.Keyboard;
     this.blueprintNext = this.scene.input.keyboard.addKey(KeyCodes.E);
@@ -40,8 +40,8 @@ export class Inventory {
 
     this.nextBlueprint = 0;
     this.nextWeaponSelect = 0;
-    this.scene.registry.set('weapon', 'arrow');
-    this.scene.events.emit('weaponAdded');
+    this.scene.registry.set('weapon', this.weapons[0]);
+    this.scene.events.emit('weaponAdded', this.weapons[0]);
     this.scene.events.emit('weaponChanged');
     this.scene.registry.set('blueprint', this.blueprints[0]);
     this.scene.events.emit('blueprintAdded');
@@ -101,7 +101,11 @@ export class Inventory {
   }
 
   private handleNewWeapon(newWeapon: Weapon): void {
-    this.weapons.push(newWeapon.weaponImage);
+    if (this.weapons.length === constants.rules.maxWeapons) {
+      const removedWeapon = this.weapons.splice(1, 1);
+      this.scene.events.emit('weaponRemoved', removedWeapon);
+    }
+    this.weapons.push(newWeapon);
   }
 
   private handleRemoveCurrentBlueprint(): void {
