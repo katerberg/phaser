@@ -122,7 +122,7 @@ export class Inventory {
 
   public createProjectile(x: number, y: number, angle: number): Projectile {
     const opts = {x, y, scene: this.scene};
-    switch (this.scene.registry.get('weapon')) {
+    switch (this.scene.registry.get('weapon').weaponImage) {
       case 'arrow':
         return new Arrow({...opts, key: 'arrow'}, angle, uuid());
       case 'bullet':
