@@ -1,5 +1,5 @@
 import {BlueprintCard, ResourceCard} from '../cards';
-import {Card} from '../interfaces/Shared';
+import {Card} from '../interfaces';
 
 export function getStartingDeck(): Card[] {
   const startingDeck: Card[] = [];

@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
 import {BlueprintCard} from './cards';
-import {Projectile} from './interfaces/Shared';
+import {Projectile} from './interfaces';
 import {Arrow, Bullet, Laser} from './projectiles';
 import {constants} from './utils/constants';
 import {Weapon} from './Weapon';

@@ -1,5 +1,5 @@
 import {HandCard} from './HandCard';
-import {Card} from './interfaces/Shared';
+import {Card} from './interfaces';
 import {constants} from './utils/constants';
 
 export class Hand {

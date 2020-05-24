@@ -1,4 +1,4 @@
-import {ServerProjectile, Projectile} from '../interfaces/shared';
+import {ServerProjectile, Projectile} from '../interfaces';
 import {Arrow} from './Arrow';
 import {Bullet} from './Bullet';
 import {Laser} from './Laser';

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import {ServerProjectile} from './interfaces/Shared';
+import {ServerProjectile} from './interfaces';
 import {getProjectile} from './projectiles';
 
 export class Enemy extends Phaser.GameObjects.Image {

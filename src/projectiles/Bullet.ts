@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
-import {ProjectileType} from '../interfaces/ProjectileType';
-import {Projectile} from '../interfaces/shared';
+import {Projectile, ProjectileType} from '../interfaces';
 import {constants} from '../utils/constants';
 
 export class Bullet extends Phaser.GameObjects.Image implements Projectile {

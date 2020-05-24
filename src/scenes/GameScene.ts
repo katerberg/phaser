@@ -9,7 +9,7 @@ import arrowImage from '../assets/projectiles/arrow.png';
 import bulletImage from '../assets/projectiles/bullet.png';
 import laserImage from '../assets/projectiles/laser.png';
 import {Enemy} from '../Enemy';
-import {ServerProjectile} from '../interfaces/Shared';
+import {ServerProjectile, instanceOfProjectile} from '../interfaces';
 import {Player} from '../Player';
 import {Bullet} from '../projectiles';
 import {constants} from '../utils/constants';
@@ -256,7 +256,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   projectileHitEnemy(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {
-    if (!this.socket || !(projectile instanceof Bullet && enemy instanceof Enemy)) {
+    if (!this.socket || !(instanceOfProjectile(projectile) && enemy instanceof Enemy)) {
       return;
     }
     this.socket.emit('projectileHit', {
