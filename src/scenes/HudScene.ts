@@ -38,7 +38,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.resetRegistry();
+    this.reset();
     this.hpText = this.add.text(constants.playArea.xOffset + 12, constants.playArea.yOffset + 8, this.getHPText(), {
       fontSize: '32px',
     });
@@ -59,9 +59,13 @@ export class HudScene extends Phaser.Scene {
     this.load.image('placeholder-resource', placeholderResourceImage);
   }
 
-  private resetRegistry(): void {
+  private reset(): void {
     this.registry.set('playerHp', 3);
     this.registry.set('playerMana', 10);
+    this.weaponImages = [];
+    this.weaponList = [];
+    this.blueprintImages = [];
+    this.blueprintList = [];
   }
 
   create(): void {
@@ -82,7 +86,7 @@ export class HudScene extends Phaser.Scene {
     Object.values(constants.events).forEach((event) => {
       this.scene.scene.events.removeListener(event);
     });
-    this.resetRegistry();
+    this.reset();
   }
 
   private get currentBlueprint(): BlueprintCard {

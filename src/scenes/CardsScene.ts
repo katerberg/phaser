@@ -82,8 +82,7 @@ export class CardsScene extends Phaser.Scene {
     }
     const level = this.scene.get(constants.scenes.game);
     if (card instanceof BlueprintCard && level.registry.get('blueprintCount') !== constants.rules.maxBlueprints) {
-      level.registry.set('blueprintPlayed', card);
-      this.events.emit(constants.events.BLUEPRINT_PLAYED);
+      this.events.emit(constants.events.BLUEPRINT_PLAYED, card);
       this.hand.removeCard(cardNumber);
     }
     if (card instanceof ResourceCard) {

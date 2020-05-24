@@ -78,8 +78,7 @@ export class Inventory {
     }
   }
 
-  private handleBlueprintPlay(): void {
-    const newBlueprint = this.scene.registry.get('blueprintPlayed');
+  private handleBlueprintPlay(newBlueprint: BlueprintCard): void {
     this.blueprints.push(newBlueprint);
     this.scene.registry.set('blueprint', newBlueprint);
     this.scene.registry.set('blueprintCount', this.blueprints.length);
