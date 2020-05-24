@@ -41,10 +41,11 @@ export class CardsScene extends Phaser.Scene {
   create(): void {
     this.hand = new Hand(this, 408, constants.game.height + 40);
     this.deck = new Deck({scene: this, x: constants.game.width - 10, y: constants.game.height - 10, key: 'icon-deck'});
-    const level = this.scene.get(constants.scenes.game);
-    level.events.on('drawCard', this.drawCardFromDeckToHand, this);
-    level.events.on('playCard', this.playCard, this);
-    this.events.on('cardAddedToDeck', this.addCardToDeck, this);
+    const gameLevel = this.scene.get(constants.scenes.game);
+    gameLevel.events.on(constants.events.DRAW_CARD, this.drawCardFromDeckToHand, this);
+    gameLevel.events.on(constants.events.PLAY_CARD, this.playCard, this);
+    gameLevel.events.on(constants.events.PLAYER_DIED, this.handlePlayerDeath, this);
+    this.events.on(constants.events.ADD_CARD_TO_DECK, this.addCardToDeck, this);
     this.add
       .image(8, constants.game.height - 10, 'icon-anvil')
       .setOrigin(0, 1)
@@ -82,13 +83,18 @@ export class CardsScene extends Phaser.Scene {
     const level = this.scene.get(constants.scenes.game);
     if (card instanceof BlueprintCard && level.registry.get('blueprintCount') !== constants.rules.maxBlueprints) {
       level.registry.set('blueprintPlayed', card);
-      this.events.emit('blueprintPlayed');
+      this.events.emit(constants.events.BLUEPRINT_PLAYED);
       this.hand.removeCard(cardNumber);
     }
     if (card instanceof ResourceCard) {
-      level.registry.set('resourcePlayed', card);
-      this.events.emit('resourcePlayed');
+      this.events.emit(constants.events.RESOURCE_PLAYED, card);
       this.hand.removeCard(cardNumber);
     }
+  }
+
+  private handlePlayerDeath(): void {
+    Object.values(constants.events).forEach((event) => {
+      this.scene.scene.events.removeListener(event);
+    });
   }
 }

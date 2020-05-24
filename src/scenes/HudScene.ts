@@ -38,10 +38,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.registry.set('blueprint', 'arrow');
-    this.registry.set('weapon', 'arrow');
-    this.registry.set('playerHp', 3);
-    this.registry.set('playerMana', 10);
+    this.resetRegistry();
     this.hpText = this.add.text(constants.playArea.xOffset + 12, constants.playArea.yOffset + 8, this.getHPText(), {
       fontSize: '32px',
     });
@@ -62,17 +59,30 @@ export class HudScene extends Phaser.Scene {
     this.load.image('placeholder-resource', placeholderResourceImage);
   }
 
+  private resetRegistry(): void {
+    this.registry.set('playerHp', 3);
+    this.registry.set('playerMana', 10);
+  }
+
   create(): void {
     const gameLevel = this.scene.get(constants.scenes.game);
-    gameLevel.events.on('hpChanged', this.updateHp, this);
-    gameLevel.events.on('manaChanged', this.updateMana, this);
-    gameLevel.events.on('blueprintChanged', this.updateBlueprint, this);
-    gameLevel.events.on('blueprintAdded', this.addBlueprint, this);
-    gameLevel.events.on('weaponChanged', this.updateWeapon, this);
-    gameLevel.events.on('weaponAdded', this.addWeapon, this);
-    gameLevel.events.on('weaponRemoved', this.removeWeapon, this);
-    gameLevel.events.on('resourceAdded', this.addResource, this);
+    gameLevel.events.on(constants.events.HP_CHANGED, this.updateHp, this);
+    gameLevel.events.on(constants.events.ENERGY_CHANGED, this.updateMana, this);
+    gameLevel.events.on(constants.events.BLUEPRINT_CHANGED, this.updateBlueprint, this);
+    gameLevel.events.on(constants.events.BLUEPRINT_ADDED, this.addBlueprint, this);
+    gameLevel.events.on(constants.events.WEAPON_CHANGED, this.updateWeapon, this);
+    gameLevel.events.on(constants.events.WEAPON_ADDED, this.addWeapon, this);
+    gameLevel.events.on(constants.events.WEAPON_REMOVED, this.removeWeapon, this);
+    gameLevel.events.on(constants.events.RESOURCE_ADDED, this.addResource, this);
+    gameLevel.events.on(constants.events.PLAYER_DIED, this.handlePlayerDeath, this);
     this.updateBlueprint();
+  }
+
+  private handlePlayerDeath(): void {
+    Object.values(constants.events).forEach((event) => {
+      this.scene.scene.events.removeListener(event);
+    });
+    this.resetRegistry();
   }
 
   private get currentBlueprint(): BlueprintCard {
@@ -157,18 +167,18 @@ export class HudScene extends Phaser.Scene {
     if (this.currentBlueprint.resources.length === this.currentBlueprint.resourceCost) {
       const cardsLevel = this.scene.get(constants.scenes.cards);
       this.currentBlueprint.resources.forEach((blueprintResource) => {
-        cardsLevel.events.emit('cardAddedToDeck', blueprintResource);
+        cardsLevel.events.emit(constants.events.ADD_CARD_TO_DECK, blueprintResource);
         this.blueprintImages[blueprintPosition].resourceImages.forEach((resourceImage) => resourceImage.destroy());
       });
       this.currentBlueprint.resources = [];
       const gameLevel = this.scene.get(constants.scenes.game);
       this.addWeapon(this.currentBlueprint.weapon);
-      gameLevel.events.emit('newWeaponPlayed', this.currentBlueprint.weapon);
+      gameLevel.events.emit(constants.events.NEW_WEAPON_PLAYED, this.currentBlueprint.weapon);
       if (blueprintPosition !== 0) {
-        cardsLevel.events.emit('cardAddedToDeck', this.currentBlueprint);
+        cardsLevel.events.emit(constants.events.ADD_CARD_TO_DECK, this.currentBlueprint);
         this.blueprintList.splice(blueprintPosition, 1);
         this.blueprintImages.splice(blueprintPosition, 1)[0].destroy();
-        gameLevel.events.emit('removeCurrentBlueprint');
+        gameLevel.events.emit(constants.events.REMOVE_CURRENT_BLUEPRINT);
       } else {
         const image = this.blueprintImages[blueprintPosition];
         image.resourceImages.forEach((resourceImage) => resourceImage.destroy());

@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import {ResourceCard} from './cards';
 import {Inventory} from './Inventory';
 import {constants} from './utils/constants';
 import {isDebug} from './utils/environments';
@@ -108,7 +109,7 @@ export class Player extends Phaser.GameObjects.Image {
     scene.add.existing(this);
 
     const cardsLevel = this.scene.scene.get(constants.scenes.cards);
-    cardsLevel.events.on('resourcePlayed', this.handleResourcePlay, this);
+    cardsLevel.events.on(constants.events.RESOURCE_PLAYED, this.handleResourcePlay, this);
   }
 
   public getProjectiles(): Phaser.GameObjects.Group {
@@ -118,9 +119,13 @@ export class Player extends Phaser.GameObjects.Image {
   public handleDamage(damage: number): void {
     this.hp -= damage;
     this.scene.registry.set('playerHp', this.hp);
-    this.scene.events.emit('hpChanged');
+    this.scene.events.emit(constants.events.HP_CHANGED);
     if (this.hp <= 0) {
       this.socket.emit('playerDying', {playerId: this.playerId});
+      this.scene.events.emit(constants.events.PLAYER_DIED);
+      Object.values(constants.events).forEach((event) => {
+        this.scene.events.removeListener(event);
+      });
     }
   }
 
@@ -150,7 +155,7 @@ export class Player extends Phaser.GameObjects.Image {
       this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInHand') !== constants.rules.maxHand &&
       this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInDeck') !== 0
     ) {
-      this.scene.events.emit('drawCard');
+      this.scene.events.emit(constants.events.DRAW_CARD);
       this.updateMana(this.mana - this.costs.draw);
       this.nextDraw = this.scene.time.now + 200;
     }
@@ -163,15 +168,15 @@ export class Player extends Phaser.GameObjects.Image {
       (one.isDown || two.isDown || three.isDown || four.isDown || five.isDown)
     ) {
       if (one.isDown) {
-        this.scene.events.emit('playCard', 0);
+        this.scene.events.emit(constants.events.PLAY_CARD, 0);
       } else if (two.isDown) {
-        this.scene.events.emit('playCard', 1);
+        this.scene.events.emit(constants.events.PLAY_CARD, 1);
       } else if (three.isDown) {
-        this.scene.events.emit('playCard', 2);
+        this.scene.events.emit(constants.events.PLAY_CARD, 2);
       } else if (four.isDown) {
-        this.scene.events.emit('playCard', 3);
+        this.scene.events.emit(constants.events.PLAY_CARD, 3);
       } else if (five.isDown) {
-        this.scene.events.emit('playCard', 4);
+        this.scene.events.emit(constants.events.PLAY_CARD, 4);
       }
       this.nextPlayCard = this.scene.time.now + 300;
     }
@@ -207,7 +212,7 @@ export class Player extends Phaser.GameObjects.Image {
   private updateMana(newMana: number): void {
     this.mana = newMana;
     this.scene.registry.set('playerMana', this.mana);
-    this.scene.events.emit('manaChanged');
+    this.scene.events.emit(constants.events.ENERGY_CHANGED);
   }
 
   private handleInput(): void {
@@ -227,10 +232,9 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
-  private handleResourcePlay(): void {
-    const resource = this.scene.registry.get('resourcePlayed');
+  private handleResourcePlay(resource: ResourceCard): void {
     this.scene.registry.set('resource', resource);
-    this.scene.events.emit('resourceAdded');
+    this.scene.events.emit(constants.events.RESOURCE_ADDED);
   }
 
   public update(): void {

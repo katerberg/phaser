@@ -9,13 +9,13 @@ import {Weapon} from './Weapon';
 export class Inventory {
   private scene: Phaser.Scene;
 
-  private blueprints: BlueprintCard[];
+  private blueprints!: BlueprintCard[];
 
-  private weapons: Weapon[];
+  private weapons!: Weapon[];
 
-  private nextBlueprint: number;
+  private nextBlueprint!: number;
 
-  private nextWeaponSelect: number;
+  private nextWeaponSelect!: number;
 
   private weaponInputs: Phaser.Input.Keyboard.Key[];
 
@@ -25,8 +25,6 @@ export class Inventory {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.blueprints = [new BlueprintCard(50, 'projectile', 10, 'bullet', 2)];
-    this.weapons = [new Weapon('arrow')];
 
     const {KeyCodes} = Phaser.Input.Keyboard;
     this.blueprintNext = this.scene.input.keyboard.addKey(KeyCodes.E);
@@ -38,19 +36,25 @@ export class Inventory {
       this.scene.input.keyboard.addKey(KeyCodes.FOUR),
     ];
 
+    this.reset();
+    this.scene.events.emit(constants.events.WEAPON_ADDED, this.weapons[0]);
+    this.scene.events.emit(constants.events.WEAPON_CHANGED);
+    this.scene.events.emit(constants.events.BLUEPRINT_ADDED);
+    this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
+    this.scene.events.on(constants.events.REMOVE_CURRENT_BLUEPRINT, this.handleRemoveCurrentBlueprint, this);
+    this.scene.events.on(constants.events.NEW_WEAPON_PLAYED, this.handleNewWeapon, this);
+
+    const cardsLevel = this.scene.scene.get(constants.scenes.cards);
+    cardsLevel.events.on(constants.events.BLUEPRINT_PLAYED, this.handleBlueprintPlay, this);
+  }
+
+  private reset(): void {
+    this.blueprints = [new BlueprintCard(50, 'projectile', 10, 'bullet', 2)];
+    this.weapons = [new Weapon('arrow')];
     this.nextBlueprint = 0;
     this.nextWeaponSelect = 0;
     this.scene.registry.set('weapon', this.weapons[0]);
-    this.scene.events.emit('weaponAdded', this.weapons[0]);
-    this.scene.events.emit('weaponChanged');
     this.scene.registry.set('blueprint', this.blueprints[0]);
-    this.scene.events.emit('blueprintAdded');
-    this.scene.events.emit('blueprintChanged');
-    this.scene.events.on('removeCurrentBlueprint', this.handleRemoveCurrentBlueprint, this);
-    this.scene.events.on('newWeaponPlayed', this.handleNewWeapon, this);
-
-    const cardsLevel = this.scene.scene.get(constants.scenes.cards);
-    cardsLevel.events.on('blueprintPlayed', this.handleBlueprintPlay, this);
   }
 
   private handleBlueprintSwap(): void {
@@ -69,7 +73,7 @@ export class Inventory {
       } else {
         this.scene.registry.set('blueprint', this.blueprints[0]);
       }
-      this.scene.events.emit('blueprintChanged');
+      this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
       this.nextBlueprint = this.scene.time.now + 200;
     }
   }
@@ -79,8 +83,8 @@ export class Inventory {
     this.blueprints.push(newBlueprint);
     this.scene.registry.set('blueprint', newBlueprint);
     this.scene.registry.set('blueprintCount', this.blueprints.length);
-    this.scene.events.emit('blueprintAdded');
-    this.scene.events.emit('blueprintChanged');
+    this.scene.events.emit(constants.events.BLUEPRINT_ADDED);
+    this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
   }
 
   private handleWeaponSelect(): void {
@@ -95,7 +99,7 @@ export class Inventory {
       } else if (four.isDown && this.weapons.length > 3) {
         this.scene.registry.set('weapon', this.weapons[3]);
       }
-      this.scene.events.emit('weaponChanged');
+      this.scene.events.emit(constants.events.WEAPON_CHANGED);
       this.nextWeaponSelect = this.scene.time.now + 100;
     }
   }
@@ -103,7 +107,7 @@ export class Inventory {
   private handleNewWeapon(newWeapon: Weapon): void {
     if (this.weapons.length === constants.rules.maxWeapons) {
       const removedWeapon = this.weapons.splice(1, 1);
-      this.scene.events.emit('weaponRemoved', removedWeapon);
+      this.scene.events.emit(constants.events.WEAPON_REMOVED, removedWeapon);
     }
     this.weapons.push(newWeapon);
   }
@@ -112,7 +116,7 @@ export class Inventory {
     this.blueprints.pop();
     this.scene.registry.set('blueprintCount', this.blueprints.length);
     this.scene.registry.set('blueprint', this.blueprints[this.blueprints.length - 1]);
-    this.scene.events.emit('blueprintChanged');
+    this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
   }
 
   public update(): void {
