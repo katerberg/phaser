@@ -96,6 +96,7 @@ export class GameScene extends Phaser.Scene {
     this.socket = io('http://127.0.0.1:8081');
 
     this.socket.on('currentPlayers', this.handlePlayerList.bind(this));
+    this.socket.on('currentBots', this.handleBotList.bind(this));
   }
 
   update(): void {
@@ -105,7 +106,19 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  handlePlayerList(players: {['string']: ServerPlayer}): void {
+  private handleBotList(playerList: {['string']: {['string']: ServerBot}}): void {
+    if (!this.socket) {
+      return;
+    }
+
+    Object.values(playerList).forEach((botList: {['string']: ServerBot}) => {
+      Object.values(botList).forEach((bot: ServerBot) => {
+        this.addBot(bot);
+      });
+    });
+  }
+
+  private handlePlayerList(players: {['string']: ServerPlayer}): void {
     if (!this.socket) {
       return;
     }

@@ -24,6 +24,7 @@ io.on('connection', (socket) => {
   };
   // Send the players object to the new player
   socket.emit('currentPlayers', players);
+  socket.emit('currentBots', bots);
   // Update all other players of the new player
   socket.broadcast.emit('newPlayer', players[socket.id]);
   socket.on('disconnect', () => {
@@ -76,7 +77,7 @@ io.on('connection', (socket) => {
   socket.on('spawnBot', ({playerId}) => {
     if (players[playerId]) {
       if (!bots[playerId]) {
-        bots[playerId] = [];
+        bots[playerId] = {};
       }
       const botId = uuid();
       bots[playerId][botId] = {
