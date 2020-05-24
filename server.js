@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io').listen(server);
+const uuid = require('uuid').v4;
 
 app.use(express.static(`${__dirname}/public`));
 
@@ -10,6 +11,7 @@ app.get('/', (req, res) => {
 });
 
 const players = {};
+const bots = {};
 
 io.on('connection', (socket) => {
   console.log('a user connected', socket.id); //eslint-disable-line no-console
@@ -19,7 +21,6 @@ io.on('connection', (socket) => {
     x: Math.floor(Math.random() * 988) + 200,
     y: Math.floor(Math.random() * 540) + 100,
     playerId: socket.id,
-    team: Math.floor(Math.random() * 2) === 0 ? 'red' : 'blue',
   };
   // Send the players object to the new player
   socket.emit('currentPlayers', players);
@@ -27,8 +28,8 @@ io.on('connection', (socket) => {
   socket.broadcast.emit('newPlayer', players[socket.id]);
   socket.on('disconnect', () => {
     console.log('user disconnected', socket.id); //eslint-disable-line no-console
-    // Remove this player from our players object
     delete players[socket.id];
+    delete bots[socket.id];
     // Emit a message to all players to remove this player
     io.emit('disconnect', socket.id);
   });
@@ -48,6 +49,15 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('botMovement', (movementData) => {
+    if (players[socket.id]) {
+      bots[socket.id][movementData.botId].x = movementData.x;
+      bots[socket.id][movementData.botId].y = movementData.y;
+      bots[socket.id][movementData.botId].angle = movementData.angle;
+      socket.broadcast.emit('botMoved', bots[socket.id]);
+    }
+  });
+
   socket.on('projectileHit', ({playerId, damage, projectileId}) => {
     if (players[playerId]) {
       socket.broadcast.emit('playerDamaged', {playerId, damage});
@@ -58,7 +68,25 @@ io.on('connection', (socket) => {
   socket.on('playerDying', ({playerId}) => {
     if (players[playerId]) {
       delete players[socket.id];
+      delete bots[socket.id];
       io.emit('disconnect', socket.id);
+    }
+  });
+
+  socket.on('spawnBot', ({playerId}) => {
+    if (players[playerId]) {
+      if (!bots[playerId]) {
+        bots[playerId] = [];
+      }
+      const botId = uuid();
+      bots[playerId][botId] = {
+        angle: 0,
+        x: Math.floor(Math.random() * 988) + 200,
+        y: Math.floor(Math.random() * 540) + 100,
+        botId,
+        playerId,
+      };
+      io.emit('newBot', bots[playerId][botId]);
     }
   });
 });

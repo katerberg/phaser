@@ -5,11 +5,18 @@ import {getProjectile} from './projectiles';
 export class Enemy extends Phaser.GameObjects.Image {
   public playerId: string;
 
+  public botId?: string;
+
   private projectiles: Phaser.GameObjects.Group;
 
-  constructor({scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string}, id: string) {
+  constructor(
+    {scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string},
+    id: string,
+    botId?: string,
+  ) {
     super(scene, x, y, key);
     this.playerId = id;
+    this.botId = botId;
     this.projectiles = this.scene.add.group({
       runChildUpdate: true,
     });

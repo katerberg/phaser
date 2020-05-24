@@ -30,6 +30,8 @@ export class Player extends Phaser.GameObjects.Image {
 
   private nextDraw: number;
 
+  private nextSpawnEnemy: number;
+
   private nextPlayCard: number;
 
   public playerId: string;
@@ -41,6 +43,8 @@ export class Player extends Phaser.GameObjects.Image {
   private shoot: Phaser.Input.Keyboard.Key;
 
   private draw: Phaser.Input.Keyboard.Key;
+
+  private spawnEnemy: Phaser.Input.Keyboard.Key;
 
   private inventory: Inventory;
 
@@ -62,6 +66,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.cursors = this.scene.input.keyboard.createCursorKeys();
     this.shoot = this.scene.input.keyboard.addKey(KeyCodes.SPACE);
     this.draw = this.scene.input.keyboard.addKey(KeyCodes.W);
+    this.spawnEnemy = this.scene.input.keyboard.addKey(KeyCodes.P);
     this.oldPosition = {
       x: 0,
       y: 0,
@@ -74,6 +79,7 @@ export class Player extends Phaser.GameObjects.Image {
     };
     this.nextShot = 0;
     this.nextDraw = 0;
+    this.nextSpawnEnemy = 0;
     this.nextPlayCard = 0;
     this.hp = this.max.hp;
     this.mana = 10;
@@ -209,6 +215,16 @@ export class Player extends Phaser.GameObjects.Image {
     this.handleShoot();
     this.handleDraw();
     this.handlePlayCard();
+    if (isDebug()) {
+      this.handleSpawnEnemy();
+    }
+  }
+
+  private handleSpawnEnemy(): void {
+    if (this.spawnEnemy.isDown && this.nextSpawnEnemy < this.scene.time.now) {
+      this.socket.emit('spawnBot', {playerId: this.playerId});
+      this.nextSpawnEnemy = this.scene.time.now + 300;
+    }
   }
 
   private handleResourcePlay(): void {

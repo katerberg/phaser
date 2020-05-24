@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import * as io from 'socket.io-client';
 import soldierImage from '../assets/characters/enemy.png';
 import hitmanImage from '../assets/characters/hitman.png';
+import robotImage from '../assets/characters/robot.png';
 import * as tilemap from '../assets/grass-map.json';
 import grassTileset from '../assets/grass-tileset.png';
 import arrowImage from '../assets/projectiles/arrow.png';
@@ -26,6 +27,14 @@ interface ServerPlayer {
   angle: number;
 }
 
+interface ServerBot {
+  x: number;
+  y: number;
+  playerId: string;
+  botId: string;
+  angle: number;
+}
+
 interface ServerProjectileDestroy {
   projectileId: string;
 }
@@ -36,6 +45,8 @@ export class GameScene extends Phaser.Scene {
   player: Player | undefined;
 
   otherPlayers!: Phaser.Physics.Arcade.Group;
+
+  bots!: Phaser.Physics.Arcade.Group;
 
   walls!: Phaser.Physics.Arcade.Group;
 
@@ -48,6 +59,7 @@ export class GameScene extends Phaser.Scene {
   preload(): void {
     this.load.image('hitman', hitmanImage);
     this.load.image('soldier', soldierImage);
+    this.load.image('robot', robotImage);
     this.load.image('bullet', bulletImage);
     this.load.image('laser', laserImage);
     this.load.image('arrow', arrowImage);
@@ -66,7 +78,15 @@ export class GameScene extends Phaser.Scene {
     );
     this.otherPlayers = this.physics.add.group({
       createCallback: (p) => {
-        if (p && p.body instanceof Phaser.Physics.Arcade.Body) {
+        if (p?.body instanceof Phaser.Physics.Arcade.Body) {
+          p.body.setImmovable(true);
+        }
+      },
+    });
+
+    this.bots = this.physics.add.group({
+      createCallback: (p) => {
+        if (p?.body instanceof Phaser.Physics.Arcade.Body) {
           p.body.setImmovable(true);
         }
       },
@@ -100,9 +120,14 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     this.physics.add.collider(this.otherPlayers, this.player);
+    this.physics.add.collider(this.bots, this.player);
 
     this.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
       this.addOtherPlayer(playerInfo);
+    });
+
+    this.socket.on('newBot', (botInfo: ServerBot) => {
+      this.addBot(botInfo);
     });
 
     this.socket.on('disconnect', this.handleDisconnect.bind(this));
@@ -183,6 +208,19 @@ export class GameScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0.5);
     }
+  }
+
+  private addBot(botInfo: ServerBot): void {
+    const bot: Enemy = new Enemy(
+      {
+        scene: this,
+        x: botInfo.x,
+        y: botInfo.y,
+        key: 'robot',
+      },
+      botInfo.playerId,
+    );
+    this.bots.add(bot);
   }
 
   addOtherPlayer(playerInfo: ServerPlayer): void {
