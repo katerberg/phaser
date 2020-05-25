@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Weapon swapping
 - blueprint and resource cards
+- Bot creation
+- Resources attached to blueprints
+- Blueprints into weapons
 
 ## [0.0.5] - 2020-05-06
 ### Added

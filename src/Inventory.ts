@@ -41,6 +41,7 @@ export class Inventory {
     this.scene.events.emit(constants.events.WEAPON_CHANGED);
     this.scene.events.emit(constants.events.BLUEPRINT_ADDED);
     this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
+    this.scene.events.on(constants.events.WEAPON_REMOVED, this.handleRemoveWeapon, this);
     this.scene.events.on(constants.events.REMOVE_CURRENT_BLUEPRINT, this.handleRemoveCurrentBlueprint, this);
     this.scene.events.on(constants.events.NEW_WEAPON_PLAYED, this.handleNewWeapon, this);
 
@@ -105,8 +106,7 @@ export class Inventory {
 
   private handleNewWeapon(newWeapon: Weapon): void {
     if (this.weapons.length === constants.rules.maxWeapons) {
-      const removedWeapon = this.weapons.splice(1, 1);
-      this.scene.events.emit(constants.events.WEAPON_REMOVED, removedWeapon);
+      this.scene.events.emit(constants.events.WEAPON_REMOVED, 1);
     }
     this.weapons.push(newWeapon);
   }
@@ -118,6 +118,10 @@ export class Inventory {
     this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
   }
 
+  private handleRemoveWeapon(weaponPosition: number): void {
+    this.weapons.splice(weaponPosition, 1);
+  }
+
   public update(): void {
     this.handleBlueprintSwap();
     this.handleWeaponSelect();
@@ -125,6 +129,7 @@ export class Inventory {
 
   public createProjectile(x: number, y: number, angle: number): Projectile {
     const opts = {x, y, scene: this.scene};
+    this.scene.events.emit(constants.events.PROJECTILE_FIRED);
     switch (this.scene.registry.get('weapon').weaponImage) {
       case 'arrow':
         return new Arrow({...opts, key: 'arrow'}, angle, uuid());

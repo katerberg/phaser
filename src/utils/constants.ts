@@ -64,5 +64,6 @@ export const constants = {
     RESOURCE_ADDED: 'resourceAdded',
     ADD_CARD_TO_DECK: 'addCardToDeck',
     BOT_DESTROYED: 'botDestroyed',
+    PROJECTILE_FIRED: 'projectileFired',
   },
 };

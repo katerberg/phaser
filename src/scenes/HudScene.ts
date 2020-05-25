@@ -79,7 +79,23 @@ export class HudScene extends Phaser.Scene {
     gameLevel.events.on(constants.events.WEAPON_REMOVED, this.removeWeapon, this);
     gameLevel.events.on(constants.events.RESOURCE_ADDED, this.addResource, this);
     gameLevel.events.on(constants.events.PLAYER_DIED, this.handlePlayerDeath, this);
+    gameLevel.events.on(constants.events.PROJECTILE_FIRED, this.handleProjectileFired, this);
     this.updateBlueprint();
+  }
+
+  private handleProjectileFired(): void {
+    if (this.currentWeapon.charges !== undefined) {
+      this.currentWeapon.charges--;
+      if (!this.currentWeapon.charges) {
+        const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
+        const gameLevel = this.scene.get(constants.scenes.game);
+        gameLevel.events.emit(constants.events.WEAPON_REMOVED, index);
+        this.weaponList.splice(index, 1);
+        this.weaponImages.splice(index, 1);
+        this.registry.set('weapon', this.weaponList[0]);
+        this.updateWeapon();
+      }
+    }
   }
 
   private handlePlayerDeath(): void {
@@ -87,6 +103,10 @@ export class HudScene extends Phaser.Scene {
       this.scene.scene.events.removeListener(event);
     });
     this.reset();
+  }
+
+  private get currentWeapon(): Weapon {
+    return this.registry.get('weapon') as Weapon;
   }
 
   private get currentBlueprint(): BlueprintCard {
@@ -127,8 +147,7 @@ export class HudScene extends Phaser.Scene {
     if (this.weaponSelection) {
       this.weaponSelection.destroy();
     }
-    const currentWeapon = this.registry.get('weapon');
-    const index = this.weaponList.findIndex((weapon) => weapon.id === currentWeapon.id);
+    const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
     this.weaponSelection = this.add
       .image(constants.game.width - 8, 30 + constants.game.weaponHeight * index, 'weapon-selector')
       .setOrigin(1, 0)
