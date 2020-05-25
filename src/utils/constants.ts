@@ -27,7 +27,11 @@ export const constants = {
   starting: {
     energy: 10,
     hp: 10,
-  }
+  },
+  max: {
+    energy: 200,
+    hp: 10,
+  },
   player: {
     height: 34,
   },

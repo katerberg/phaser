@@ -1,5 +1,6 @@
 import {v4 as uuid} from 'uuid';
 import {WeaponType, WeaponName, Card} from '../interfaces';
+import {getCharges} from '../utils/weapons';
 import {Weapon} from '../Weapon';
 import {ResourceCard} from './ResourceCard';
 
@@ -28,6 +29,6 @@ export class BlueprintCard implements Card {
     this.buildTime = buildTime;
     this.resources = [];
     this.resourceCost = resourceCost;
-    this.weapon = new Weapon(image);
+    this.weapon = new Weapon(image, getCharges(image));
   }
 }

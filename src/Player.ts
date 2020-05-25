@@ -6,7 +6,7 @@ import {isDebug} from './utils/environments';
 import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
 
 interface Maximums {
-  mana: number;
+  energy: number;
   hp: number;
 }
 
@@ -23,7 +23,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   private hp: number;
 
-  private mana: number;
+  private energy: number;
 
   private projectiles: Phaser.GameObjects.Group;
 
@@ -73,7 +73,7 @@ export class Player extends Phaser.GameObjects.Image {
       y: 0,
       angle: 0,
     };
-    this.max = {mana: 200, hp: 10};
+    this.max = {energy: constants.max.energy, hp: constants.max.hp};
     this.costs = {
       draw: 50,
       shoot: 10,
@@ -83,7 +83,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.nextSpawnEnemy = 0;
     this.nextPlayCard = 0;
     this.hp = this.max.hp;
-    this.mana = 10;
+    this.energy = 10;
     this.playerId = playerId;
     this.projectiles = this.scene.add.group({
       runChildUpdate: true,
@@ -130,10 +130,10 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   private handleShoot(): void {
-    if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.mana >= this.costs.shoot) {
+    if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.energy >= this.costs.shoot) {
       const {x, y} = getProjectilePosition(this.x, this.y, this.angle);
       const projectile = this.inventory.createProjectile(x, y, this.angle);
-      this.updateMana(this.mana - this.costs.shoot);
+      this.updateMana(this.energy - this.costs.shoot);
       this.projectiles.add(projectile);
       this.socket.emit('projectileFiring', {
         x: this.x,
@@ -151,12 +151,12 @@ export class Player extends Phaser.GameObjects.Image {
     if (
       this.draw.isDown &&
       this.nextDraw < this.scene.time.now &&
-      this.mana >= this.costs.draw &&
+      this.energy >= this.costs.draw &&
       this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInHand') !== constants.rules.maxHand &&
       this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInDeck') !== 0
     ) {
       this.scene.events.emit(constants.events.DRAW_CARD);
-      this.updateMana(this.mana - this.costs.draw);
+      this.updateMana(this.energy - this.costs.draw);
       this.nextDraw = this.scene.time.now + 200;
     }
   }
@@ -183,8 +183,8 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   private handleManaUpdate(): void {
-    if (this.mana < this.max.mana) {
-      this.updateMana(this.mana + 1);
+    if (this.energy < this.max.energy) {
+      this.updateMana(this.energy + 1);
     }
   }
 
@@ -210,8 +210,8 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   private updateMana(newMana: number): void {
-    this.mana = newMana;
-    this.scene.registry.set('playerMana', this.mana);
+    this.energy = newMana;
+    this.scene.registry.set('playerMana', this.energy);
     this.scene.events.emit(constants.events.ENERGY_CHANGED);
   }
 
