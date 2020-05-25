@@ -73,7 +73,7 @@ export class Player extends Phaser.GameObjects.Image {
       y: 0,
       angle: 0,
     };
-    this.max = {mana: 100, hp: 3};
+    this.max = {mana: 200, hp: 10};
     this.costs = {
       draw: 50,
       shoot: 10,

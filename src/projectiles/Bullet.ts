@@ -17,7 +17,7 @@ export class Bullet extends Phaser.GameObjects.Image implements Projectile {
     this.id = id;
     this.projectileType = 'bullet';
     this.speed = constants.speed.bullet;
-    this.damage = 1;
+    this.damage = 2;
     this.setAngle(angle).setOrigin(0.5, 0.5).setDisplaySize(10, 10);
     if (this.body instanceof Phaser.Physics.Arcade.Body) {
       const xVelocity = Math.cos((angle * Math.PI) / 180) * this.speed;

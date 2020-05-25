@@ -60,8 +60,8 @@ export class HudScene extends Phaser.Scene {
   }
 
   private reset(): void {
-    this.registry.set('playerHp', 3);
-    this.registry.set('playerMana', 10);
+    this.registry.set('playerHp', constants.starting.hp);
+    this.registry.set('playerMana', constants.starting.energy);
     this.weaponImages = [];
     this.weaponList = [];
     this.blueprintImages = [];

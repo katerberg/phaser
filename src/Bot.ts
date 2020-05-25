@@ -10,7 +10,7 @@ export class Bot extends Enemy {
   constructor({scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string}, id: string, botId: string) {
     super({scene, x, y, key}, id);
     this.botId = botId;
-    this.hp = 1;
+    this.hp = 10;
   }
 
   handleDamage(damage: number): void {

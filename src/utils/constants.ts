@@ -21,7 +21,13 @@ export const constants = {
     maxBlueprints: 4,
     maxWeapons: 4,
     maxHand: 5,
+    maxHp: 10,
+    maxEnergy: 200,
   },
+  starting: {
+    energy: 10,
+    hp: 10,
+  }
   player: {
     height: 34,
   },
