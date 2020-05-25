@@ -50,7 +50,7 @@ export class HandCard extends Phaser.GameObjects.Image {
     }
 
     this.energyText = this.scene.add
-      .text(this.x, this.y - 200, `${this.card.cost}${constants.symbols.energy}`, {
+      .text(this.x - 8, this.y - 200, `${this.card.cost}${constants.symbols.energy}`, {
         fontSize: '32px',
       })
       .setOrigin(1, 1);
