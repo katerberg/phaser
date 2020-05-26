@@ -5,7 +5,7 @@ import weaponArrowImage from '../assets/weapon-dart.png';
 import weaponLaserImage from '../assets/weapon-laser.png';
 import weaponSelectorImage from '../assets/weapon-selector.png';
 import {BlueprintCard, ResourceCard} from '../cards';
-import {EVENTS, SCENES, STARTING, PLAY_AREA, GAME, SYMBOLS} from '../constants';
+import {EVENTS, SCENES, STARTING, REGISTRIES, PLAY_AREA, GAME, SYMBOLS} from '../constants';
 import {BlueprintImage} from '../interfaces';
 import {Weapon} from '../Weapon';
 
@@ -55,8 +55,8 @@ export class HudScene extends Phaser.Scene {
   }
 
   private reset(): void {
-    this.registry.set('playerHp', STARTING.hp);
-    this.registry.set('playerMana', STARTING.energy);
+    this.registry.set(REGISTRIES.PLAYER_HP, STARTING.hp);
+    this.registry.set(REGISTRIES.PLAYER_ENERGY, STARTING.energy);
     this.weaponImages = [];
     this.weaponList = [];
     this.blueprintImages = [];
@@ -87,7 +87,7 @@ export class HudScene extends Phaser.Scene {
         gameLevel.events.emit(EVENTS.WEAPON_REMOVED, index);
         this.weaponList.splice(index, 1);
         this.weaponImages.splice(index, 1);
-        this.registry.set('weapon', this.weaponList[0]);
+        this.registry.set(REGISTRIES.CURRENT_WEAPON, this.weaponList[0]);
         this.updateWeapon();
       }
     }
@@ -101,11 +101,11 @@ export class HudScene extends Phaser.Scene {
   }
 
   private get currentWeapon(): Weapon {
-    return this.registry.get('weapon') as Weapon;
+    return this.registry.get(REGISTRIES.CURRENT_WEAPON) as Weapon;
   }
 
   private get currentBlueprint(): BlueprintCard {
-    return this.registry.get('blueprint') as BlueprintCard;
+    return this.registry.get(REGISTRIES.CURRENT_BLUEPRINT) as BlueprintCard;
   }
 
   private updateBlueprint(): void {
@@ -167,7 +167,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   private addResource(): void {
-    const resource = this.registry.get('resource') as ResourceCard;
+    const resource = this.registry.get(REGISTRIES.CURRENT_RESOURCE) as ResourceCard;
     this.currentBlueprint.resources.push(resource);
     const blueprintPosition = this.blueprintList.findIndex((value) => this.currentBlueprint.id === value.id);
     const resourcePosition = this.currentBlueprint.resources.length - 1;
@@ -213,10 +213,10 @@ export class HudScene extends Phaser.Scene {
   }
 
   private getManaText(): string {
-    return `${SYMBOLS.energy}:${`${this.registry.get('playerMana')}`.padStart(3, '  ')}`;
+    return `${SYMBOLS.energy}:${`${this.registry.get(REGISTRIES.PLAYER_ENERGY)}`.padStart(3, '  ')}`;
   }
 
   private getHPText(): string {
-    return `HP: ${this.registry.get('playerHp')}`;
+    return `HP: ${this.registry.get(REGISTRIES.PLAYER_HP)}`;
   }
 }

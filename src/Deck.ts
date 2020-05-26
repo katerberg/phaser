@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import {REGISTRIES} from './constants';
 import {Card} from './interfaces';
 
 export class Deck extends Phaser.GameObjects.Image {
@@ -28,7 +29,7 @@ export class Deck extends Phaser.GameObjects.Image {
 
   public draw(): Card | undefined {
     const card = this.cards.shift();
-    this.scene.registry.set('numberOfCardsInDeck', this.cards.length);
+    this.scene.registry.set(REGISTRIES.DECK_CARDS_NUMBER, this.cards.length);
     this.updateText();
     return card;
   }
@@ -39,7 +40,7 @@ export class Deck extends Phaser.GameObjects.Image {
     } else {
       this.cards.unshift(card);
     }
-    this.scene.registry.set('numberOfCardsInDeck', this.cards.length);
+    this.scene.registry.set(REGISTRIES.DECK_CARDS_NUMBER, this.cards.length);
     this.updateText();
   }
 

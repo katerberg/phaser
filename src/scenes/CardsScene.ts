@@ -9,7 +9,7 @@ import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
 import {ResourceCard, BlueprintCard} from '../cards';
-import {GAME, EVENTS, RULES, SCENES} from '../constants';
+import {GAME, EVENTS, REGISTRIES, RULES, SCENES} from '../constants';
 import {Deck} from '../Deck';
 import {Hand} from '../Hand';
 import {Card} from '../interfaces';
@@ -81,7 +81,7 @@ export class CardsScene extends Phaser.Scene {
       return;
     }
     const level = this.scene.get(SCENES.game);
-    if (card instanceof BlueprintCard && level.registry.get('blueprintCount') !== RULES.maxBlueprints) {
+    if (card instanceof BlueprintCard && level.registry.get(REGISTRIES.BLUEPRINTS_NUMBER) !== RULES.maxBlueprints) {
       this.events.emit(EVENTS.BLUEPRINT_PLAYED, card);
       this.hand.removeCard(cardNumber);
     }

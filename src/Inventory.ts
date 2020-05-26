@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
 import {BlueprintCard} from './cards';
-import {EVENTS, RULES, SCENES} from './constants';
+import {EVENTS, REGISTRIES, RULES, SCENES} from './constants';
 import {Projectile} from './interfaces';
 import {Arrow, Bullet, Laser} from './projectiles';
 import {Weapon} from './Weapon';
@@ -54,25 +54,25 @@ export class Inventory {
     this.weapons = [new Weapon('arrow')];
     this.nextBlueprint = 0;
     this.nextWeaponSelect = 0;
-    this.scene.registry.set('weapon', this.weapons[0]);
-    this.scene.registry.set('blueprint', this.blueprints[0]);
+    this.scene.registry.set(REGISTRIES.CURRENT_WEAPON, this.weapons[0]);
+    this.scene.registry.set(REGISTRIES.CURRENT_BLUEPRINT, this.blueprints[0]);
   }
 
   private handleBlueprintSwap(): void {
     if ((this.blueprintNext.isDown || this.blueprintPrevious.isDown) && this.nextBlueprint < this.scene.time.now) {
-      const currentBlueprint = this.scene.registry.get('blueprint') as BlueprintCard;
+      const currentBlueprint = this.scene.registry.get(REGISTRIES.CURRENT_BLUEPRINT) as BlueprintCard;
       const blueprintIndex = this.blueprints.findIndex((value) => value.id === currentBlueprint.id);
       if (blueprintIndex !== -1) {
         const numberOfBlueprints = this.blueprints.length;
         if (this.blueprintNext.isDown) {
           const newBlueprint = blueprintIndex === numberOfBlueprints - 1 ? 0 : blueprintIndex + 1;
-          this.scene.registry.set('blueprint', this.blueprints[newBlueprint]);
+          this.scene.registry.set(REGISTRIES.CURRENT_BLUEPRINT, this.blueprints[newBlueprint]);
         } else {
           const newBlueprint = blueprintIndex === 0 ? numberOfBlueprints - 1 : blueprintIndex - 1;
-          this.scene.registry.set('blueprint', this.blueprints[newBlueprint]);
+          this.scene.registry.set(REGISTRIES.CURRENT_BLUEPRINT, this.blueprints[newBlueprint]);
         }
       } else {
-        this.scene.registry.set('blueprint', this.blueprints[0]);
+        this.scene.registry.set(REGISTRIES.CURRENT_BLUEPRINT, this.blueprints[0]);
       }
       this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
       this.nextBlueprint = this.scene.time.now + 200;
@@ -81,8 +81,8 @@ export class Inventory {
 
   private handleBlueprintPlay(newBlueprint: BlueprintCard): void {
     this.blueprints.push(newBlueprint);
-    this.scene.registry.set('blueprint', newBlueprint);
-    this.scene.registry.set('blueprintCount', this.blueprints.length);
+    this.scene.registry.set(REGISTRIES.CURRENT_BLUEPRINT, newBlueprint);
+    this.scene.registry.set(REGISTRIES.BLUEPRINTS_NUMBER, this.blueprints.length);
     this.scene.events.emit(EVENTS.BLUEPRINT_ADDED);
     this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
   }
@@ -91,13 +91,13 @@ export class Inventory {
     const [one, two, three, four] = this.weaponInputs;
     if (this.nextWeaponSelect < this.scene.time.now && (one.isDown || two.isDown || three.isDown || four.isDown)) {
       if (one.isDown) {
-        this.scene.registry.set('weapon', this.weapons[0]);
+        this.scene.registry.set(REGISTRIES.CURRENT_WEAPON, this.weapons[0]);
       } else if (two.isDown && this.weapons.length > 1) {
-        this.scene.registry.set('weapon', this.weapons[1]);
+        this.scene.registry.set(REGISTRIES.CURRENT_WEAPON, this.weapons[1]);
       } else if (three.isDown && this.weapons.length > 2) {
-        this.scene.registry.set('weapon', this.weapons[2]);
+        this.scene.registry.set(REGISTRIES.CURRENT_WEAPON, this.weapons[2]);
       } else if (four.isDown && this.weapons.length > 3) {
-        this.scene.registry.set('weapon', this.weapons[3]);
+        this.scene.registry.set(REGISTRIES.CURRENT_WEAPON, this.weapons[3]);
       }
       this.scene.events.emit(EVENTS.WEAPON_CHANGED);
       this.nextWeaponSelect = this.scene.time.now + 100;
@@ -113,8 +113,8 @@ export class Inventory {
 
   private handleRemoveCurrentBlueprint(): void {
     this.blueprints.pop();
-    this.scene.registry.set('blueprintCount', this.blueprints.length);
-    this.scene.registry.set('blueprint', this.blueprints[this.blueprints.length - 1]);
+    this.scene.registry.set(REGISTRIES.BLUEPRINTS_NUMBER, this.blueprints.length);
+    this.scene.registry.set(REGISTRIES.CURRENT_BLUEPRINT, this.blueprints[this.blueprints.length - 1]);
     this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
   }
 
@@ -130,7 +130,7 @@ export class Inventory {
   public createProjectile(x: number, y: number, angle: number): Projectile {
     const opts = {x, y, scene: this.scene};
     this.scene.events.emit(EVENTS.PROJECTILE_FIRED);
-    switch (this.scene.registry.get('weapon').weaponImage) {
+    switch (this.scene.registry.get(REGISTRIES.CURRENT_WEAPON).weaponImage) {
       case 'arrow':
         return new Arrow({...opts, key: 'arrow'}, angle, uuid());
       case 'bullet':

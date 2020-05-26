@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import {ResourceCard} from './cards';
-import {EVENTS, RULES, SCENES, MAX, SPEED} from './constants';
+import {EVENTS, RULES, SCENES, MAX, REGISTRIES, SPEED} from './constants';
 import {Inventory} from './Inventory';
 import {isDebug} from './utils/environments';
 import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
@@ -118,7 +118,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   public handleDamage(damage: number): void {
     this.hp -= damage;
-    this.scene.registry.set('playerHp', this.hp);
+    this.scene.registry.set(REGISTRIES.PLAYER_HP, this.hp);
     this.scene.events.emit(EVENTS.HP_CHANGED);
     if (this.hp <= 0) {
       this.socket.emit('playerDying', {playerId: this.playerId});
@@ -152,8 +152,8 @@ export class Player extends Phaser.GameObjects.Image {
       this.draw.isDown &&
       this.nextDraw < this.scene.time.now &&
       this.energy >= this.costs.draw &&
-      this.scene.scene.get(SCENES.cards).registry.get('numberOfCardsInHand') !== RULES.maxHand &&
-      this.scene.scene.get(SCENES.cards).registry.get('numberOfCardsInDeck') !== 0
+      this.scene.scene.get(SCENES.cards).registry.get(REGISTRIES.HAND_CARDS_NUMBER) !== RULES.maxHand &&
+      this.scene.scene.get(SCENES.cards).registry.get(REGISTRIES.DECK_CARDS_NUMBER) !== 0
     ) {
       this.scene.events.emit(EVENTS.DRAW_CARD);
       this.updateMana(this.energy - this.costs.draw);
@@ -211,7 +211,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   private updateMana(newMana: number): void {
     this.energy = newMana;
-    this.scene.registry.set('playerMana', this.energy);
+    this.scene.registry.set(REGISTRIES.PLAYER_ENERGY, this.energy);
     this.scene.events.emit(EVENTS.ENERGY_CHANGED);
   }
 
@@ -233,7 +233,7 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   private handleResourcePlay(resource: ResourceCard): void {
-    this.scene.registry.set('resource', resource);
+    this.scene.registry.set(REGISTRIES.CURRENT_RESOURCE, resource);
     this.scene.events.emit(EVENTS.RESOURCE_ADDED);
   }
 
