@@ -1,6 +1,6 @@
+import {GAME} from './constants';
 import {HandCard} from './HandCard';
 import {Card} from './interfaces';
-import {constants} from './utils/constants';
 
 export class Hand {
   private displayCards: HandCard[];
@@ -37,7 +37,7 @@ export class Hand {
     this.displayCards = this.displayCards.map((displayCard, i) => {
       const card = displayCard.getCard();
       displayCard.destroy();
-      return new HandCard({scene: this.scene, x: this.x + i * (constants.game.cardWidth + 20), y: this.y}, card);
+      return new HandCard({scene: this.scene, x: this.x + i * (GAME.cardWidth + 20), y: this.y}, card);
     });
     this.scene.registry.set('numberOfCardsInHand', this.displayCards.length);
   }
@@ -45,7 +45,7 @@ export class Hand {
   public add(card: Card): void {
     const cardPosition = this.displayCards.length;
     this.displayCards.push(
-      new HandCard({scene: this.scene, x: this.x + cardPosition * (constants.game.cardWidth + 20), y: this.y}, card),
+      new HandCard({scene: this.scene, x: this.x + cardPosition * (GAME.cardWidth + 20), y: this.y}, card),
     );
     this.scene.registry.set('numberOfCardsInHand', this.displayCards.length);
   }

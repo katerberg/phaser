@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
+import {SPEED, PLAY_AREA} from '../constants';
 import {Projectile, ProjectileType} from '../interfaces';
-import {constants} from '../utils/constants';
 
 export class Bullet extends Phaser.GameObjects.Image implements Projectile {
   public id: string;
@@ -16,7 +16,7 @@ export class Bullet extends Phaser.GameObjects.Image implements Projectile {
     this.scene.physics.world.enable(this);
     this.id = id;
     this.projectileType = 'bullet';
-    this.speed = constants.speed.bullet;
+    this.speed = SPEED.bullet;
     this.damage = 2;
     this.setAngle(angle).setOrigin(0.5, 0.5).setDisplaySize(10, 10);
     if (this.body instanceof Phaser.Physics.Arcade.Body) {
@@ -29,10 +29,10 @@ export class Bullet extends Phaser.GameObjects.Image implements Projectile {
 
   public update(): void {
     if (
-      this.y <= constants.playArea.yOffset ||
-      this.y >= constants.playArea.yOffset + constants.playArea.height ||
-      this.x <= constants.playArea.xOffset ||
-      this.x >= constants.playArea.xOffset + constants.playArea.width
+      this.y <= PLAY_AREA.yOffset ||
+      this.y >= PLAY_AREA.yOffset + PLAY_AREA.height ||
+      this.x <= PLAY_AREA.xOffset ||
+      this.x >= PLAY_AREA.xOffset + PLAY_AREA.width
     ) {
       this.destroy();
     }

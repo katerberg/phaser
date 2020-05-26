@@ -1,12 +1,12 @@
 import * as Phaser from 'phaser';
-import {constants} from '../utils/constants';
+import {SCENES, GAME} from '../constants';
 
 export class MenuScene extends Phaser.Scene {
   private startKey: Phaser.Input.Keyboard.Key | undefined;
 
   constructor() {
     super({
-      key: constants.scenes.menu,
+      key: SCENES.menu,
     });
   }
 
@@ -15,16 +15,16 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.scene.stop(constants.scenes.hud);
-    this.scene.stop(constants.scenes.cards);
-    this.add.text(constants.game.width / 2 - 5 * 32, constants.game.height / 2 - 32, 'Press S to Start', {
+    this.scene.stop(SCENES.hud);
+    this.scene.stop(SCENES.cards);
+    this.add.text(GAME.width / 2 - 5 * 32, GAME.height / 2 - 32, 'Press S to Start', {
       fontSize: '32px',
     });
   }
 
   update(): void {
     if (this.startKey && this.startKey.isDown) {
-      this.scene.start(constants.scenes.loading);
+      this.scene.start(SCENES.loading);
     }
   }
 }

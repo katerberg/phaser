@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import {BlueprintCard, ResourceCard} from './cards';
+import {SYMBOLS} from './constants';
 import {Card} from './interfaces';
-import {constants} from './utils/constants';
 
 function getCardTexture(card: Card): string {
   return card instanceof ResourceCard ? 'darkCard' : 'lightCard';
@@ -50,7 +50,7 @@ export class HandCard extends Phaser.GameObjects.Image {
     }
 
     this.energyText = this.scene.add
-      .text(this.x - 8, this.y - 200, `${this.card.cost}${constants.symbols.energy}`, {
+      .text(this.x - 8, this.y - 200, `${this.card.cost}${SYMBOLS.energy}`, {
         fontSize: '32px',
       })
       .setOrigin(1, 1);

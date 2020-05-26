@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
+import {EVENTS} from './constants';
 import {Enemy} from './Enemy';
-import {constants} from './utils/constants';
 
 export class Bot extends Enemy {
   public botId: string;
@@ -16,7 +16,7 @@ export class Bot extends Enemy {
   handleDamage(damage: number): void {
     this.hp -= damage;
     if (this.hp <= 0) {
-      this.scene.events.emit(constants.events.BOT_DESTROYED, {botId: this.botId, playerId: this.playerId});
+      this.scene.events.emit(EVENTS.BOT_DESTROYED, {botId: this.botId, playerId: this.playerId});
       this.destroy();
     }
   }

@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import {ResourceCard} from './cards';
+import {EVENTS, RULES, SCENES, MAX, SPEED} from './constants';
 import {Inventory} from './Inventory';
-import {constants} from './utils/constants';
 import {isDebug} from './utils/environments';
 import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
 
@@ -73,7 +73,7 @@ export class Player extends Phaser.GameObjects.Image {
       y: 0,
       angle: 0,
     };
-    this.max = {energy: constants.max.energy, hp: constants.max.hp};
+    this.max = {energy: MAX.energy, hp: MAX.hp};
     this.costs = {
       draw: 50,
       shoot: 10,
@@ -108,8 +108,8 @@ export class Player extends Phaser.GameObjects.Image {
     this.body.setCollideWorldBounds();
     scene.add.existing(this);
 
-    const cardsLevel = this.scene.scene.get(constants.scenes.cards);
-    cardsLevel.events.on(constants.events.RESOURCE_PLAYED, this.handleResourcePlay, this);
+    const cardsLevel = this.scene.scene.get(SCENES.cards);
+    cardsLevel.events.on(EVENTS.RESOURCE_PLAYED, this.handleResourcePlay, this);
   }
 
   public getProjectiles(): Phaser.GameObjects.Group {
@@ -119,11 +119,11 @@ export class Player extends Phaser.GameObjects.Image {
   public handleDamage(damage: number): void {
     this.hp -= damage;
     this.scene.registry.set('playerHp', this.hp);
-    this.scene.events.emit(constants.events.HP_CHANGED);
+    this.scene.events.emit(EVENTS.HP_CHANGED);
     if (this.hp <= 0) {
       this.socket.emit('playerDying', {playerId: this.playerId});
-      this.scene.events.emit(constants.events.PLAYER_DIED);
-      Object.values(constants.events).forEach((event) => {
+      this.scene.events.emit(EVENTS.PLAYER_DIED);
+      Object.values(EVENTS).forEach((event) => {
         this.scene.events.removeListener(event);
       });
     }
@@ -152,10 +152,10 @@ export class Player extends Phaser.GameObjects.Image {
       this.draw.isDown &&
       this.nextDraw < this.scene.time.now &&
       this.energy >= this.costs.draw &&
-      this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInHand') !== constants.rules.maxHand &&
-      this.scene.scene.get(constants.scenes.cards).registry.get('numberOfCardsInDeck') !== 0
+      this.scene.scene.get(SCENES.cards).registry.get('numberOfCardsInHand') !== RULES.maxHand &&
+      this.scene.scene.get(SCENES.cards).registry.get('numberOfCardsInDeck') !== 0
     ) {
-      this.scene.events.emit(constants.events.DRAW_CARD);
+      this.scene.events.emit(EVENTS.DRAW_CARD);
       this.updateMana(this.energy - this.costs.draw);
       this.nextDraw = this.scene.time.now + 200;
     }
@@ -168,15 +168,15 @@ export class Player extends Phaser.GameObjects.Image {
       (one.isDown || two.isDown || three.isDown || four.isDown || five.isDown)
     ) {
       if (one.isDown) {
-        this.scene.events.emit(constants.events.PLAY_CARD, 0);
+        this.scene.events.emit(EVENTS.PLAY_CARD, 0);
       } else if (two.isDown) {
-        this.scene.events.emit(constants.events.PLAY_CARD, 1);
+        this.scene.events.emit(EVENTS.PLAY_CARD, 1);
       } else if (three.isDown) {
-        this.scene.events.emit(constants.events.PLAY_CARD, 2);
+        this.scene.events.emit(EVENTS.PLAY_CARD, 2);
       } else if (four.isDown) {
-        this.scene.events.emit(constants.events.PLAY_CARD, 3);
+        this.scene.events.emit(EVENTS.PLAY_CARD, 3);
       } else if (five.isDown) {
-        this.scene.events.emit(constants.events.PLAY_CARD, 4);
+        this.scene.events.emit(EVENTS.PLAY_CARD, 4);
       }
       this.nextPlayCard = this.scene.time.now + 300;
     }
@@ -191,7 +191,7 @@ export class Player extends Phaser.GameObjects.Image {
   private handleMovement(): void {
     const {up, down, left, right} = this.cursors;
     if (up?.isDown || down?.isDown || left?.isDown || right?.isDown) {
-      let speed = constants.speed.player;
+      let speed = SPEED.player;
       const keysCount = [up, down, right, left].reduce((prev, cur) => prev + (cur?.isDown ? 1 : 0), 0);
       if (keysCount > 1) {
         speed /= Math.sqrt(2);
@@ -212,7 +212,7 @@ export class Player extends Phaser.GameObjects.Image {
   private updateMana(newMana: number): void {
     this.energy = newMana;
     this.scene.registry.set('playerMana', this.energy);
-    this.scene.events.emit(constants.events.ENERGY_CHANGED);
+    this.scene.events.emit(EVENTS.ENERGY_CHANGED);
   }
 
   private handleInput(): void {
@@ -234,7 +234,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   private handleResourcePlay(resource: ResourceCard): void {
     this.scene.registry.set('resource', resource);
-    this.scene.events.emit(constants.events.RESOURCE_ADDED);
+    this.scene.events.emit(EVENTS.RESOURCE_ADDED);
   }
 
   public update(): void {

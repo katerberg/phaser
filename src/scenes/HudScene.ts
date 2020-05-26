@@ -5,8 +5,8 @@ import weaponArrowImage from '../assets/weapon-dart.png';
 import weaponLaserImage from '../assets/weapon-laser.png';
 import weaponSelectorImage from '../assets/weapon-selector.png';
 import {BlueprintCard, ResourceCard} from '../cards';
+import {EVENTS, SCENES, STARTING, PLAY_AREA, GAME, SYMBOLS} from '../constants';
 import {BlueprintImage} from '../interfaces';
-import {constants} from '../utils/constants';
 import {Weapon} from '../Weapon';
 
 export class HudScene extends Phaser.Scene {
@@ -28,7 +28,7 @@ export class HudScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: constants.scenes.hud,
+      key: SCENES.hud,
     });
 
     this.weaponImages = [];
@@ -39,18 +39,13 @@ export class HudScene extends Phaser.Scene {
 
   preload(): void {
     this.reset();
-    this.hpText = this.add.text(constants.playArea.xOffset + 12, constants.playArea.yOffset + 8, this.getHPText(), {
+    this.hpText = this.add.text(PLAY_AREA.xOffset + 12, PLAY_AREA.yOffset + 8, this.getHPText(), {
       fontSize: '32px',
     });
     this.manaText = this.add
-      .text(
-        constants.playArea.xOffset + constants.playArea.width - 12,
-        constants.playArea.yOffset + 8,
-        this.getManaText(),
-        {
-          fontSize: '32px',
-        },
-      )
+      .text(PLAY_AREA.xOffset + PLAY_AREA.width - 12, PLAY_AREA.yOffset + 8, this.getManaText(), {
+        fontSize: '32px',
+      })
       .setOrigin(1, 0);
     this.load.image('weapon-arrow', weaponArrowImage);
     this.load.image('weapon-bullet', weaponBulletImage);
@@ -60,8 +55,8 @@ export class HudScene extends Phaser.Scene {
   }
 
   private reset(): void {
-    this.registry.set('playerHp', constants.starting.hp);
-    this.registry.set('playerMana', constants.starting.energy);
+    this.registry.set('playerHp', STARTING.hp);
+    this.registry.set('playerMana', STARTING.energy);
     this.weaponImages = [];
     this.weaponList = [];
     this.blueprintImages = [];
@@ -69,17 +64,17 @@ export class HudScene extends Phaser.Scene {
   }
 
   create(): void {
-    const gameLevel = this.scene.get(constants.scenes.game);
-    gameLevel.events.on(constants.events.HP_CHANGED, this.updateHp, this);
-    gameLevel.events.on(constants.events.ENERGY_CHANGED, this.updateMana, this);
-    gameLevel.events.on(constants.events.BLUEPRINT_CHANGED, this.updateBlueprint, this);
-    gameLevel.events.on(constants.events.BLUEPRINT_ADDED, this.addBlueprint, this);
-    gameLevel.events.on(constants.events.WEAPON_CHANGED, this.updateWeapon, this);
-    gameLevel.events.on(constants.events.WEAPON_ADDED, this.addWeapon, this);
-    gameLevel.events.on(constants.events.WEAPON_REMOVED, this.removeWeapon, this);
-    gameLevel.events.on(constants.events.RESOURCE_ADDED, this.addResource, this);
-    gameLevel.events.on(constants.events.PLAYER_DIED, this.handlePlayerDeath, this);
-    gameLevel.events.on(constants.events.PROJECTILE_FIRED, this.handleProjectileFired, this);
+    const gameLevel = this.scene.get(SCENES.game);
+    gameLevel.events.on(EVENTS.HP_CHANGED, this.updateHp, this);
+    gameLevel.events.on(EVENTS.ENERGY_CHANGED, this.updateMana, this);
+    gameLevel.events.on(EVENTS.BLUEPRINT_CHANGED, this.updateBlueprint, this);
+    gameLevel.events.on(EVENTS.BLUEPRINT_ADDED, this.addBlueprint, this);
+    gameLevel.events.on(EVENTS.WEAPON_CHANGED, this.updateWeapon, this);
+    gameLevel.events.on(EVENTS.WEAPON_ADDED, this.addWeapon, this);
+    gameLevel.events.on(EVENTS.WEAPON_REMOVED, this.removeWeapon, this);
+    gameLevel.events.on(EVENTS.RESOURCE_ADDED, this.addResource, this);
+    gameLevel.events.on(EVENTS.PLAYER_DIED, this.handlePlayerDeath, this);
+    gameLevel.events.on(EVENTS.PROJECTILE_FIRED, this.handleProjectileFired, this);
     this.updateBlueprint();
   }
 
@@ -88,8 +83,8 @@ export class HudScene extends Phaser.Scene {
       this.currentWeapon.charges--;
       if (!this.currentWeapon.charges) {
         const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
-        const gameLevel = this.scene.get(constants.scenes.game);
-        gameLevel.events.emit(constants.events.WEAPON_REMOVED, index);
+        const gameLevel = this.scene.get(SCENES.game);
+        gameLevel.events.emit(EVENTS.WEAPON_REMOVED, index);
         this.weaponList.splice(index, 1);
         this.weaponImages.splice(index, 1);
         this.registry.set('weapon', this.weaponList[0]);
@@ -99,7 +94,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   private handlePlayerDeath(): void {
-    Object.values(constants.events).forEach((event) => {
+    Object.values(EVENTS).forEach((event) => {
       this.scene.scene.events.removeListener(event);
     });
     this.reset();
@@ -119,7 +114,7 @@ export class HudScene extends Phaser.Scene {
     }
     const index = this.blueprintList.findIndex((value) => value.id === this.currentBlueprint.id);
     this.blueprintSelection = this.add
-      .image(8, 30 + constants.game.weaponHeight * index, 'weapon-selector')
+      .image(8, 30 + GAME.weaponHeight * index, 'weapon-selector')
       .setOrigin(0, 0)
       .setScale(0.3);
   }
@@ -127,7 +122,7 @@ export class HudScene extends Phaser.Scene {
   private addBlueprint(): void {
     this.blueprintList.push(this.currentBlueprint);
     const blueprintImage = this.add
-      .image(8, 32 + constants.game.weaponHeight * this.blueprintImages.length, `weapon-${this.currentBlueprint.image}`)
+      .image(8, 32 + GAME.weaponHeight * this.blueprintImages.length, `weapon-${this.currentBlueprint.image}`)
       .setOrigin(0, 0)
       .setScale(0.3) as BlueprintImage;
     blueprintImage.resourceImages = [];
@@ -149,7 +144,7 @@ export class HudScene extends Phaser.Scene {
     }
     const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
     this.weaponSelection = this.add
-      .image(constants.game.width - 8, 30 + constants.game.weaponHeight * index, 'weapon-selector')
+      .image(GAME.width - 8, 30 + GAME.weaponHeight * index, 'weapon-selector')
       .setOrigin(1, 0)
       .setScale(0.3);
   }
@@ -159,11 +154,7 @@ export class HudScene extends Phaser.Scene {
     this.weaponList.push(weapon);
     this.weaponImages.push(
       this.add
-        .image(
-          constants.game.width - 8,
-          32 + constants.game.weaponHeight * this.weaponImages.length,
-          `weapon-${weaponTag}`,
-        )
+        .image(GAME.width - 8, 32 + GAME.weaponHeight * this.weaponImages.length, `weapon-${weaponTag}`)
         .setOrigin(1, 0)
         .setScale(0.3),
     );
@@ -188,21 +179,21 @@ export class HudScene extends Phaser.Scene {
       .setScale(0.03);
 
     if (this.currentBlueprint.resources.length === this.currentBlueprint.resourceCost) {
-      const cardsLevel = this.scene.get(constants.scenes.cards);
+      const cardsLevel = this.scene.get(SCENES.cards);
       this.currentBlueprint.resources.forEach((blueprintResource) => {
-        cardsLevel.events.emit(constants.events.ADD_CARD_TO_DECK, blueprintResource);
+        cardsLevel.events.emit(EVENTS.ADD_CARD_TO_DECK, blueprintResource);
         this.blueprintImages[blueprintPosition].resourceImages.forEach((resourceImage) => resourceImage.destroy());
       });
       this.currentBlueprint.resources = [];
-      const gameLevel = this.scene.get(constants.scenes.game);
+      const gameLevel = this.scene.get(SCENES.game);
       this.addWeapon(this.currentBlueprint.weapon);
-      gameLevel.events.emit(constants.events.NEW_WEAPON_PLAYED, this.currentBlueprint.weapon);
-      cardsLevel.events.emit(constants.events.ADD_CARD_TO_DECK, this.currentBlueprint);
+      gameLevel.events.emit(EVENTS.NEW_WEAPON_PLAYED, this.currentBlueprint.weapon);
+      cardsLevel.events.emit(EVENTS.ADD_CARD_TO_DECK, this.currentBlueprint);
       this.blueprintList.splice(blueprintPosition, 1);
       this.blueprintImages.splice(blueprintPosition, 1)[0].destroy();
-      gameLevel.events.emit(constants.events.REMOVE_CURRENT_BLUEPRINT);
+      gameLevel.events.emit(EVENTS.REMOVE_CURRENT_BLUEPRINT);
       if (blueprintPosition === 0) {
-        cardsLevel.events.emit(constants.events.BLUEPRINT_PLAYED, new BlueprintCard(0, 'projectile', 0, 'bullet', 2));
+        cardsLevel.events.emit(EVENTS.BLUEPRINT_PLAYED, new BlueprintCard(0, 'projectile', 0, 'bullet', 2));
       }
     }
   }
@@ -222,7 +213,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   private getManaText(): string {
-    return `${constants.symbols.energy}:${`${this.registry.get('playerMana')}`.padStart(3, '  ')}`;
+    return `${SYMBOLS.energy}:${`${this.registry.get('playerMana')}`.padStart(3, '  ')}`;
   }
 
   private getHPText(): string {

@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
 import {BlueprintCard} from './cards';
+import {EVENTS, RULES, SCENES} from './constants';
 import {Projectile} from './interfaces';
 import {Arrow, Bullet, Laser} from './projectiles';
-import {constants} from './utils/constants';
 import {Weapon} from './Weapon';
 
 export class Inventory {
@@ -37,16 +37,16 @@ export class Inventory {
     ];
 
     this.reset();
-    this.scene.events.emit(constants.events.WEAPON_ADDED, this.weapons[0]);
-    this.scene.events.emit(constants.events.WEAPON_CHANGED);
-    this.scene.events.emit(constants.events.BLUEPRINT_ADDED);
-    this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
-    this.scene.events.on(constants.events.WEAPON_REMOVED, this.handleRemoveWeapon, this);
-    this.scene.events.on(constants.events.REMOVE_CURRENT_BLUEPRINT, this.handleRemoveCurrentBlueprint, this);
-    this.scene.events.on(constants.events.NEW_WEAPON_PLAYED, this.handleNewWeapon, this);
+    this.scene.events.emit(EVENTS.WEAPON_ADDED, this.weapons[0]);
+    this.scene.events.emit(EVENTS.WEAPON_CHANGED);
+    this.scene.events.emit(EVENTS.BLUEPRINT_ADDED);
+    this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
+    this.scene.events.on(EVENTS.WEAPON_REMOVED, this.handleRemoveWeapon, this);
+    this.scene.events.on(EVENTS.REMOVE_CURRENT_BLUEPRINT, this.handleRemoveCurrentBlueprint, this);
+    this.scene.events.on(EVENTS.NEW_WEAPON_PLAYED, this.handleNewWeapon, this);
 
-    const cardsLevel = this.scene.scene.get(constants.scenes.cards);
-    cardsLevel.events.on(constants.events.BLUEPRINT_PLAYED, this.handleBlueprintPlay, this);
+    const cardsLevel = this.scene.scene.get(SCENES.cards);
+    cardsLevel.events.on(EVENTS.BLUEPRINT_PLAYED, this.handleBlueprintPlay, this);
   }
 
   private reset(): void {
@@ -74,7 +74,7 @@ export class Inventory {
       } else {
         this.scene.registry.set('blueprint', this.blueprints[0]);
       }
-      this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
+      this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
       this.nextBlueprint = this.scene.time.now + 200;
     }
   }
@@ -83,8 +83,8 @@ export class Inventory {
     this.blueprints.push(newBlueprint);
     this.scene.registry.set('blueprint', newBlueprint);
     this.scene.registry.set('blueprintCount', this.blueprints.length);
-    this.scene.events.emit(constants.events.BLUEPRINT_ADDED);
-    this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
+    this.scene.events.emit(EVENTS.BLUEPRINT_ADDED);
+    this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
   }
 
   private handleWeaponSelect(): void {
@@ -99,14 +99,14 @@ export class Inventory {
       } else if (four.isDown && this.weapons.length > 3) {
         this.scene.registry.set('weapon', this.weapons[3]);
       }
-      this.scene.events.emit(constants.events.WEAPON_CHANGED);
+      this.scene.events.emit(EVENTS.WEAPON_CHANGED);
       this.nextWeaponSelect = this.scene.time.now + 100;
     }
   }
 
   private handleNewWeapon(newWeapon: Weapon): void {
-    if (this.weapons.length === constants.rules.maxWeapons) {
-      this.scene.events.emit(constants.events.WEAPON_REMOVED, 1);
+    if (this.weapons.length === RULES.maxWeapons) {
+      this.scene.events.emit(EVENTS.WEAPON_REMOVED, 1);
     }
     this.weapons.push(newWeapon);
   }
@@ -115,7 +115,7 @@ export class Inventory {
     this.blueprints.pop();
     this.scene.registry.set('blueprintCount', this.blueprints.length);
     this.scene.registry.set('blueprint', this.blueprints[this.blueprints.length - 1]);
-    this.scene.events.emit(constants.events.BLUEPRINT_CHANGED);
+    this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
   }
 
   private handleRemoveWeapon(weaponPosition: number): void {
@@ -129,7 +129,7 @@ export class Inventory {
 
   public createProjectile(x: number, y: number, angle: number): Projectile {
     const opts = {x, y, scene: this.scene};
-    this.scene.events.emit(constants.events.PROJECTILE_FIRED);
+    this.scene.events.emit(EVENTS.PROJECTILE_FIRED);
     switch (this.scene.registry.get('weapon').weaponImage) {
       case 'arrow':
         return new Arrow({...opts, key: 'arrow'}, angle, uuid());

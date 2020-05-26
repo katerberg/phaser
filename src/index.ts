@@ -1,13 +1,13 @@
 import 'regenerator-runtime/runtime';
 import * as Phaser from 'phaser';
+import {GAME} from './constants';
 import {GameScene, HudScene, CardsScene, LoadingScene, MenuScene} from './scenes';
-import {constants} from './utils/constants';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
-  width: constants.game.width,
-  height: constants.game.height,
+  width: GAME.width,
+  height: GAME.height,
   physics: {
     default: 'arcade',
     arcade: {

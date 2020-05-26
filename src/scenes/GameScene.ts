@@ -9,11 +9,11 @@ import arrowImage from '../assets/projectiles/arrow.png';
 import bulletImage from '../assets/projectiles/bullet.png';
 import laserImage from '../assets/projectiles/laser.png';
 import {Bot} from '../Bot';
+import {EVENTS, PLAY_AREA, SCENES, GAME} from '../constants';
 import {Enemy} from '../Enemy';
 import {ServerProjectile, instanceOfProjectile} from '../interfaces';
 import {Player} from '../Player';
 import {Bullet} from '../projectiles';
-import {constants} from '../utils/constants';
 import {isDebug} from '../utils/environments';
 
 interface ServerDamage {
@@ -59,7 +59,7 @@ export class GameScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: constants.scenes.game,
+      key: SCENES.game,
     });
   }
 
@@ -77,12 +77,7 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor('#FFFFFF');
-    this.physics.world.setBounds(
-      constants.playArea.xOffset,
-      constants.playArea.yOffset,
-      constants.playArea.width,
-      constants.playArea.height,
-    );
+    this.physics.world.setBounds(PLAY_AREA.xOffset, PLAY_AREA.yOffset, PLAY_AREA.width, PLAY_AREA.height);
     this.otherPlayers = this.physics.add.group({
       createCallback: (p) => {
         if (p?.body instanceof Phaser.Physics.Arcade.Body) {
@@ -105,7 +100,7 @@ export class GameScene extends Phaser.Scene {
     this.socket.on('currentPlayers', this.handlePlayerList.bind(this));
     this.socket.on('currentBots', this.handleBotList.bind(this));
 
-    this.events.on(constants.events.BOT_DESTROYED, this.handleBotDestroyed, this);
+    this.events.on(EVENTS.BOT_DESTROYED, this.handleBotDestroyed, this);
   }
 
   update(): void {
@@ -220,7 +215,7 @@ export class GameScene extends Phaser.Scene {
     if (this.socket && this.player?.playerId === playerId) {
       this.socket.disconnect();
       delete this.player;
-      this.scene.start(constants.scenes.menu);
+      this.scene.start(SCENES.menu);
     }
     this.otherPlayers.getChildren().forEach((otherPlayer) => {
       if (otherPlayer instanceof Enemy && playerId === otherPlayer.playerId) {
@@ -245,7 +240,7 @@ export class GameScene extends Phaser.Scene {
     );
     if (isDebug()) {
       this.add
-        .text(constants.game.width / 2, constants.game.height / 2, this.player.playerId, {
+        .text(GAME.width / 2, GAME.height / 2, this.player.playerId, {
           align: 'center',
           fontSize: '32px',
         })
@@ -283,7 +278,7 @@ export class GameScene extends Phaser.Scene {
   buildPlayArea(): void {
     const map = this.make.tilemap({key: 'map'});
     const tileset = map.addTilesetImage('grass-tileset');
-    map.createStaticLayer('Tile Layer 1', tileset, constants.playArea.xOffset, constants.playArea.yOffset);
+    map.createStaticLayer('Tile Layer 1', tileset, PLAY_AREA.xOffset, PLAY_AREA.yOffset);
   }
 
   projectileHitEnemy(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {
