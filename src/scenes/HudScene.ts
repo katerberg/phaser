@@ -9,6 +9,10 @@ import {EVENTS, SCENES, STARTING, REGISTRIES, PLAY_AREA, GAME, SYMBOLS} from '..
 import {BlueprintImage} from '../interfaces';
 import {Weapon} from '../Weapon';
 
+interface WeaponImage extends Phaser.GameObjects.Image {
+  charges?: Phaser.GameObjects.Text;
+}
+
 export class HudScene extends Phaser.Scene {
   private hpText: Phaser.GameObjects.Text | undefined;
 
@@ -20,7 +24,7 @@ export class HudScene extends Phaser.Scene {
 
   private blueprintList: BlueprintCard[];
 
-  private weaponImages: Phaser.GameObjects.Image[];
+  private weaponImages: WeaponImage[];
 
   private weaponSelection: Phaser.GameObjects.Image | undefined;
 
@@ -81,8 +85,10 @@ export class HudScene extends Phaser.Scene {
   private handleProjectileFired(): void {
     if (this.currentWeapon.charges !== undefined) {
       this.currentWeapon.charges--;
+      const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
+      console.log(index);
+      this.weaponImages[index].charges?.setText(`Charges: ${this.currentWeapon.charges}`);
       if (!this.currentWeapon.charges) {
-        const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
         const gameLevel = this.scene.get(SCENES.game);
         gameLevel.events.emit(EVENTS.WEAPON_REMOVED, index);
         this.weaponList.splice(index, 1);
@@ -152,18 +158,28 @@ export class HudScene extends Phaser.Scene {
   private addWeapon(weapon: Weapon): void {
     const weaponTag = weapon.weaponImage;
     this.weaponList.push(weapon);
-    this.weaponImages.push(
-      this.add
-        .image(GAME.width - 8, 32 + GAME.weaponHeight * this.weaponImages.length, `weapon-${weaponTag}`)
-        .setOrigin(1, 0)
-        .setScale(0.3),
-    );
+    const weaponX = GAME.width - 8;
+    const weaponY = 32 + GAME.weaponHeight * this.weaponImages.length;
+    this.weaponImages.push(this.add.image(weaponX, weaponY, `weapon-${weaponTag}`).setOrigin(1, 0).setScale(0.3));
+    this.weaponImages[this.weaponImages.length - 1].charges = this.add
+      .text(
+        GAME.width - GAME.weaponImageWidth - 8,
+        weaponY + 10 + GAME.weaponImageHeight,
+        `Charges: ${weapon.charges ?? SYMBOLS.infinite}`,
+        {
+          fontSize: '20px',
+        },
+      )
+      .setColor('#888888')
+      .setOrigin(0, 0);
   }
 
   private removeWeapon(weapon: Weapon): void {
     const index = this.weaponList.findIndex((current) => current.id === weapon.id);
     this.weaponList.splice(index, 1);
-    this.weaponImages.splice(index, 1)[0].destroy();
+    const weaponImage = this.weaponImages.splice(index, 1)[0];
+    weaponImage?.charges?.destroy();
+    weaponImage.destroy();
   }
 
   private addResource(): void {

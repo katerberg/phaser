@@ -6,6 +6,8 @@ export const GAME = {
   height: 900,
   cardWidth: 174,
   weaponHeight: 174,
+  weaponImageHeight: 50,
+  weaponImageWidth: 133,
 };
 
 export const PLAY_AREA = {
@@ -55,4 +57,5 @@ export const SCENES = {
 export const SYMBOLS = {
   energy: '⚛',
   moon: '☾',
+  infinite: '∞',
 };
