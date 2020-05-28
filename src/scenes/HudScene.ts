@@ -85,18 +85,11 @@ export class HudScene extends Phaser.Scene {
   private handleProjectileFired(): void {
     if (this.currentWeapon.charges !== undefined) {
       this.currentWeapon.charges--;
-      console.log(this.currentWeapon);
       const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
-      console.log('weapon index ', index);
-      if (index === -1) {
-        console.log(this.weaponList);
-      }
       this.weaponImages[index].charges?.setText(`Charges: ${this.currentWeapon.charges}`);
       if (!this.currentWeapon.charges) {
         const gameLevel = this.scene.get(SCENES.game);
         gameLevel.events.emit(EVENTS.WEAPON_REMOVED, index);
-        this.weaponList.splice(index, 1);
-        this.weaponImages.splice(index, 1);
         this.registry.set(REGISTRIES.CURRENT_WEAPON, this.weaponList[0]);
         this.updateWeapon();
       }
@@ -178,14 +171,20 @@ export class HudScene extends Phaser.Scene {
       .setOrigin(0, 0);
   }
 
-  private removeWeapon(weapon: Weapon): void {
-    const index = this.weaponList.findIndex((current) => current.id === weapon.id);
+  private removeWeapon(index: number): void {
     this.weaponList.splice(index, 1);
-    console.log('removing weapon');
-    console.log(this.weaponList);
     const weaponImage = this.weaponImages.splice(index, 1)[0];
     weaponImage?.charges?.destroy();
     weaponImage.destroy();
+    this.redrawWeapons();
+  }
+
+  private redrawWeapons(): void {
+    this.weaponImages.forEach((weapon, index) => {
+      const weaponY = 32 + GAME.weaponHeight * index;
+      weapon.setY(weaponY);
+      weapon.charges?.setY(weaponY + 10 + GAME.weaponImageHeight);
+    });
   }
 
   private addResource(): void {
