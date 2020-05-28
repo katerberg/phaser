@@ -85,8 +85,12 @@ export class HudScene extends Phaser.Scene {
   private handleProjectileFired(): void {
     if (this.currentWeapon.charges !== undefined) {
       this.currentWeapon.charges--;
+      console.log(this.currentWeapon);
       const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
-      console.log(index);
+      console.log('weapon index ', index);
+      if (index === -1) {
+        console.log(this.weaponList);
+      }
       this.weaponImages[index].charges?.setText(`Charges: ${this.currentWeapon.charges}`);
       if (!this.currentWeapon.charges) {
         const gameLevel = this.scene.get(SCENES.game);
@@ -177,6 +181,8 @@ export class HudScene extends Phaser.Scene {
   private removeWeapon(weapon: Weapon): void {
     const index = this.weaponList.findIndex((current) => current.id === weapon.id);
     this.weaponList.splice(index, 1);
+    console.log('removing weapon');
+    console.log(this.weaponList);
     const weaponImage = this.weaponImages.splice(index, 1)[0];
     weaponImage?.charges?.destroy();
     weaponImage.destroy();
@@ -200,7 +206,7 @@ export class HudScene extends Phaser.Scene {
         cardsLevel.events.emit(EVENTS.ADD_CARD_TO_DECK, blueprintResource);
         this.blueprintImages[blueprintPosition].resourceImages.forEach((resourceImage) => resourceImage.destroy());
       });
-      this.currentBlueprint.resources = [];
+      this.currentBlueprint.reset();
       const gameLevel = this.scene.get(SCENES.game);
       this.addWeapon(this.currentBlueprint.weapon);
       gameLevel.events.emit(EVENTS.NEW_WEAPON_PLAYED, this.currentBlueprint.weapon);

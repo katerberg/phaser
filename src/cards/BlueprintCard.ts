@@ -9,17 +9,17 @@ export class BlueprintCard implements Card {
 
   public cost: number;
 
-  public image: string;
+  public image: WeaponName;
 
   public weaponType: WeaponType;
 
   public buildTime: number;
 
-  public resources: ResourceCard[];
+  public resources!: ResourceCard[];
 
   public resourceCost: number;
 
-  public weapon: Weapon;
+  public weapon!: Weapon;
 
   constructor(cost: number, weaponType: WeaponType, buildTime: number, image: WeaponName, resourceCost: number) {
     this.id = uuid();
@@ -27,8 +27,12 @@ export class BlueprintCard implements Card {
     this.image = image;
     this.weaponType = weaponType;
     this.buildTime = buildTime;
-    this.resources = [];
     this.resourceCost = resourceCost;
-    this.weapon = new Weapon(image, getCharges(image));
+    this.reset();
+  }
+
+  reset(): void {
+    this.resources = [];
+    this.weapon = new Weapon(this.image, getCharges(this.image));
   }
 }
