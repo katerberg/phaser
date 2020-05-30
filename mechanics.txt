@@ -27,7 +27,27 @@ Damage types
   Cold (slow)
   Normal
 
-Combining cards into triangle?
-  Has to include 4 types?
-  maybe each one affects a different region?
-Potentially schematics for different weapon types?
+
+Ideas for displays:
+  Make the weapons show the colors of the resources put into them
+    Store the resources on the weapons
+
+
+Overworld map:
+  Grid based and turn based
+  Enemies move each turn you do
+  At end of combat receive ante?
+  Risk losing a random card? idk, this kinda sucks
+  Grid cards
+  Have agendas? Need to figure out how this works
+    What is the end game?
+
+Deck builder:
+  Min cards?
+  Max cards?
+  Types of cards:
+    Blueprints
+    Resources
+    Actions
+      Draw cards
+      Shuffle
