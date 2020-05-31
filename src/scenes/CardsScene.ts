@@ -16,14 +16,19 @@ import {Card} from '../interfaces';
 import {getStartingDeck} from '../utils/starting';
 
 export class CardsScene extends Phaser.Scene {
-  hand!: Hand;
+  private hand!: Hand;
 
-  deck!: Deck;
+  private deck!: Deck;
+
+  private nextPlayCard: number;
+
+  private handInputs!: Phaser.Input.Keyboard.Key[];
 
   constructor() {
     super({
       key: SCENES.cards,
     });
+    this.nextPlayCard = 0;
   }
 
   preload(): void {
@@ -36,6 +41,14 @@ export class CardsScene extends Phaser.Scene {
     this.load.image('card-bullet', weaponBulletImage);
     this.load.image('darkCard', cardDarkImage);
     this.load.image('lightCard', cardLightImage);
+    const {KeyCodes} = Phaser.Input.Keyboard;
+    this.handInputs = [
+      this.scene.scene.input.keyboard.addKey(KeyCodes.A),
+      this.scene.scene.input.keyboard.addKey(KeyCodes.S),
+      this.scene.scene.input.keyboard.addKey(KeyCodes.D),
+      this.scene.scene.input.keyboard.addKey(KeyCodes.F),
+      this.scene.scene.input.keyboard.addKey(KeyCodes.G),
+    ];
   }
 
   create(): void {
@@ -43,9 +56,9 @@ export class CardsScene extends Phaser.Scene {
     this.deck = new Deck({scene: this, x: GAME.width - 10, y: GAME.height - 10, key: 'icon-deck'});
     const gameLevel = this.scene.get(SCENES.game);
     gameLevel.events.on(EVENTS.DRAW_CARD, this.drawCardFromDeckToHand, this);
-    gameLevel.events.on(EVENTS.PLAY_CARD, this.playCard, this);
     gameLevel.events.on(EVENTS.PLAYER_DIED, this.handlePlayerDeath, this);
     this.events.on(EVENTS.ADD_CARD_TO_DECK, this.addCardToDeck, this);
+    this.events.on(EVENTS.PLAY_CARD, this.playCard, this);
     this.add
       .image(8, GAME.height - 10, 'icon-anvil')
       .setOrigin(0, 1)
@@ -61,6 +74,31 @@ export class CardsScene extends Phaser.Scene {
       .forEach(() => {
         this.drawCardFromDeckToHand();
       });
+  }
+
+  update(): void {
+    this.handlePlayCard();
+  }
+
+  private handlePlayCard(): void {
+    const [one, two, three, four, five] = this.handInputs;
+    if (
+      this.nextPlayCard < this.scene.scene.time.now &&
+      (one.isDown || two.isDown || three.isDown || four.isDown || five.isDown)
+    ) {
+      if (one.isDown) {
+        this.scene.scene.events.emit(EVENTS.PLAY_CARD, 0);
+      } else if (two.isDown) {
+        this.scene.scene.events.emit(EVENTS.PLAY_CARD, 1);
+      } else if (three.isDown) {
+        this.scene.scene.events.emit(EVENTS.PLAY_CARD, 2);
+      } else if (four.isDown) {
+        this.scene.scene.events.emit(EVENTS.PLAY_CARD, 3);
+      } else if (five.isDown) {
+        this.scene.scene.events.emit(EVENTS.PLAY_CARD, 4);
+      }
+      this.nextPlayCard = this.scene.scene.time.now + 300;
+    }
   }
 
   drawCardFromDeckToHand(): void {

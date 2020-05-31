@@ -33,8 +33,6 @@ export class Player extends Phaser.GameObjects.Image {
 
   private nextSpawnEnemy: number;
 
-  private nextPlayCard: number;
-
   public playerId: string;
 
   private socket: SocketIOClient.Socket;
@@ -48,8 +46,6 @@ export class Player extends Phaser.GameObjects.Image {
   private spawnEnemy: Phaser.Input.Keyboard.Key;
 
   private inventory: Inventory;
-
-  private handInputs: Phaser.Input.Keyboard.Key[];
 
   private costs: {
     draw: number;
@@ -81,20 +77,12 @@ export class Player extends Phaser.GameObjects.Image {
     this.nextShot = 0;
     this.nextDraw = 0;
     this.nextSpawnEnemy = 0;
-    this.nextPlayCard = 0;
     this.hp = this.max.hp;
     this.energy = 10;
     this.playerId = playerId;
     this.projectiles = this.scene.add.group({
       runChildUpdate: true,
     });
-    this.handInputs = [
-      this.scene.input.keyboard.addKey(KeyCodes.A),
-      this.scene.input.keyboard.addKey(KeyCodes.S),
-      this.scene.input.keyboard.addKey(KeyCodes.D),
-      this.scene.input.keyboard.addKey(KeyCodes.F),
-      this.scene.input.keyboard.addKey(KeyCodes.G),
-    ];
     this.scene.time.addEvent({
       delay: isDebug() ? 1 : 100,
       callback: this.handleManaUpdate,
@@ -161,27 +149,6 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
-  private handlePlayCard(): void {
-    const [one, two, three, four, five] = this.handInputs;
-    if (
-      this.nextPlayCard < this.scene.time.now &&
-      (one.isDown || two.isDown || three.isDown || four.isDown || five.isDown)
-    ) {
-      if (one.isDown) {
-        this.scene.events.emit(EVENTS.PLAY_CARD, 0);
-      } else if (two.isDown) {
-        this.scene.events.emit(EVENTS.PLAY_CARD, 1);
-      } else if (three.isDown) {
-        this.scene.events.emit(EVENTS.PLAY_CARD, 2);
-      } else if (four.isDown) {
-        this.scene.events.emit(EVENTS.PLAY_CARD, 3);
-      } else if (five.isDown) {
-        this.scene.events.emit(EVENTS.PLAY_CARD, 4);
-      }
-      this.nextPlayCard = this.scene.time.now + 300;
-    }
-  }
-
   private handleManaUpdate(): void {
     if (this.energy < this.max.energy) {
       this.updateMana(this.energy + 1);
@@ -219,7 +186,6 @@ export class Player extends Phaser.GameObjects.Image {
     this.handleMovement();
     this.handleShoot();
     this.handleDraw();
-    this.handlePlayCard();
     if (isDebug()) {
       this.handleSpawnEnemy();
     }
