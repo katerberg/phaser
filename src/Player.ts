@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import {ResourceCard} from './cards';
-import {EVENTS, RULES, SCENES, MAX, REGISTRIES, SPEED} from './constants';
+import {EVENTS, SCENES, MAX, REGISTRIES, SPEED} from './constants';
 import {Inventory} from './Inventory';
 import {isDebug} from './utils/environments';
 import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
@@ -29,8 +29,6 @@ export class Player extends Phaser.GameObjects.Image {
 
   private nextShot: number;
 
-  private nextDraw: number;
-
   private nextSpawnEnemy: number;
 
   public playerId: string;
@@ -41,14 +39,11 @@ export class Player extends Phaser.GameObjects.Image {
 
   private shoot: Phaser.Input.Keyboard.Key;
 
-  private draw: Phaser.Input.Keyboard.Key;
-
   private spawnEnemy: Phaser.Input.Keyboard.Key;
 
   private inventory: Inventory;
 
   private costs: {
-    draw: number;
     shoot: number;
   };
 
@@ -62,7 +57,6 @@ export class Player extends Phaser.GameObjects.Image {
     const {KeyCodes} = Phaser.Input.Keyboard;
     this.cursors = this.scene.input.keyboard.createCursorKeys();
     this.shoot = this.scene.input.keyboard.addKey(KeyCodes.SPACE);
-    this.draw = this.scene.input.keyboard.addKey(KeyCodes.W);
     this.spawnEnemy = this.scene.input.keyboard.addKey(KeyCodes.P);
     this.oldPosition = {
       x: 0,
@@ -71,11 +65,9 @@ export class Player extends Phaser.GameObjects.Image {
     };
     this.max = {energy: MAX.energy, hp: MAX.hp};
     this.costs = {
-      draw: 50,
       shoot: 10,
     };
     this.nextShot = 0;
-    this.nextDraw = 0;
     this.nextSpawnEnemy = 0;
     this.hp = this.max.hp;
     this.energy = 10;
@@ -85,7 +77,7 @@ export class Player extends Phaser.GameObjects.Image {
     });
     this.scene.time.addEvent({
       delay: isDebug() ? 1 : 100,
-      callback: this.handleManaUpdate,
+      callback: this.handleEnergyUpdate,
       callbackScope: this,
       loop: true,
     });
@@ -95,6 +87,8 @@ export class Player extends Phaser.GameObjects.Image {
     scene.physics.world.enable(this);
     this.body.setCollideWorldBounds();
     scene.add.existing(this);
+
+    this.scene.events.on(EVENTS.UPDATE_ENERGY, this.updateEnergy, this);
 
     const cardsLevel = this.scene.scene.get(SCENES.cards);
     cardsLevel.events.on(EVENTS.RESOURCE_PLAYED, this.handleResourcePlay, this);
@@ -121,7 +115,7 @@ export class Player extends Phaser.GameObjects.Image {
     if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.energy >= this.costs.shoot) {
       const {x, y} = getProjectilePosition(this.x, this.y, this.angle);
       const projectile = this.inventory.createProjectile(x, y, this.angle);
-      this.updateMana(this.energy - this.costs.shoot);
+      this.updateEnergy(this.energy - this.costs.shoot);
       this.projectiles.add(projectile);
       this.socket.emit('projectileFiring', {
         x: this.x,
@@ -135,23 +129,9 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
-  private handleDraw(): void {
-    if (
-      this.draw.isDown &&
-      this.nextDraw < this.scene.time.now &&
-      this.energy >= this.costs.draw &&
-      this.scene.scene.get(SCENES.cards).registry.get(REGISTRIES.HAND_CARDS_NUMBER) !== RULES.maxHand &&
-      this.scene.scene.get(SCENES.cards).registry.get(REGISTRIES.DECK_CARDS_NUMBER) !== 0
-    ) {
-      this.scene.events.emit(EVENTS.DRAW_CARD);
-      this.updateMana(this.energy - this.costs.draw);
-      this.nextDraw = this.scene.time.now + 200;
-    }
-  }
-
-  private handleManaUpdate(): void {
+  private handleEnergyUpdate(): void {
     if (this.energy < this.max.energy) {
-      this.updateMana(this.energy + 1);
+      this.updateEnergy(this.energy + 1);
     }
   }
 
@@ -176,8 +156,8 @@ export class Player extends Phaser.GameObjects.Image {
     }
   }
 
-  private updateMana(newMana: number): void {
-    this.energy = newMana;
+  private updateEnergy(newEnergy: number): void {
+    this.energy = newEnergy;
     this.scene.registry.set(REGISTRIES.PLAYER_ENERGY, this.energy);
     this.scene.events.emit(EVENTS.ENERGY_CHANGED);
   }
@@ -185,7 +165,6 @@ export class Player extends Phaser.GameObjects.Image {
   private handleInput(): void {
     this.handleMovement();
     this.handleShoot();
-    this.handleDraw();
     if (isDebug()) {
       this.handleSpawnEnemy();
     }

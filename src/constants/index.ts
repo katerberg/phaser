@@ -30,6 +30,7 @@ export const RULES = {
   maxHand: 5,
   maxHp: 10,
   maxEnergy: 200,
+  costOfDraw: 50,
 };
 
 export const STARTING = {

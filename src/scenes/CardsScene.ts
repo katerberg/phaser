@@ -22,6 +22,10 @@ export class CardsScene extends Phaser.Scene {
 
   private nextPlayCard: number;
 
+  private nextDraw!: number;
+
+  private draw!: Phaser.Input.Keyboard.Key;
+
   private handInputs!: Phaser.Input.Keyboard.Key[];
 
   constructor() {
@@ -49,13 +53,14 @@ export class CardsScene extends Phaser.Scene {
       this.scene.scene.input.keyboard.addKey(KeyCodes.F),
       this.scene.scene.input.keyboard.addKey(KeyCodes.G),
     ];
+    this.draw = this.scene.scene.input.keyboard.addKey(KeyCodes.W);
+    this.nextDraw = 0;
   }
 
   create(): void {
     this.hand = new Hand(this, 408, GAME.height + 40);
     this.deck = new Deck({scene: this, x: GAME.width - 10, y: GAME.height - 10, key: 'icon-deck'});
     const gameLevel = this.scene.get(SCENES.game);
-    gameLevel.events.on(EVENTS.DRAW_CARD, this.drawCardFromDeckToHand, this);
     gameLevel.events.on(EVENTS.PLAYER_DIED, this.handlePlayerDeath, this);
     this.events.on(EVENTS.ADD_CARD_TO_DECK, this.addCardToDeck, this);
     this.events.on(EVENTS.PLAY_CARD, this.playCard, this);
@@ -78,6 +83,24 @@ export class CardsScene extends Phaser.Scene {
 
   update(): void {
     this.handlePlayCard();
+    this.handleDraw();
+  }
+
+  private handleDraw(): void {
+    const energy = this.registry.get(REGISTRIES.PLAYER_ENERGY);
+    if (
+      this.draw.isDown &&
+      this.nextDraw < this.scene.scene.time.now &&
+      energy >= RULES.costOfDraw &&
+      this.registry.get(REGISTRIES.HAND_CARDS_NUMBER) !== RULES.maxHand &&
+      this.registry.get(REGISTRIES.DECK_CARDS_NUMBER) !== 0
+    ) {
+      const gameScene = this.scene.get(SCENES.game);
+      this.drawCardFromDeckToHand();
+      this.scene.scene.events.emit(EVENTS.DRAW_CARD);
+      gameScene.events.emit(EVENTS.UPDATE_ENERGY, energy - RULES.costOfDraw);
+      this.nextDraw = this.scene.scene.time.now + 200;
+    }
   }
 
   private handlePlayCard(): void {
@@ -101,19 +124,19 @@ export class CardsScene extends Phaser.Scene {
     }
   }
 
-  drawCardFromDeckToHand(): void {
+  private drawCardFromDeckToHand(): void {
     const draw = this.deck.draw();
     if (draw) {
       this.hand.add(draw);
     }
   }
 
-  addCardToDeck(card: Card): void {
+  private addCardToDeck(card: Card): void {
     this.deck.add(card);
     this.deck.shuffle();
   }
 
-  playCard(cardNumber: number): void {
+  private playCard(cardNumber: number): void {
     const card = this.hand.getCard(cardNumber);
     if (!card) {
       return;

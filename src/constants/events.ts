@@ -7,6 +7,7 @@ export const EVENTS = {
   PLAY_CARD: 'playCard',
   PLAYER_DIED: 'playerDied',
   HP_CHANGED: 'hpChanged',
+  UPDATE_ENERGY: 'updateEnergy',
   ENERGY_CHANGED: 'energyChanged',
   BLUEPRINT_CHANGED: 'blueprintChanged',
   BLUEPRINT_ADDED: 'blueprintAdded',
