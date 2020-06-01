@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.0.6] - 2020-05-31
+### Added
 - Weapon swapping
 - blueprint and resource cards
 - Bot creation
 - Resources attached to blueprints
 - Blueprints into weapons
+- Weapon recharge rates
 
 ## [0.0.5] - 2020-05-06
 ### Added
@@ -42,7 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial commit
 
-[unreleased]: https://github.com/katerberg/phaser/compare/v0.0.5...HEAD
+[unreleased]: https://github.com/katerberg/phaser/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/katerberg/phaser/releases/tag/v0.0.6
 [0.0.5]: https://github.com/katerberg/phaser/releases/tag/v0.0.5
 [0.0.4]: https://github.com/katerberg/phaser/releases/tag/v0.0.4
 [0.0.3]: https://github.com/katerberg/phaser/releases/tag/v0.0.3

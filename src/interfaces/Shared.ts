@@ -12,7 +12,7 @@ export interface ServerProjectile {
 
 export interface Card {
   id: string;
-  cost: number;
+  costToPlay: number;
 }
 
 export interface Projectile extends Phaser.GameObjects.Image {

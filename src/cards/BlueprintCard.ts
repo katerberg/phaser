@@ -7,13 +7,15 @@ import {ResourceCard} from './ResourceCard';
 export class BlueprintCard implements Card {
   public id: string;
 
-  public cost: number;
+  public costToPlay: number;
+
+  public costOfShot: number;
+
+  public rechargeDelay: number;
 
   public image: WeaponName;
 
   public weaponType: WeaponType;
-
-  public buildTime: number;
 
   public resources!: ResourceCard[];
 
@@ -21,18 +23,26 @@ export class BlueprintCard implements Card {
 
   public weapon!: Weapon;
 
-  constructor(cost: number, weaponType: WeaponType, buildTime: number, image: WeaponName, resourceCost: number) {
+  constructor(
+    costToPlay: number,
+    weaponType: WeaponType,
+    image: WeaponName,
+    resourceCost: number,
+    costOfShot: number,
+    rechargeDelay: number,
+  ) {
     this.id = uuid();
-    this.cost = cost;
+    this.costToPlay = costToPlay;
     this.image = image;
     this.weaponType = weaponType;
-    this.buildTime = buildTime;
     this.resourceCost = resourceCost;
+    this.costOfShot = costOfShot;
+    this.rechargeDelay = rechargeDelay;
     this.reset();
   }
 
   reset(): void {
     this.resources = [];
-    this.weapon = new Weapon(this.image, getCharges(this.image));
+    this.weapon = new Weapon(this.image, this.costOfShot, this.rechargeDelay, getCharges(this.image));
   }
 }

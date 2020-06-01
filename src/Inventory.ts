@@ -49,9 +49,13 @@ export class Inventory {
     cardsLevel.events.on(EVENTS.BLUEPRINT_PLAYED, this.handleBlueprintPlay, this);
   }
 
+  public get currentWeapon(): Weapon {
+    return this.scene.registry.get(REGISTRIES.CURRENT_WEAPON) as Weapon;
+  }
+
   private reset(): void {
-    this.blueprints = [new BlueprintCard(50, 'projectile', 10, 'bullet', 2)];
-    this.weapons = [new Weapon('arrow')];
+    this.blueprints = [new BlueprintCard(50, 'projectile', 'bullet', 2, 5, 300)];
+    this.weapons = [new Weapon('arrow', 0, 500)];
     this.nextBlueprint = 0;
     this.nextWeaponSelect = 0;
     this.scene.registry.set(REGISTRIES.CURRENT_WEAPON, this.weapons[0]);

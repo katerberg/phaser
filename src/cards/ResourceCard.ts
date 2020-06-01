@@ -4,15 +4,15 @@ import {ResourceType, Card} from '../interfaces';
 export class ResourceCard implements Card {
   public id: string;
 
-  public cost: number;
+  public costToPlay: number;
 
   public benefit: number;
 
   public resourceType: ResourceType;
 
-  constructor(cost: number, benefit: number, resourceType: ResourceType) {
+  constructor(costToPlay: number, benefit: number, resourceType: ResourceType) {
     this.id = uuid();
-    this.cost = cost;
+    this.costToPlay = costToPlay;
     this.benefit = benefit;
     this.resourceType = resourceType;
   }

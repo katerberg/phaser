@@ -10,7 +10,7 @@ function getCardTexture(card: Card): string {
 export class HandCard extends Phaser.GameObjects.Image {
   public id: string;
 
-  public cost: number;
+  public costToPlay: number;
 
   private card: Card;
 
@@ -23,7 +23,7 @@ export class HandCard extends Phaser.GameObjects.Image {
   constructor({scene, x, y}: {scene: Phaser.Scene; x: number; y: number}, card: Card) {
     super(scene, x, y, getCardTexture(card));
     this.id = card.id;
-    this.cost = card.cost;
+    this.costToPlay = card.costToPlay;
     this.card = card;
 
     this.setOrigin(1, 1);
@@ -50,7 +50,7 @@ export class HandCard extends Phaser.GameObjects.Image {
     }
 
     this.energyText = this.scene.add
-      .text(this.x - 8, this.y - 200, `${this.card.cost}${SYMBOLS.energy}`, {
+      .text(this.x - 8, this.y - 200, `${this.card.costToPlay}${SYMBOLS.energy}`, {
         fontSize: '32px',
       })
       .setOrigin(1, 1);

@@ -43,10 +43,6 @@ export class Player extends Phaser.GameObjects.Image {
 
   private inventory: Inventory;
 
-  private costs: {
-    shoot: number;
-  };
-
   constructor(
     {scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string},
     playerId: string,
@@ -64,9 +60,6 @@ export class Player extends Phaser.GameObjects.Image {
       angle: 0,
     };
     this.max = {energy: MAX.energy, hp: MAX.hp};
-    this.costs = {
-      shoot: 10,
-    };
     this.nextShot = 0;
     this.nextSpawnEnemy = 0;
     this.hp = this.max.hp;
@@ -89,6 +82,7 @@ export class Player extends Phaser.GameObjects.Image {
     scene.add.existing(this);
 
     this.scene.events.on(EVENTS.UPDATE_ENERGY, this.updateEnergy, this);
+    this.scene.events.on(EVENTS.WEAPON_CHANGED, this.handleWeaponChanged, this);
 
     const cardsLevel = this.scene.scene.get(SCENES.cards);
     cardsLevel.events.on(EVENTS.RESOURCE_PLAYED, this.handleResourcePlay, this);
@@ -112,10 +106,15 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   private handleShoot(): void {
-    if (this.shoot.isDown && this.nextShot < this.scene.time.now && this.energy >= this.costs.shoot) {
+    if (
+      this.shoot.isDown &&
+      this.nextShot < this.scene.time.now &&
+      this.energy >= this.inventory.currentWeapon.costOfShot
+    ) {
       const {x, y} = getProjectilePosition(this.x, this.y, this.angle);
       const projectile = this.inventory.createProjectile(x, y, this.angle);
-      this.updateEnergy(this.energy - this.costs.shoot);
+      const {currentWeapon} = this.inventory;
+      this.updateEnergy(this.energy - currentWeapon.costOfShot);
       this.projectiles.add(projectile);
       this.socket.emit('projectileFiring', {
         x: this.x,
@@ -125,8 +124,12 @@ export class Player extends Phaser.GameObjects.Image {
         projectileType: projectile.projectileType,
         id: projectile.id,
       });
-      this.nextShot = this.scene.time.now + 200;
+      this.nextShot = this.scene.time.now + currentWeapon.rechargeDelay;
     }
+  }
+
+  private handleWeaponChanged(): void {
+    this.nextShot = this.scene.time.now + this.inventory.currentWeapon.rechargeDelay;
   }
 
   private handleEnergyUpdate(): void {

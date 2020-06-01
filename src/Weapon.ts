@@ -8,9 +8,15 @@ export class Weapon {
 
   public weaponImage: WeaponName;
 
-  constructor(weaponImage: WeaponName, charges?: number) {
+  public costOfShot: number;
+
+  public rechargeDelay: number;
+
+  constructor(weaponImage: WeaponName, costOfShot: number, rechargeDelay: number, charges?: number) {
     this.id = uuid();
     this.weaponImage = weaponImage;
     this.charges = charges;
+    this.costOfShot = costOfShot;
+    this.rechargeDelay = rechargeDelay;
   }
 }
