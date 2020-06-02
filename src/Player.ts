@@ -83,9 +83,6 @@ export class Player extends Phaser.GameObjects.Image {
 
     this.scene.events.on(EVENTS.UPDATE_ENERGY, this.updateEnergy, this);
     this.scene.events.on(EVENTS.WEAPON_CHANGED, this.handleWeaponChanged, this);
-
-    const cardsLevel = this.scene.scene.get(SCENES.cards);
-    cardsLevel.events.on(EVENTS.RESOURCE_PLAYED, this.handleResourcePlay, this);
   }
 
   public getProjectiles(): Phaser.GameObjects.Group {
@@ -178,10 +175,6 @@ export class Player extends Phaser.GameObjects.Image {
       this.socket.emit('spawnBot', {playerId: this.playerId});
       this.nextSpawnEnemy = this.scene.time.now + 300;
     }
-  }
-
-  private handleResourcePlay(resource: ResourceCard): void {
-    this.scene.events.emit(EVENTS.RESOURCE_ADDED, resource);
   }
 
   public update(): void {

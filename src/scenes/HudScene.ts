@@ -68,6 +68,8 @@ export class HudScene extends Phaser.Scene {
   }
 
   create(): void {
+    const cardLevel = this.scene.get(SCENES.cards);
+    cardLevel.events.on(EVENTS.RESOURCE_PLAYED, this.addResource, this);
     const gameLevel = this.scene.get(SCENES.game);
     gameLevel.events.on(EVENTS.HP_CHANGED, this.updateHp, this);
     gameLevel.events.on(EVENTS.ENERGY_CHANGED, this.updateMana, this);
@@ -76,7 +78,6 @@ export class HudScene extends Phaser.Scene {
     gameLevel.events.on(EVENTS.WEAPON_CHANGED, this.updateWeapon, this);
     gameLevel.events.on(EVENTS.WEAPON_ADDED, this.addWeapon, this);
     gameLevel.events.on(EVENTS.WEAPON_REMOVED, this.removeWeapon, this);
-    gameLevel.events.on(EVENTS.RESOURCE_ADDED, this.addResource, this);
     gameLevel.events.on(EVENTS.PLAYER_DIED, this.handlePlayerDeath, this);
     gameLevel.events.on(EVENTS.PROJECTILE_FIRED, this.handleProjectileFired, this);
     this.updateBlueprint();
