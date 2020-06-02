@@ -6,5 +6,4 @@ export const REGISTRIES = {
   PLAYER_ENERGY: 'playerEnergy',
   CURRENT_BLUEPRINT: 'blueprint',
   CURRENT_WEAPON: 'weapon',
-  CURRENT_RESOURCE: 'resource',
 };

@@ -181,8 +181,7 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   private handleResourcePlay(resource: ResourceCard): void {
-    this.scene.registry.set(REGISTRIES.CURRENT_RESOURCE, resource);
-    this.scene.events.emit(EVENTS.RESOURCE_ADDED);
+    this.scene.events.emit(EVENTS.RESOURCE_ADDED, resource);
   }
 
   public update(): void {

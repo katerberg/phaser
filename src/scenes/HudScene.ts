@@ -187,8 +187,7 @@ export class HudScene extends Phaser.Scene {
     });
   }
 
-  private addResource(): void {
-    const resource = this.registry.get(REGISTRIES.CURRENT_RESOURCE) as ResourceCard;
+  private addResource(resource: ResourceCard): void {
     this.currentBlueprint.resources.push(resource);
     const blueprintPosition = this.blueprintList.findIndex((value) => this.currentBlueprint.id === value.id);
     const resourcePosition = this.currentBlueprint.resources.length - 1;
