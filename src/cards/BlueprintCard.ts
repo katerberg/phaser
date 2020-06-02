@@ -21,8 +21,6 @@ export class BlueprintCard implements Card {
 
   public resourceCost: number;
 
-  public weapon!: Weapon;
-
   constructor(
     costToPlay: number,
     weaponType: WeaponType,
@@ -41,8 +39,16 @@ export class BlueprintCard implements Card {
     this.reset();
   }
 
-  reset(): void {
+  public createWeapon(): Weapon {
+    return new Weapon({
+      type: this.image,
+      costOfShot: this.costOfShot,
+      rechargeDelay: this.rechargeDelay,
+      charges: getCharges(this.image),
+    });
+  }
+
+  public reset(): void {
     this.resources = [];
-    this.weapon = new Weapon(this.image, this.costOfShot, this.rechargeDelay, getCharges(this.image));
   }
 }

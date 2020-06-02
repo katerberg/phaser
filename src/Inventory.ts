@@ -55,7 +55,13 @@ export class Inventory {
 
   private reset(): void {
     this.blueprints = [new BlueprintCard(50, 'projectile', 'bullet', 2, 5, 300)];
-    this.weapons = [new Weapon('arrow', 0, 500)];
+    this.weapons = [
+      new Weapon({
+        type: 'arrow',
+        costOfShot: 0,
+        rechargeDelay: 500,
+      }),
+    ];
     this.nextBlueprint = 0;
     this.nextWeaponSelect = 0;
     this.scene.registry.set(REGISTRIES.CURRENT_WEAPON, this.weapons[0]);

@@ -207,8 +207,9 @@ export class HudScene extends Phaser.Scene {
       });
       this.currentBlueprint.reset();
       const gameLevel = this.scene.get(SCENES.game);
-      this.addWeapon(this.currentBlueprint.weapon);
-      gameLevel.events.emit(EVENTS.NEW_WEAPON_PLAYED, this.currentBlueprint.weapon);
+      const weaponFromBlueprint = this.currentBlueprint.createWeapon();
+      this.addWeapon(weaponFromBlueprint);
+      gameLevel.events.emit(EVENTS.NEW_WEAPON_PLAYED, weaponFromBlueprint);
       if (blueprintPosition !== 0) {
         cardsLevel.events.emit(EVENTS.ADD_CARD_TO_DECK, this.currentBlueprint);
         this.blueprintList.splice(blueprintPosition, 1);

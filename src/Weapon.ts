@@ -1,6 +1,13 @@
 import {v4 as uuid} from 'uuid';
 import {WeaponName} from './interfaces';
 
+interface WeaponOptions {
+  type: WeaponName;
+  costOfShot: number;
+  rechargeDelay: number;
+  charges?: number;
+}
+
 export class Weapon {
   public id: string;
 
@@ -12,11 +19,11 @@ export class Weapon {
 
   public rechargeDelay: number;
 
-  constructor(weaponImage: WeaponName, costOfShot: number, rechargeDelay: number, charges?: number) {
+  constructor(options: WeaponOptions) {
     this.id = uuid();
-    this.weaponImage = weaponImage;
-    this.charges = charges;
-    this.costOfShot = costOfShot;
-    this.rechargeDelay = rechargeDelay;
+    this.weaponImage = options.type;
+    this.charges = options.charges;
+    this.costOfShot = options.costOfShot;
+    this.rechargeDelay = options.rechargeDelay;
   }
 }
