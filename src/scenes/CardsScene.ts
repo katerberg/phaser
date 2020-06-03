@@ -144,11 +144,19 @@ export class CardsScene extends Phaser.Scene {
       return;
     }
     const level = this.scene.get(SCENES.game);
-    if (card instanceof BlueprintCard && level.registry.get(REGISTRIES.BLUEPRINTS_NUMBER) !== RULES.maxBlueprints) {
+    const energy = this.registry.get(REGISTRIES.PLAYER_ENERGY);
+    const gameScene = this.scene.get(SCENES.game);
+    if (
+      card instanceof BlueprintCard &&
+      level.registry.get(REGISTRIES.BLUEPRINTS_NUMBER) !== RULES.maxBlueprints &&
+      card.costToPlay <= energy
+    ) {
+      gameScene.events.emit(EVENTS.UPDATE_ENERGY, energy - card.costToPlay);
       this.events.emit(EVENTS.BLUEPRINT_PLAYED, card);
       this.hand.removeCard(cardNumber);
     }
-    if (card instanceof ResourceCard) {
+    if (card instanceof ResourceCard && card.costToPlay <= energy) {
+      gameScene.events.emit(EVENTS.UPDATE_ENERGY, energy - card.costToPlay);
       this.events.emit(EVENTS.RESOURCE_PLAYED, card);
       this.hand.removeCard(cardNumber);
     }
