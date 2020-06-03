@@ -64,7 +64,7 @@ export class CardsScene extends Phaser.Scene {
     this.deck = new Deck({scene: this, x: GAME.width - 10, y: GAME.height - 10, key: 'icon-deck'});
     const gameLevel = this.scene.get(SCENES.game);
     gameLevel.events.on(EVENTS.PLAYER_DIED, this.handlePlayerDeath, this);
-    this.events.on(EVENTS.ADD_CARD_TO_DECK, this.addCardToDeck, this);
+    this.events.on(EVENTS.ADD_CARD_TO_BOTTOM_OF_DECK, this.addCardToBottomOfDeck, this);
     this.events.on(EVENTS.PLAY_CARD, this.playCard, this);
     this.add
       .image(8, GAME.height - 10, 'icon-anvil')
@@ -133,9 +133,8 @@ export class CardsScene extends Phaser.Scene {
     }
   }
 
-  private addCardToDeck(card: Card): void {
-    this.deck.add(card);
-    this.deck.shuffle();
+  private addCardToBottomOfDeck(card: Card): void {
+    this.deck.add(card, true);
   }
 
   private playCard(cardNumber: number): void {

@@ -14,7 +14,7 @@ export const EVENTS = {
   WEAPON_CHANGED: 'weaponChanged',
   WEAPON_ADDED: 'weaponAdded',
   WEAPON_REMOVED: 'weaponRemoved',
-  ADD_CARD_TO_DECK: 'addCardToDeck',
+  ADD_CARD_TO_BOTTOM_OF_DECK: 'addCardToBottomOfDeck',
   BOT_DESTROYED: 'botDestroyed',
   PROJECTILE_FIRED: 'projectileFired',
 };

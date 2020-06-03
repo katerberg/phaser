@@ -202,7 +202,7 @@ export class HudScene extends Phaser.Scene {
     if (this.currentBlueprint.resources.length === this.currentBlueprint.resourceCost) {
       const cardsLevel = this.scene.get(SCENES.cards);
       this.currentBlueprint.resources.forEach((blueprintResource) => {
-        cardsLevel.events.emit(EVENTS.ADD_CARD_TO_DECK, blueprintResource);
+        cardsLevel.events.emit(EVENTS.ADD_CARD_TO_BOTTOM_OF_DECK, blueprintResource);
         this.blueprintImages[blueprintPosition].resourceImages.forEach((resourceImage) => resourceImage.destroy());
       });
       this.currentBlueprint.reset();
@@ -211,7 +211,7 @@ export class HudScene extends Phaser.Scene {
       this.addWeapon(weaponFromBlueprint);
       gameLevel.events.emit(EVENTS.NEW_WEAPON_PLAYED, weaponFromBlueprint);
       if (blueprintPosition !== 0) {
-        cardsLevel.events.emit(EVENTS.ADD_CARD_TO_DECK, this.currentBlueprint);
+        cardsLevel.events.emit(EVENTS.ADD_CARD_TO_BOTTOM_OF_DECK, this.currentBlueprint);
         this.blueprintList.splice(blueprintPosition, 1);
         this.blueprintImages.splice(blueprintPosition, 1)[0].destroy();
         gameLevel.events.emit(EVENTS.REMOVE_CURRENT_BLUEPRINT);
