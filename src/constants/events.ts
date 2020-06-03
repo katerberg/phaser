@@ -1,5 +1,5 @@
 export const EVENTS = {
-  REMOVE_CURRENT_BLUEPRINT: 'removeCurrentBlueprint',
+  REMOVE_BLUEPRINT: 'remove blueprint',
   NEW_WEAPON_PLAYED: 'newWeaponPlayed',
   BLUEPRINT_PLAYED: 'blueprintPlayed',
   RESOURCE_PLAYED: 'resourcePlayed',

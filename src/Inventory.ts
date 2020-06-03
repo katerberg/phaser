@@ -42,7 +42,7 @@ export class Inventory {
     this.scene.events.emit(EVENTS.BLUEPRINT_ADDED);
     this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);
     this.scene.events.on(EVENTS.WEAPON_REMOVED, this.handleRemoveWeapon, this);
-    this.scene.events.on(EVENTS.REMOVE_CURRENT_BLUEPRINT, this.handleRemoveCurrentBlueprint, this);
+    this.scene.events.on(EVENTS.REMOVE_BLUEPRINT, this.handleRemoveBlueprint, this);
     this.scene.events.on(EVENTS.NEW_WEAPON_PLAYED, this.handleNewWeapon, this);
 
     const cardsLevel = this.scene.scene.get(SCENES.cards);
@@ -121,8 +121,8 @@ export class Inventory {
     this.weapons.push(newWeapon);
   }
 
-  private handleRemoveCurrentBlueprint(): void {
-    this.blueprints.pop();
+  private handleRemoveBlueprint(position: number): void {
+    this.blueprints.splice(position, 1);
     this.scene.registry.set(REGISTRIES.BLUEPRINTS_NUMBER, this.blueprints.length);
     this.scene.registry.set(REGISTRIES.CURRENT_BLUEPRINT, this.blueprints[this.blueprints.length - 1]);
     this.scene.events.emit(EVENTS.BLUEPRINT_CHANGED);

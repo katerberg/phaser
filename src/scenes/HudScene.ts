@@ -188,6 +188,15 @@ export class HudScene extends Phaser.Scene {
     });
   }
 
+  private redrawBlueprints(): void {
+    this.blueprintImages.forEach((blueprint, index) => {
+      const blueprintY = 32 + GAME.weaponHeight * index;
+      blueprint.setY(blueprintY);
+      const resourceY = blueprintY + 72;
+      blueprint.resourceImages.forEach((resourceImage) => resourceImage.setY(resourceY));
+    });
+  }
+
   private addResource(resource: ResourceCard): void {
     this.currentBlueprint.resources.push(resource);
     const blueprintPosition = this.blueprintList.findIndex((value) => this.currentBlueprint.id === value.id);
@@ -214,7 +223,8 @@ export class HudScene extends Phaser.Scene {
         cardsLevel.events.emit(EVENTS.ADD_CARD_TO_BOTTOM_OF_DECK, this.currentBlueprint);
         this.blueprintList.splice(blueprintPosition, 1);
         this.blueprintImages.splice(blueprintPosition, 1)[0].destroy();
-        gameLevel.events.emit(EVENTS.REMOVE_CURRENT_BLUEPRINT);
+        gameLevel.events.emit(EVENTS.REMOVE_BLUEPRINT, blueprintPosition);
+        this.redrawBlueprints();
       } else {
         this.blueprintImages[blueprintPosition].resourceImages = [];
         this.populatePlaceholders(this.blueprintImages[blueprintPosition]);

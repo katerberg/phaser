@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
-import {ResourceCard} from './cards';
-import {EVENTS, SCENES, MAX, REGISTRIES, SPEED} from './constants';
+import {EVENTS, MAX, REGISTRIES, SPEED} from './constants';
 import {Inventory} from './Inventory';
 import {isDebug} from './utils/environments';
 import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
