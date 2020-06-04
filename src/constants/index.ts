@@ -1,3 +1,4 @@
+export {COLORS} from './colors';
 export {EVENTS} from './events';
 export {REGISTRIES} from './registries';
 

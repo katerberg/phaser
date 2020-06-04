@@ -45,6 +45,7 @@ export class BlueprintCard implements Card {
       costOfShot: this.costOfShot,
       rechargeDelay: this.rechargeDelay,
       charges: getCharges(this.image),
+      resourceTypes: this.resources.map((r) => r.resourceType),
     });
   }
 

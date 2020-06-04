@@ -7,6 +7,7 @@ import weaponSelectorImage from '../assets/weapon-selector.png';
 import {BlueprintCard, ResourceCard} from '../cards';
 import {EVENTS, SCENES, STARTING, REGISTRIES, PLAY_AREA, GAME, SYMBOLS} from '../constants';
 import {BlueprintImage} from '../interfaces';
+import {getColor} from '../utils/weapons';
 import {Weapon} from '../Weapon';
 
 interface WeaponImage extends Phaser.GameObjects.Image {
@@ -158,7 +159,13 @@ export class HudScene extends Phaser.Scene {
     this.weaponList.push(weapon);
     const weaponX = GAME.width - 8;
     const weaponY = 32 + GAME.weaponHeight * this.weaponImages.length;
-    this.weaponImages.push(this.add.image(weaponX, weaponY, `weapon-${weaponTag}`).setOrigin(1, 0).setScale(0.3));
+    this.weaponImages.push(
+      this.add
+        .image(weaponX, weaponY, `weapon-${weaponTag}`)
+        .setOrigin(1, 0)
+        .setScale(0.3)
+        .setTintFill(getColor(weapon.resourceTypes[0])),
+    );
     this.weaponImages[this.weaponImages.length - 1].charges = this.add
       .text(
         GAME.width - GAME.weaponImageWidth - 8,
@@ -209,14 +216,14 @@ export class HudScene extends Phaser.Scene {
       .setScale(0.03);
 
     if (this.currentBlueprint.resources.length === this.currentBlueprint.resourceCost) {
+      const gameLevel = this.scene.get(SCENES.game);
       const cardsLevel = this.scene.get(SCENES.cards);
+      const weaponFromBlueprint = this.currentBlueprint.createWeapon();
       this.currentBlueprint.resources.forEach((blueprintResource) => {
         cardsLevel.events.emit(EVENTS.ADD_CARD_TO_BOTTOM_OF_DECK, blueprintResource);
         this.blueprintImages[blueprintPosition].resourceImages.forEach((resourceImage) => resourceImage.destroy());
       });
       this.currentBlueprint.reset();
-      const gameLevel = this.scene.get(SCENES.game);
-      const weaponFromBlueprint = this.currentBlueprint.createWeapon();
       this.addWeapon(weaponFromBlueprint);
       gameLevel.events.emit(EVENTS.NEW_WEAPON_PLAYED, weaponFromBlueprint);
       if (blueprintPosition !== 0) {
