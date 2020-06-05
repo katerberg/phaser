@@ -1,9 +1,7 @@
 import * as Phaser from 'phaser';
-import {v4 as uuid} from 'uuid';
 import {BlueprintCard} from './cards';
 import {EVENTS, REGISTRIES, RULES, SCENES} from './constants';
 import {Projectile} from './interfaces';
-import {Arrow, Bullet, Laser} from './projectiles';
 import {Weapon} from './Weapon';
 
 export class Inventory {
@@ -138,17 +136,13 @@ export class Inventory {
   }
 
   public createProjectile(x: number, y: number, angle: number): Projectile {
-    const opts = {x, y, scene: this.scene};
     this.scene.events.emit(EVENTS.PROJECTILE_FIRED);
-    switch (this.scene.registry.get(REGISTRIES.CURRENT_WEAPON).weaponImage) {
-      case 'arrow':
-        return new Arrow({...opts, key: 'arrow'}, angle, uuid());
-      case 'bullet':
-        return new Bullet({...opts, key: 'bullet'}, angle, uuid());
-      case 'laser':
-        return new Laser({...opts, key: 'laser'}, angle, uuid());
-      default:
-        throw new Error();
-    }
+    const weapon = this.scene.registry.get(REGISTRIES.CURRENT_WEAPON) as Weapon;
+    return weapon.createProjectile({
+      x,
+      y,
+      angle,
+      scene: this.scene,
+    });
   }
 }
