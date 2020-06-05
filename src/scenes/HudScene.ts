@@ -159,12 +159,14 @@ export class HudScene extends Phaser.Scene {
     this.weaponList.push(weapon);
     const weaponX = GAME.width - 8;
     const weaponY = 32 + GAME.weaponHeight * this.weaponImages.length;
+    const color0 = getColor(weapon.resourceTypes[0]);
+    const color1 = getColor(weapon.resourceTypes[1]);
     this.weaponImages.push(
       this.add
         .image(weaponX, weaponY, `weapon-${weaponTag}`)
         .setOrigin(1, 0)
         .setScale(0.3)
-        .setTintFill(getColor(weapon.resourceTypes[0])),
+        .setTintFill(color0, color1, color0, color1),
     );
     this.weaponImages[this.weaponImages.length - 1].charges = this.add
       .text(

@@ -29,7 +29,5 @@ export class Weapon {
     this.costOfShot = options.costOfShot;
     this.rechargeDelay = options.rechargeDelay;
     this.resourceTypes = options.resourceTypes || ['energy'];
-    console.log(this.resourceTypes);
-    console.log(options.resourceTypes);
   }
 }

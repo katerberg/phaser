@@ -14,7 +14,7 @@ export function getCharges(weapon: WeaponName): number | undefined {
   }
 }
 
-export function getColor(resource: ResourceType): number {
+export function getColor(resource: ResourceType): number | undefined {
   switch (resource) {
     case 'iron':
       return COLORS.ORANGE;
@@ -22,7 +22,9 @@ export function getColor(resource: ResourceType): number {
       return COLORS.SEAFOAM;
     case 'wood':
       return COLORS.TAN;
-    default:
+    case 'energy':
       return COLORS.GRAY;
+    default:
+      return undefined;
   }
 }
