@@ -25,6 +25,12 @@ export const SPEED = {
   bullet: 400,
 };
 
+export const DAMAGE = {
+  arrow: 1,
+  laser: 1,
+  bullet: 2,
+};
+
 export const RULES = {
   maxBlueprints: 4,
   maxWeapons: 4,

@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import {BlueprintCard} from './cards';
 import {EVENTS, REGISTRIES, RULES, SCENES} from './constants';
-import {Projectile} from './interfaces';
+import {Projectile} from './projectiles';
 import {Weapon} from './Weapon';
 
 export class Inventory {

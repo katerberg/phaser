@@ -1,43 +1,14 @@
-import {ServerProjectile, Projectile} from '../interfaces';
-import {Arrow} from './Arrow';
-import {Bullet} from './Bullet';
-import {Laser} from './Laser';
+import {DAMAGE, SPEED} from '../constants';
+import {ProjectileType, ServerProjectile, ProjectileOpts} from '../interfaces';
+import {Projectile} from './Projectile';
 
-export {Arrow} from './Arrow';
-export {Bullet} from './Bullet';
-export {Laser} from './Laser';
+export {Projectile} from './Projectile';
+
+export function createProjectile(type: ProjectileType, opts: ProjectileOpts, id: string): Projectile {
+  return new Projectile(opts, opts.angle, id, type, SPEED[type], DAMAGE[type]);
+}
 
 export function getProjectile(projectile: ServerProjectile, scene: Phaser.Scene): Projectile {
-  const opts = {x: projectile.x, y: projectile.y, scene};
-  switch (projectile.projectileType) {
-    case 'bullet':
-      return new Bullet(
-        {
-          ...opts,
-          key: 'bullet',
-        },
-        projectile.angle,
-        projectile.id,
-      );
-    case 'laser':
-      return new Laser(
-        {
-          ...opts,
-          key: 'laser',
-        },
-        projectile.angle,
-        projectile.id,
-      );
-    case 'arrow':
-      return new Arrow(
-        {
-          ...opts,
-          key: 'arrow',
-        },
-        projectile.angle,
-        projectile.id,
-      );
-    default:
-      throw new Error();
-  }
+  const opts = {x: projectile.x, y: projectile.y, scene, angle: projectile.angle, key: projectile.projectileType};
+  return createProjectile(projectile.projectileType, opts, projectile.id);
 }

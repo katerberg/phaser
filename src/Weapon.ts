@@ -1,6 +1,6 @@
 import {v4 as uuid} from 'uuid';
-import {WeaponName, ResourceType, Projectile} from './interfaces';
-import {Arrow, Bullet, Laser} from './projectiles';
+import {WeaponName, ResourceType, WeaponProjectileOpts} from './interfaces';
+import {createProjectile, Projectile} from './projectiles';
 
 interface WeaponOptions {
   type: WeaponName;
@@ -8,12 +8,6 @@ interface WeaponOptions {
   rechargeDelay: number;
   charges?: number;
   resourceTypes?: ResourceType[];
-}
-interface ProjectileOpts {
-  x: number;
-  y: number;
-  angle: number;
-  scene: Phaser.Scene;
 }
 
 export class Weapon {
@@ -38,17 +32,7 @@ export class Weapon {
     this.resourceTypes = options.resourceTypes || ['energy'];
   }
 
-  public createProjectile({x, y, angle, scene}: ProjectileOpts): Projectile {
-    const opts = {x, y, angle, scene};
-    switch (this.weaponImage) {
-      case 'arrow':
-        return new Arrow({...opts, key: 'arrow'}, angle, uuid());
-      case 'bullet':
-        return new Bullet({...opts, key: 'bullet'}, angle, uuid());
-      case 'laser':
-        return new Laser({...opts, key: 'laser'}, angle, uuid());
-      default:
-        throw new Error();
-    }
+  public createProjectile({x, y, angle, scene}: WeaponProjectileOpts): Projectile {
+    return createProjectile(this.weaponImage, {x, y, angle, key: this.weaponImage, scene}, uuid());
   }
 }

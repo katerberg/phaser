@@ -14,10 +14,3 @@ export interface Card {
   id: string;
   costToPlay: number;
 }
-
-export interface Projectile extends Phaser.GameObjects.Image {
-  speed: number;
-  damage: number;
-  id: string;
-  projectileType: ProjectileType;
-}

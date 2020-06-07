@@ -13,7 +13,7 @@ import {EVENTS, PLAY_AREA, SCENES, GAME} from '../constants';
 import {Enemy} from '../Enemy';
 import {ServerProjectile, instanceOfProjectile} from '../interfaces';
 import {Player} from '../Player';
-import {Bullet} from '../projectiles';
+import {Projectile} from '../projectiles';
 import {isDebug} from '../utils/environments';
 
 interface ServerDamage {
@@ -167,7 +167,7 @@ export class GameScene extends Phaser.Scene {
             .getProjectiles()
             .getChildren()
             .forEach((projectile) => {
-              if (projectile instanceof Bullet && projectile.id === projectileId) {
+              if (projectile instanceof Projectile && projectile.id === projectileId) {
                 projectile.destroy();
               }
             });

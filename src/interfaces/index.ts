@@ -1,6 +1,7 @@
-import {Projectile} from './Shared';
+import {Projectile} from '../projectiles/Projectile';
 
 export {ProjectileType} from './ProjectileType';
+export {ProjectileOpts, WeaponProjectileOpts} from './ProjectileOpts';
 export {ResourceType} from './ResourceType';
 export {WeaponType} from './WeaponType';
 export {WeaponName} from './WeaponName';
