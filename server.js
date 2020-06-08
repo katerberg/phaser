@@ -60,13 +60,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('projectileHit', ({playerId, damage, projectileId, botId}) => {
-    if (players[playerId]) {
-      socket.broadcast.emit('projectileDestroyed', {projectileId});
-      if (botId) {
-        io.emit('botDamaged', {playerId, botId, damage});
-      } else {
-        socket.broadcast.emit('playerDamaged', {playerId, damage});
-      }
+    socket.broadcast.emit('projectileDestroyed', {projectileId});
+    if (botId) {
+      io.emit('botDamaged', {playerId, botId, damage});
+    } else if (playerId) {
+      socket.broadcast.emit('playerDamaged', {playerId, damage});
     }
   });
 

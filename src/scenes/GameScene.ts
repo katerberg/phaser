@@ -8,12 +8,14 @@ import grassTileset from '../assets/grass-tileset.png';
 import arrowImage from '../assets/projectiles/arrow.png';
 import bulletImage from '../assets/projectiles/bullet.png';
 import laserImage from '../assets/projectiles/laser.png';
+import rockImage from '../assets/structures/rock.png';
 import {Bot} from '../Bot';
 import {EVENTS, PLAY_AREA, SCENES, GAME} from '../constants';
 import {Enemy} from '../Enemy';
 import {ServerProjectile, instanceOfProjectile} from '../interfaces';
 import {Player} from '../Player';
 import {Projectile} from '../projectiles';
+import {Structure} from '../Structure';
 import {isDebug} from '../utils/environments';
 
 interface ServerDamage {
@@ -53,6 +55,8 @@ export class GameScene extends Phaser.Scene {
 
   otherPlayers!: Phaser.Physics.Arcade.Group;
 
+  structures!: Phaser.Physics.Arcade.Group;
+
   bots!: Phaser.Physics.Arcade.Group;
 
   walls!: Phaser.Physics.Arcade.Group;
@@ -67,6 +71,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('hitman', hitmanImage);
     this.load.image('soldier', soldierImage);
     this.load.image('robot', robotImage);
+    this.load.image('rock', rockImage);
     this.load.image('bullet', bulletImage);
     this.load.image('laser', laserImage);
     this.load.image('arrow', arrowImage);
@@ -86,6 +91,14 @@ export class GameScene extends Phaser.Scene {
       },
     });
 
+    this.structures = this.physics.add.group({
+      createCallback: (p) => {
+        if (p?.body instanceof Phaser.Physics.Arcade.Body) {
+          p.body.setImmovable(true);
+        }
+      },
+    });
+
     this.bots = this.physics.add.group({
       createCallback: (p) => {
         if (p?.body instanceof Phaser.Physics.Arcade.Body) {
@@ -95,6 +108,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.buildPlayArea();
+    this.addStructure();
     this.socket = io('http://127.0.0.1:8081');
 
     this.socket.on('currentPlayers', this.handlePlayerList.bind(this));
@@ -106,6 +120,7 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     if (this.player) {
       this.player.update();
+      this.physics.overlap(this.player.getProjectiles(), this.structures, this.projectileHitStructure, undefined, this);
       this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
       this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
     }
@@ -139,6 +154,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.physics.add.collider(this.otherPlayers, this.player);
     this.physics.add.collider(this.bots, this.player);
+    this.physics.add.collider(this.structures, this.player);
 
     this.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
       this.addOtherPlayer(playerInfo);
@@ -249,7 +265,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addBot(botInfo: ServerBot): void {
-    const bot: Bot = new Bot(
+    const bot = new Bot(
       {
         scene: this,
         x: botInfo.x,
@@ -260,6 +276,16 @@ export class GameScene extends Phaser.Scene {
       botInfo.botId,
     );
     this.bots.add(bot);
+  }
+
+  private addStructure(): void {
+    const structure = new Structure({
+      scene: this,
+      x: PLAY_AREA.xOffset + 100,
+      y: PLAY_AREA.yOffset + 100,
+      key: 'rock',
+    });
+    this.structures.add(structure);
   }
 
   addOtherPlayer(playerInfo: ServerPlayer): void {
@@ -279,6 +305,17 @@ export class GameScene extends Phaser.Scene {
     const map = this.make.tilemap({key: 'map'});
     const tileset = map.addTilesetImage('grass-tileset');
     map.createStaticLayer('Tile Layer 1', tileset, PLAY_AREA.xOffset, PLAY_AREA.yOffset);
+  }
+
+  projectileHitStructure(projectile: Phaser.GameObjects.GameObject, structure: Phaser.GameObjects.GameObject): void {
+    if (!this.socket || !(instanceOfProjectile(projectile) && structure instanceof Structure)) {
+      return;
+    }
+    this.socket.emit('projectileHit', {
+      damage: projectile.damage,
+      projectileId: projectile.id,
+    });
+    projectile.destroy();
   }
 
   projectileHitEnemy(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {
