@@ -12,18 +12,42 @@ app.get('/', (req, res) => {
 
 const players = {};
 const bots = {};
+const structures = {};
+
+function calculateRandomX() {
+  return Math.floor(Math.random() * 988) + 200
+}
+
+function calculateRandomY() {
+  return Math.floor(Math.random() * 550) + 40;
+}
+
+function addStructure() {
+  const id = uuid();
+  structures[id] = {
+    id,
+    type: 'rock',
+    x: calculateRandomX(),
+    y: calculateRandomY(),
+  }
+}
+
+for (let i=0; i<30; i++) {
+  addStructure();
+}
 
 io.on('connection', (socket) => {
   console.log('a user connected', socket.id); //eslint-disable-line no-console
   // Create a new player and add it to our players object
   players[socket.id] = {
     angle: 0,
-    x: Math.floor(Math.random() * 988) + 200,
-    y: Math.floor(Math.random() * 540) + 100,
+    x: calculateRandomX(),
+    y: calculateRandomY(),
     playerId: socket.id,
   };
   // Send the players object to the new player
   socket.emit('currentPlayers', players);
+  socket.emit('currentStructures', structures);
   socket.emit('currentBots', bots);
   // Update all other players of the new player
   socket.broadcast.emit('newPlayer', players[socket.id]);

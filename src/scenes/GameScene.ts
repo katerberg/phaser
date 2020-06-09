@@ -24,6 +24,13 @@ interface ServerDamage {
   botId?: string;
 }
 
+interface ServerStructure {
+  x: number;
+  y: number;
+  id: string;
+  type: string;
+}
+
 interface ServerPlayer {
   x: number;
   y: number;
@@ -108,11 +115,11 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.buildPlayArea();
-    this.addStructure();
     this.socket = io('http://127.0.0.1:8081');
 
     this.socket.on('currentPlayers', this.handlePlayerList.bind(this));
     this.socket.on('currentBots', this.handleBotList.bind(this));
+    this.socket.on('currentStructures', this.handleStructureList.bind(this));
 
     this.events.on(EVENTS.BOT_DESTROYED, this.handleBotDestroyed, this);
   }
@@ -124,6 +131,14 @@ export class GameScene extends Phaser.Scene {
       this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
       this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
     }
+  }
+
+  private handleStructureList(structureList: {['string']: ServerStructure}): void {
+    console.log(structureList);
+    Object.values(structureList).forEach((structure: ServerStructure) => {
+      console.log(structure);
+      this.addStructure(structure.id, structure.x, structure.y, structure.type);
+    });
   }
 
   private handleBotList(playerList: {['string']: {['string']: ServerBot}}): void {
@@ -278,13 +293,16 @@ export class GameScene extends Phaser.Scene {
     this.bots.add(bot);
   }
 
-  private addStructure(): void {
-    const structure = new Structure({
-      scene: this,
-      x: PLAY_AREA.xOffset + 100,
-      y: PLAY_AREA.yOffset + 100,
-      key: 'rock',
-    });
+  private addStructure(id: string, x: number, y: number, type: string): void {
+    const structure = new Structure(
+      {
+        scene: this,
+        x,
+        y,
+        key: type,
+      },
+      id,
+    );
     this.structures.add(structure);
   }
 
