@@ -127,16 +127,20 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     if (this.player) {
       this.player.update();
-      this.physics.overlap(this.player.getProjectiles(), this.structures, this.projectileHitStructure, undefined, this);
+      this.physics.overlap(
+        this.player.getProjectiles(),
+        this.structures,
+        this.projectileHitStructure,
+        this.testStructureOverlap,
+        this,
+      );
       this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
       this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
     }
   }
 
   private handleStructureList(structureList: {['string']: ServerStructure}): void {
-    console.log(structureList);
     Object.values(structureList).forEach((structure: ServerStructure) => {
-      console.log(structure);
       this.addStructure(structure.id, structure.x, structure.y, structure.type);
     });
   }
@@ -323,6 +327,19 @@ export class GameScene extends Phaser.Scene {
     const map = this.make.tilemap({key: 'map'});
     const tileset = map.addTilesetImage('grass-tileset');
     map.createStaticLayer('Tile Layer 1', tileset, PLAY_AREA.xOffset, PLAY_AREA.yOffset);
+  }
+
+  testStructureOverlap(projectile: Phaser.GameObjects.GameObject, structure: Phaser.GameObjects.GameObject): boolean {
+    if (!this.socket || !(instanceOfProjectile(projectile) && structure instanceof Structure)) {
+      return false;
+    }
+    const left = structure.x - structure.width / 2;
+    const right = structure.x + structure.width / 2;
+    const bottom = structure.y - structure.height / 2;
+    const top = structure.y + structure.height / 2;
+    const insideX = projectile.x > left && projectile.x < right;
+    const insideY = projectile.y > bottom && projectile.y < top;
+    return insideX && insideY;
   }
 
   projectileHitStructure(projectile: Phaser.GameObjects.GameObject, structure: Phaser.GameObjects.GameObject): void {

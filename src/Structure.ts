@@ -6,7 +6,7 @@ export class Structure extends Phaser.GameObjects.Image {
   constructor({scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string}, id: string) {
     super(scene, x, y, key);
     this.id = id;
-    this.setOrigin(0.5, 0.5).setDisplaySize(35, 34);
+    this.setDisplaySize(35, 34);
     scene.physics.world.enable(this);
     scene.add.existing(this);
   }
