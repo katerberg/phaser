@@ -284,6 +284,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addBot(botInfo: ServerBot): void {
+    if (!this.socket) {
+      return;
+    }
     const bot = new Bot(
       {
         scene: this,
@@ -293,6 +296,7 @@ export class GameScene extends Phaser.Scene {
       },
       botInfo.playerId,
       botInfo.botId,
+      this.socket,
     );
     this.bots.add(bot);
   }

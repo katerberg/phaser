@@ -1,11 +1,11 @@
 import * as Phaser from 'phaser';
 import {ServerProjectile} from './interfaces';
-import {getProjectile} from './projectiles';
+import {getProjectile, Projectile} from './projectiles';
 
 export class Enemy extends Phaser.GameObjects.Image {
   public playerId: string;
 
-  private projectiles: Phaser.GameObjects.Group;
+  protected projectiles: Phaser.GameObjects.Group;
 
   constructor({scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string}, id: string) {
     super(scene, x, y, key);
@@ -18,8 +18,10 @@ export class Enemy extends Phaser.GameObjects.Image {
     scene.add.existing(this);
   }
 
-  public addProjectile(projectile: ServerProjectile): void {
-    this.projectiles.add(getProjectile(projectile, this.scene));
+  public addProjectile(serverProjectile: ServerProjectile): Projectile {
+    const projectile = getProjectile(serverProjectile, this.scene);
+    this.projectiles.add(projectile);
+    return projectile;
   }
 
   public getProjectiles(): Phaser.GameObjects.Group {
