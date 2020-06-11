@@ -38,8 +38,6 @@ export class GameScene extends Phaser.Scene {
 
   bots!: Phaser.Physics.Arcade.Group;
 
-  walls!: Phaser.Physics.Arcade.Group;
-
   constructor() {
     super({
       key: SCENES.game,
