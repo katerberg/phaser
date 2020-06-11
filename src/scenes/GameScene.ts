@@ -106,6 +106,11 @@ export class GameScene extends Phaser.Scene {
       );
       this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
       this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
+      this.bots.getChildren().forEach((bot) => {
+        if (bot instanceof Bot) {
+          this.physics.overlap(bot.getProjectiles(), this.player, this.projectileHitPlayer, undefined, this);
+        }
+      });
     }
   }
 
@@ -324,6 +329,19 @@ export class GameScene extends Phaser.Scene {
       damage: projectile.damage,
       projectileId: projectile.id,
     });
+    projectile.destroy();
+  }
+
+  projectileHitPlayer(projectile: Phaser.GameObjects.GameObject, player: Phaser.GameObjects.GameObject): void {
+    if (!this.socket || !(instanceOfProjectile(projectile) && player instanceof Player)) {
+      return;
+    }
+    this.socket.emit('projectileHit', {
+      playerId: player.playerId,
+      damage: projectile.damage,
+      projectileId: projectile.id,
+    });
+    player.handleDamage(projectile.damage);
     projectile.destroy();
   }
 

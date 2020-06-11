@@ -31,7 +31,7 @@ export class Bot extends Enemy {
   botProjectile(): void {
     const projectile = this.addProjectile({
       id: uuid(),
-      projectileType: 'arrow',
+      projectileType: 'laser',
       angle: this.angle,
       x: this.x,
       y: this.y,
@@ -49,7 +49,7 @@ export class Bot extends Enemy {
     });
 
     setTimeout(() => {
-      if (this.shouldFire) {
+      if (this.scene && this.shouldFire) {
         this.botProjectile();
       }
     }, 1000);

@@ -27,7 +27,7 @@ export const SPEED = {
 
 export const DAMAGE = {
   arrow: 1,
-  laser: 1,
+  laser: 5,
   bullet: 2,
 };
 
