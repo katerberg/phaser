@@ -12,48 +12,20 @@ import rockImage from '../assets/structures/rock.png';
 import {Bot} from '../Bot';
 import {EVENTS, PLAY_AREA, SCENES, GAME} from '../constants';
 import {Enemy} from '../Enemy';
-import {ServerProjectile, instanceOfProjectile} from '../interfaces';
+import {
+  ServerProjectile,
+  ServerStructure,
+  ServerBotDisconnect,
+  ServerPlayer,
+  ServerProjectileDestroy,
+  ServerDamage,
+  ServerBot,
+  instanceOfProjectile,
+} from '../interfaces';
 import {Player} from '../Player';
 import {Projectile} from '../projectiles';
 import {Structure} from '../Structure';
 import {isDebug} from '../utils/environments';
-
-interface ServerDamage {
-  playerId: string;
-  damage: number;
-  botId?: string;
-}
-
-interface ServerStructure {
-  x: number;
-  y: number;
-  id: string;
-  type: string;
-}
-
-interface ServerPlayer {
-  x: number;
-  y: number;
-  playerId: string;
-  angle: number;
-}
-
-interface ServerBot {
-  x: number;
-  y: number;
-  playerId: string;
-  botId: string;
-  angle: number;
-}
-
-interface ServerBotDisconnect {
-  botId: string;
-  playerId: string;
-}
-
-interface ServerProjectileDestroy {
-  projectileId: string;
-}
 
 export class GameScene extends Phaser.Scene {
   public socket: SocketIOClient.Socket | undefined;
