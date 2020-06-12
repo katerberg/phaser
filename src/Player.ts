@@ -74,7 +74,7 @@ export class Player extends Phaser.GameObjects.Image {
       loop: true,
     });
 
-    this.setAngle(270).setOrigin(0.5, 0.5).setDisplaySize(35, 43);
+    this.setOrigin(0.5, 0.5).setDisplaySize(35, 43);
     this.socket = socket;
     scene.physics.world.enable(this);
     this.body.setCollideWorldBounds();

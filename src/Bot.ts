@@ -43,6 +43,8 @@ export class Bot extends Enemy {
       playerId: this.playerId,
     });
 
+    console.log(this.angle);
+    console.log(projectile.angle);
     this.socket.emit('projectileFiring', {
       x: projectile.x,
       y: projectile.y,
