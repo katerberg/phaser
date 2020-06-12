@@ -272,6 +272,7 @@ export class GameScene extends Phaser.Scene {
       botInfo.playerId,
       botInfo.botId,
       this.socket,
+      botInfo.playerId === this.player?.playerId,
     );
     this.bots.add(bot);
   }

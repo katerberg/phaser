@@ -17,25 +17,29 @@ export class Bot extends Enemy {
     id: string,
     botId: string,
     socket: SocketIOClient.Socket,
+    shouldFire: boolean,
   ) {
     super({scene, x, y, key}, id);
     this.botId = botId;
     this.socket = socket;
     this.hp = 10;
-    this.shouldFire = true;
+    this.shouldFire = shouldFire;
     setTimeout(() => {
       this.botProjectile();
     }, 1000);
   }
 
   botProjectile(): void {
+    if (!this.scene || !this.shouldFire) {
+      return;
+    }
     const projectile = this.addProjectile({
       id: uuid(),
-      projectileType: 'laser',
+      projectileType: 'bullet',
       angle: this.angle,
       x: this.x,
       y: this.y,
-      speed: 200,
+      speed: 20,
       playerId: this.playerId,
     });
 
@@ -49,9 +53,7 @@ export class Bot extends Enemy {
     });
 
     setTimeout(() => {
-      if (this.scene && this.shouldFire) {
-        this.botProjectile();
-      }
+      this.botProjectile();
     }, 1000);
   }
 
