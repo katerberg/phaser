@@ -1,14 +1,19 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
 import {EVENTS} from './constants';
-import {Enemy} from './Enemy';
+import {Player} from './player';
+import {getProjectile} from './projectiles';
 
-export class Bot extends Enemy {
+export class Bot extends Phaser.GameObjects.Image {
+  public playerId: string;
+
   public botId: string;
 
   public hp: number;
 
   private socket: SocketIOClient.Socket;
+
+  private player: Player;
 
   private isOwned: boolean;
 
@@ -17,13 +22,20 @@ export class Bot extends Enemy {
     id: string,
     botId: string,
     socket: SocketIOClient.Socket,
-    isOwned: boolean,
+    player: Player,
   ) {
-    super({scene, x, y, key}, id);
+    super(scene, x, y, key);
+
+    this.setOrigin(0.5, 0.5).setDisplaySize(35, 43);
+    scene.physics.world.enable(this);
+    scene.add.existing(this);
+
+    this.playerId = id;
     this.botId = botId;
     this.socket = socket;
     this.hp = 10;
-    this.isOwned = isOwned;
+    this.player = player;
+    this.isOwned = this.player.playerId === this.playerId;
     setTimeout(() => {
       this.botAct();
     }, 1000);
@@ -56,24 +68,20 @@ export class Bot extends Enemy {
   }
 
   private botProjectile(): void {
-    const projectile = this.addProjectile({
-      id: uuid(),
-      projectileType: 'laser',
-      angle: this.angle,
-      x: this.x,
-      y: this.y,
-      speed: 20,
-      playerId: this.playerId,
-    });
+    const projectile = getProjectile(
+      {
+        id: uuid(),
+        projectileType: 'laser',
+        angle: this.angle,
+        x: this.x,
+        y: this.y,
+        speed: 20,
+        playerId: this.playerId,
+      },
+      this.scene,
+    );
 
-    this.socket.emit('projectileFiring', {
-      x: projectile.x,
-      y: projectile.y,
-      angle: projectile.angle,
-      speed: projectile.speed,
-      projectileType: projectile.projectileType,
-      id: projectile.id,
-    });
+    this.player.addProjectile(projectile);
   }
 
   handleDamage(damage: number): void {

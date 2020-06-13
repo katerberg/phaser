@@ -1,8 +1,9 @@
 import * as Phaser from 'phaser';
 import {EVENTS, MAX, REGISTRIES, SPEED} from './constants';
 import {Inventory} from './Inventory';
+import {Projectile} from './projectiles';
 import {isDebug} from './utils/environments';
-import {getAngleFromSpeed, getProjectilePosition} from './utils/trig';
+import {getAngleFromSpeed, getProjectileStartPosition} from './utils/trig';
 
 interface Maximums {
   energy: number;
@@ -84,6 +85,18 @@ export class Player extends Phaser.GameObjects.Image {
     this.scene.events.on(EVENTS.WEAPON_CHANGED, this.handleWeaponChanged, this);
   }
 
+  public addProjectile(projectile: Projectile): void {
+    this.projectiles.add(projectile);
+    this.socket.emit('projectileFiring', {
+      x: projectile.x,
+      y: projectile.y,
+      angle: projectile.angle,
+      speed: projectile.speed,
+      projectileType: projectile.projectileType,
+      id: projectile.id,
+    });
+  }
+
   public getProjectiles(): Phaser.GameObjects.Group {
     return this.projectiles;
   }
@@ -107,19 +120,11 @@ export class Player extends Phaser.GameObjects.Image {
       this.nextShot < this.scene.time.now &&
       this.energy >= this.inventory.currentWeapon.costOfShot
     ) {
-      const {x, y} = getProjectilePosition(this.x, this.y, this.angle);
+      const {x, y} = getProjectileStartPosition(this.x, this.y, this.angle);
       const projectile = this.inventory.createProjectile(x, y, this.angle);
       const {currentWeapon} = this.inventory;
       this.updateEnergy(this.energy - currentWeapon.costOfShot);
-      this.projectiles.add(projectile);
-      this.socket.emit('projectileFiring', {
-        x: this.x,
-        y: this.y,
-        angle: this.angle,
-        speed: projectile.speed,
-        projectileType: projectile.projectileType,
-        id: projectile.id,
-      });
+      this.addProjectile(projectile);
       this.nextShot = this.scene.time.now + currentWeapon.rechargeDelay;
     }
   }

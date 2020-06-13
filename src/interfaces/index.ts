@@ -12,3 +12,7 @@ export * from './Server';
 export function instanceOfProjectile(object: Phaser.GameObjects.GameObject): object is Projectile {
   return 'speed' in object && 'damage' in object && 'id' in object && 'projectileType' in object;
 }
+
+export function instanceOfImage(object: Phaser.GameObjects.GameObject): object is Phaser.GameObjects.Image {
+  return 'width' in object && 'height' in object && 'x' in object && 'y' in object;
+}

@@ -29,9 +29,9 @@ export function getAngleFromSpeed(x: number, y: number): number {
   return north;
 }
 
-export function getProjectilePosition(x: number, y: number, angle: number): {x: number; y: number} {
-  const playerOffset = PLAYER.height / 2;
-  const xSpeed = Math.cos((angle * Math.PI) / 180) * playerOffset;
-  const ySpeed = Math.sin((angle * Math.PI) / 180) * playerOffset;
-  return {x: x + xSpeed, y: y + ySpeed};
+export function getProjectileStartPosition(playerX: number, playerY: number, angle: number): {x: number; y: number} {
+  const playerOffset = PLAYER.height;
+  const xOffset = Math.cos((angle * Math.PI) / 180) * playerOffset;
+  const yOffset = Math.sin((angle * Math.PI) / 180) * playerOffset;
+  return {x: playerX + xOffset, y: playerY + yOffset};
 }

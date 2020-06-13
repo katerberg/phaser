@@ -20,6 +20,7 @@ import {
   ServerProjectileDestroy,
   ServerDamage,
   ServerBot,
+  instanceOfImage,
   instanceOfProjectile,
 } from '../interfaces';
 import {Player} from '../Player';
@@ -101,16 +102,18 @@ export class GameScene extends Phaser.Scene {
         this.player.getProjectiles(),
         this.structures,
         this.projectileHitStructure,
-        this.testStructureOverlap,
+        this.testImageOverlap,
         this,
       );
       this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
       this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
-      this.bots.getChildren().forEach((bot) => {
-        if (bot instanceof Bot) {
-          this.physics.overlap(bot.getProjectiles(), this.player, this.projectileHitPlayer, undefined, this);
-        }
-      });
+      this.physics.overlap(
+        this.player.getProjectiles(),
+        this.player,
+        this.projectileHitPlayer,
+        this.testImageOverlap,
+        this,
+      );
     }
   }
 
@@ -259,7 +262,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addBot(botInfo: ServerBot): void {
-    if (!this.socket) {
+    if (!this.socket || !this.player) {
       return;
     }
     const bot = new Bot(
@@ -272,7 +275,7 @@ export class GameScene extends Phaser.Scene {
       botInfo.playerId,
       botInfo.botId,
       this.socket,
-      botInfo.playerId === this.player?.playerId,
+      this.player,
     );
     this.bots.add(bot);
   }
@@ -309,14 +312,14 @@ export class GameScene extends Phaser.Scene {
     map.createStaticLayer('Tile Layer 1', tileset, PLAY_AREA.xOffset, PLAY_AREA.yOffset);
   }
 
-  testStructureOverlap(projectile: Phaser.GameObjects.GameObject, structure: Phaser.GameObjects.GameObject): boolean {
-    if (!this.socket || !(instanceOfProjectile(projectile) && structure instanceof Structure)) {
+  testImageOverlap(projectile: Phaser.GameObjects.GameObject, image: Phaser.GameObjects.GameObject): boolean {
+    if (!this.socket || !instanceOfProjectile(projectile) || !instanceOfImage(image)) {
       return false;
     }
-    const left = structure.x - structure.width / 2;
-    const right = structure.x + structure.width / 2;
-    const bottom = structure.y - structure.height / 2;
-    const top = structure.y + structure.height / 2;
+    const left = image.x - image.width / 2;
+    const right = image.x + image.width / 2;
+    const bottom = image.y - image.height / 2;
+    const top = image.y + image.height / 2;
     const insideX = projectile.x > left && projectile.x < right;
     const insideY = projectile.y > bottom && projectile.y < top;
     return insideX && insideY;
@@ -347,7 +350,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   projectileHitEnemy(projectile: Phaser.GameObjects.GameObject, enemy: Phaser.GameObjects.GameObject): void {
-    if (!this.socket || !(instanceOfProjectile(projectile) && enemy instanceof Enemy)) {
+    if (!this.socket || !(instanceOfProjectile(projectile) && (enemy instanceof Enemy || enemy instanceof Bot))) {
       return;
     }
     this.socket.emit('projectileHit', {

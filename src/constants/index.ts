@@ -51,7 +51,7 @@ export const MAX = {
 };
 
 export const PLAYER = {
-  height: 34,
+  height: 35,
 };
 
 export const SCENES = {
