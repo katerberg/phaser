@@ -10,29 +10,52 @@ export class Bot extends Enemy {
 
   private socket: SocketIOClient.Socket;
 
-  private shouldFire: boolean;
+  private isOwned: boolean;
 
   constructor(
     {scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string},
     id: string,
     botId: string,
     socket: SocketIOClient.Socket,
-    shouldFire: boolean,
+    isOwned: boolean,
   ) {
     super({scene, x, y, key}, id);
     this.botId = botId;
     this.socket = socket;
     this.hp = 10;
-    this.shouldFire = shouldFire;
+    this.isOwned = isOwned;
     setTimeout(() => {
-      this.botProjectile();
+      this.botAct();
     }, 1000);
   }
 
-  botProjectile(): void {
-    if (!this.scene || !this.shouldFire) {
+  private botAct(): void {
+    if (!this.scene || !this.isOwned) {
       return;
     }
+    switch (Math.floor(Math.random() * 10)) {
+      case 0:
+        this.setAngle(90);
+        break;
+      case 1:
+        this.setAngle(180);
+        break;
+      case 2:
+        this.setAngle(270);
+        break;
+      case 3:
+        this.setAngle(0);
+        break;
+      default:
+        this.botProjectile();
+    }
+
+    setTimeout(() => {
+      this.botAct();
+    }, 1000);
+  }
+
+  private botProjectile(): void {
     const projectile = this.addProjectile({
       id: uuid(),
       projectileType: 'laser',
@@ -51,17 +74,13 @@ export class Bot extends Enemy {
       projectileType: projectile.projectileType,
       id: projectile.id,
     });
-
-    setTimeout(() => {
-      this.botProjectile();
-    }, 1000);
   }
 
   handleDamage(damage: number): void {
     this.hp -= damage;
     if (this.hp <= 0) {
       this.scene.events.emit(EVENTS.BOT_DESTROYED, {botId: this.botId, playerId: this.playerId});
-      this.shouldFire = false;
+      this.isOwned = false;
       this.destroy();
     }
   }
