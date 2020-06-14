@@ -88,9 +88,9 @@ export class GameScene extends Phaser.Scene {
     this.buildPlayArea();
     this.socket = io('http://127.0.0.1:8081');
 
-    this.socket.on('currentPlayers', this.handlePlayerList.bind(this));
-    this.socket.on('currentBots', this.handleBotList.bind(this));
-    this.socket.on('currentStructures', this.handleStructureList.bind(this));
+    this.socket.on(EVENTS.CURRENT_PLAYERS, this.handlePlayerList.bind(this));
+    this.socket.on(EVENTS.CURRENT_BOTS, this.handleBotList.bind(this));
+    this.socket.on(EVENTS.CURRENT_STRUCTURES, this.handleStructureList.bind(this));
 
     this.events.on(EVENTS.BOT_DESTROYED, this.handleBotDestroyed, this);
   }
@@ -153,15 +153,15 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.bots, this.player);
     this.physics.add.collider(this.structures, this.player);
 
-    this.socket.on('newPlayer', (playerInfo: ServerPlayer) => {
+    this.socket.on(EVENTS.NEW_PLAYER, (playerInfo: ServerPlayer) => {
       this.addOtherPlayer(playerInfo);
     });
 
-    this.socket.on('newBot', (botInfo: ServerBot) => {
+    this.socket.on(EVENTS.NEW_BOT, (botInfo: ServerBot) => {
       this.addBot(botInfo);
     });
 
-    this.socket.on('disconnect', this.handleDisconnect.bind(this));
+    this.socket.on(EVENTS.PLAYER_REMOVED, this.handleDisconnect.bind(this));
 
     this.socket.on(EVENTS.PROJECTILE_FIRED, (projectileInfo: ServerProjectile) => {
       this.otherPlayers.getChildren().forEach((otherPlayer) => {
@@ -173,7 +173,7 @@ export class GameScene extends Phaser.Scene {
       });
     });
 
-    this.socket.on('projectileDestroyed', ({projectileId}: ServerProjectileDestroy) => {
+    this.socket.on(EVENTS.PROJECTILE_DESTROYED, ({projectileId}: ServerProjectileDestroy) => {
       this.otherPlayers.getChildren().forEach((otherPlayer) => {
         if (otherPlayer instanceof Enemy) {
           otherPlayer
@@ -188,7 +188,7 @@ export class GameScene extends Phaser.Scene {
       });
     });
 
-    this.socket.on('playerMoved', (playerInfo: ServerPlayer) => {
+    this.socket.on(EVENTS.PLAYER_MOVED, (playerInfo: ServerPlayer) => {
       this.otherPlayers.getChildren().forEach((otherPlayer) => {
         if (otherPlayer instanceof Enemy && playerInfo.playerId === otherPlayer.playerId) {
           otherPlayer.setAngle(playerInfo.angle);
@@ -197,13 +197,13 @@ export class GameScene extends Phaser.Scene {
       });
     });
 
-    this.socket.on('playerDamaged', ({playerId, damage}: ServerDamage) => {
+    this.socket.on(EVENTS.PLAYER_DAMAGED, ({playerId, damage}: ServerDamage) => {
       if (this.player?.playerId === playerId) {
         this.player.handleDamage(damage);
       }
     });
 
-    this.socket.on('botDamaged', ({botId, playerId, damage}: ServerDamage) => {
+    this.socket.on(EVENTS.BOT_DAMAGED, ({botId, playerId, damage}: ServerDamage) => {
       if (this.player?.playerId === playerId) {
         this.bots.getChildren().forEach((bot) => {
           if (bot instanceof Bot && bot.botId === botId) {
@@ -213,7 +213,7 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    this.socket.on('botRemoved', this.handleBotRemoval.bind(this));
+    this.socket.on(EVENTS.BOT_REMOVED, this.handleBotRemoval.bind(this));
   }
 
   handleBotRemoval({botId}: ServerBotDisconnect): void {
