@@ -92,6 +92,7 @@ export class Player extends Phaser.GameObjects.Image {
       y: projectile.y,
       angle: projectile.angle,
       speed: projectile.speed,
+      damage: projectile.damage,
       projectileType: projectile.projectileType,
       id: projectile.id,
     });

@@ -59,9 +59,9 @@ io.on('connection', (socket) => {
     io.emit('disconnect', socket.id);
   });
 
-  socket.on('projectileFiring', ({x, y, speed, angle, id, projectileType}) => {
+  socket.on('projectileFiring', ({x, y, speed, angle, id, damage, projectileType}) => {
     if (players[socket.id]) {
-      socket.broadcast.emit('projectileFired', {x, y, speed, angle, playerId: socket.id, id, projectileType});
+      socket.broadcast.emit('projectileFired', {x, y, speed, angle, damage, playerId: socket.id, id, projectileType});
     }
   });
 

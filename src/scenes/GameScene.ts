@@ -163,7 +163,7 @@ export class GameScene extends Phaser.Scene {
 
     this.socket.on('disconnect', this.handleDisconnect.bind(this));
 
-    this.socket.on('projectileFired', (projectileInfo: ServerProjectile) => {
+    this.socket.on(EVENTS.PROJECTILE_FIRED, (projectileInfo: ServerProjectile) => {
       this.otherPlayers.getChildren().forEach((otherPlayer) => {
         if (otherPlayer instanceof Enemy) {
           if (otherPlayer.playerId === projectileInfo.playerId) {
@@ -274,7 +274,6 @@ export class GameScene extends Phaser.Scene {
       },
       botInfo.playerId,
       botInfo.botId,
-      this.socket,
       this.player,
     );
     this.bots.add(bot);

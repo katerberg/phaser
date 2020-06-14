@@ -13,12 +13,11 @@ export class Projectile extends Phaser.GameObjects.Image {
   public damage: number;
 
   constructor(
-    {x, y, scene, key}: ProjectileOpts,
+    {x, y, scene, key, damage}: ProjectileOpts,
     angle: number,
     id: string,
     type: ProjectileType,
     speed: number,
-    damage: number,
   ) {
     super(scene, x, y, key);
     this.scene.physics.world.enable(this);

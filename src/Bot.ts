@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
-import {EVENTS} from './constants';
+import {EVENTS, DAMAGE} from './constants';
 import {Player} from './player';
 import {getProjectile} from './projectiles';
 
@@ -11,8 +11,6 @@ export class Bot extends Phaser.GameObjects.Image {
 
   public hp: number;
 
-  private socket: SocketIOClient.Socket;
-
   private player: Player;
 
   private isOwned: boolean;
@@ -21,7 +19,6 @@ export class Bot extends Phaser.GameObjects.Image {
     {scene, x, y, key}: {scene: Phaser.Scene; x: number; y: number; key: string},
     id: string,
     botId: string,
-    socket: SocketIOClient.Socket,
     player: Player,
   ) {
     super(scene, x, y, key);
@@ -32,7 +29,6 @@ export class Bot extends Phaser.GameObjects.Image {
 
     this.playerId = id;
     this.botId = botId;
-    this.socket = socket;
     this.hp = 10;
     this.player = player;
     this.isOwned = this.player.playerId === this.playerId;
@@ -77,6 +73,7 @@ export class Bot extends Phaser.GameObjects.Image {
         y: this.y,
         speed: 20,
         playerId: this.playerId,
+        damage: DAMAGE.laser,
       },
       this.scene,
     );

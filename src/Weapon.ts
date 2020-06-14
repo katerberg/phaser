@@ -1,4 +1,5 @@
 import {v4 as uuid} from 'uuid';
+import {DAMAGE} from './constants';
 import {WeaponName, ResourceType, WeaponProjectileOpts} from './interfaces';
 import {createProjectile, Projectile} from './projectiles';
 
@@ -33,6 +34,7 @@ export class Weapon {
   }
 
   public createProjectile({x, y, angle, scene}: WeaponProjectileOpts): Projectile {
-    return createProjectile(this.weaponImage, {x, y, angle, key: this.weaponImage, scene}, uuid());
+    const damage = DAMAGE[this.weaponImage];
+    return createProjectile(this.weaponImage, {x, y, angle, key: this.weaponImage, scene, damage}, uuid());
   }
 }

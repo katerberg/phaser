@@ -37,6 +37,7 @@ export interface ServerProjectile {
   id: string;
   x: number;
   y: number;
+  damage: number;
   playerId: string;
   angle: number;
   speed: number;
