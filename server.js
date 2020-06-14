@@ -65,20 +65,20 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('playerMovement', (movementData) => {
+  socket.on('playerMovement', ({x, y, angle}) => {
     if (players[socket.id]) {
-      players[socket.id].x = movementData.x;
-      players[socket.id].y = movementData.y;
-      players[socket.id].angle = movementData.angle;
+      players[socket.id].x = x;
+      players[socket.id].y = y;
+      players[socket.id].angle = angle;
       socket.broadcast.emit('playerMoved', players[socket.id]);
     }
   });
 
-  socket.on('botMovement', (movementData) => {
+  socket.on('botMovement', ({x, y, botId, angle}) => {
     if (players[socket.id]) {
-      bots[socket.id][movementData.botId].x = movementData.x;
-      bots[socket.id][movementData.botId].y = movementData.y;
-      bots[socket.id][movementData.botId].angle = movementData.angle;
+      bots[socket.id][botId].x = x;
+      bots[socket.id][botId].y = y;
+      bots[socket.id][botId].angle = angle;
       socket.broadcast.emit('botMoved', bots[socket.id]);
     }
   });
