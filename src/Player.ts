@@ -4,6 +4,7 @@ import {Inventory} from './Inventory';
 import {Projectile} from './projectiles';
 import {isDebug} from './utils/environments';
 import {getAngleFromSpeed, getProjectileStartPosition} from './utils/trig';
+import {createFloatingText} from './utils/visuals';
 
 interface Maximums {
   energy: number;
@@ -104,6 +105,8 @@ export class Player extends Phaser.GameObjects.Image {
 
   public handleDamage(damage: number): void {
     this.hp -= damage;
+
+    createFloatingText(this.scene, this.x, this.y, `${damage}`, 'red');
     this.scene.registry.set(REGISTRIES.PLAYER_HP, this.hp);
     this.scene.events.emit(EVENTS.HP_CHANGED);
     if (this.hp <= 0) {
@@ -126,6 +129,8 @@ export class Player extends Phaser.GameObjects.Image {
       const {currentWeapon} = this.inventory;
       this.updateEnergy(this.energy - currentWeapon.costOfShot);
       this.addProjectile(projectile);
+
+      createFloatingText(this.scene, x, y, 'pew');
       this.nextShot = this.scene.time.now + currentWeapon.rechargeDelay;
     }
   }

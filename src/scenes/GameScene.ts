@@ -27,6 +27,7 @@ import {Player} from '../Player';
 import {Projectile} from '../projectiles';
 import {Structure} from '../Structure';
 import {isDebug} from '../utils/environments';
+import {createFloatingText} from '../utils/visuals';
 
 export class GameScene extends Phaser.Scene {
   public socket: SocketIOClient.Socket | undefined;
@@ -358,6 +359,7 @@ export class GameScene extends Phaser.Scene {
       projectileId: projectile.id,
       botId: enemy instanceof Bot ? enemy.botId : undefined,
     });
+    createFloatingText(this, projectile.x, projectile.y, `${projectile.damage}`, 'red');
     projectile.destroy();
   }
 

@@ -14,6 +14,21 @@ export function getCharges(weapon: WeaponName): number | undefined {
   }
 }
 
+export function getDamageModifier(resource: ResourceType): number {
+  switch (resource) {
+    case 'iron':
+      return 2;
+    case 'poison':
+      return 5;
+    case 'wood':
+      return 1;
+    case 'energy':
+      return 0;
+    default:
+      return 0;
+  }
+}
+
 export function getColor(resource: ResourceType): number | undefined {
   switch (resource) {
     case 'iron':
