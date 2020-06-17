@@ -99,23 +99,30 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     if (this.player) {
       this.player.update();
-      this.physics.overlap(
-        this.player.getProjectiles(),
-        this.structures,
-        this.projectileHitStructure,
-        this.testImageOverlap,
-        this,
-      );
-      this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
-      this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
-      this.physics.overlap(
-        this.player.getProjectiles(),
-        this.player,
-        this.projectileHitPlayer,
-        this.testImageOverlap,
-        this,
-      );
+      this.updateOverlap();
     }
+  }
+
+  private updateOverlap(): void {
+    if (!this.player) {
+      return;
+    }
+    this.physics.overlap(
+      this.player.getProjectiles(),
+      this.structures,
+      this.projectileHitStructure,
+      this.testImageOverlap,
+      this,
+    );
+    this.physics.overlap(this.player.getProjectiles(), this.otherPlayers, this.projectileHitEnemy, undefined, this);
+    this.physics.overlap(this.player.getProjectiles(), this.bots, this.projectileHitEnemy, undefined, this);
+    this.physics.overlap(
+      this.player.getProjectiles(),
+      this.player,
+      this.projectileHitPlayer,
+      this.testImageOverlap,
+      this,
+    );
   }
 
   private handleStructureList(structureList: {['string']: ServerStructure}): void {
@@ -198,17 +205,17 @@ export class GameScene extends Phaser.Scene {
       });
     });
 
-    this.socket.on(EVENTS.PLAYER_DAMAGED, ({playerId, damage}: ServerDamage) => {
+    this.socket.on(EVENTS.PLAYER_DAMAGED, ({playerId, damageAmount, damageOverTime}: ServerDamage) => {
       if (this.player?.playerId === playerId) {
-        this.player.handleDamage(damage);
+        this.player.handleDamage(damageAmount, damageOverTime);
       }
     });
 
-    this.socket.on(EVENTS.BOT_DAMAGED, ({botId, playerId, damage}: ServerDamage) => {
+    this.socket.on(EVENTS.BOT_DAMAGED, ({botId, playerId, damageAmount, damageOverTime}: ServerDamage) => {
       if (this.player?.playerId === playerId) {
         this.bots.getChildren().forEach((bot) => {
           if (bot instanceof Bot && bot.botId === botId) {
-            bot.handleDamage(damage);
+            bot.handleDamage(damageAmount, damageOverTime);
           }
         });
       }
@@ -330,7 +337,8 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     this.socket.emit('projectileHit', {
-      damage: projectile.damage,
+      damageAmount: projectile.damageAmount,
+      damageOverTime: projectile.damageOverTime,
       projectileId: projectile.id,
     });
     projectile.destroy();
@@ -342,10 +350,11 @@ export class GameScene extends Phaser.Scene {
     }
     this.socket.emit('projectileHit', {
       playerId: player.playerId,
-      damage: projectile.damage,
+      damageAmount: projectile.damageAmount,
+      damageOverTime: projectile.damageOverTime,
       projectileId: projectile.id,
     });
-    player.handleDamage(projectile.damage);
+    player.handleDamage(projectile.damageAmount, projectile.damageOverTime);
     projectile.destroy();
   }
 
@@ -355,12 +364,25 @@ export class GameScene extends Phaser.Scene {
     }
     this.socket.emit('projectileHit', {
       playerId: enemy.playerId,
-      damage: projectile.damage,
+      damageAmount: projectile.damageAmount,
+      damageOverTime: projectile.damageOverTime,
       projectileId: projectile.id,
       botId: enemy instanceof Bot ? enemy.botId : undefined,
     });
-    createFloatingText(this, projectile.x, projectile.y, `${projectile.damage}`, 'red');
+    this.handleEnemyDamageDisplay(projectile.damageAmount, projectile.damageOverTime, enemy);
     projectile.destroy();
+  }
+
+  private handleEnemyDamageDisplay(damageAmount: number, damageOverTime: number, enemy: Enemy | Bot): void {
+    if (!this.socket || !enemy.visible) {
+      return;
+    }
+    const dot = Math.ceil(damageAmount / damageOverTime);
+    const amount = damageOverTime ? dot : damageAmount;
+    createFloatingText(this, enemy.x, enemy.y, `${amount}`, 'red');
+    if (damageOverTime) {
+      setTimeout(() => this.handleEnemyDamageDisplay(damageAmount - dot, damageOverTime - 1, enemy), 1000);
+    }
   }
 
   private handleBotDestroyed({botId, playerId}: {botId: number; playerId: number}): void {

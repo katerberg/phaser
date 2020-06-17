@@ -10,10 +10,12 @@ export class Projectile extends Phaser.GameObjects.Image {
 
   public projectileType: ProjectileType;
 
-  public damage: number;
+  public damageAmount: number;
+
+  public damageOverTime: number;
 
   constructor(
-    {x, y, scene, key, damage}: ProjectileOpts,
+    {x, y, scene, key, damageAmount, damageOverTime}: ProjectileOpts,
     angle: number,
     id: string,
     type: ProjectileType,
@@ -24,7 +26,8 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.id = id;
     this.projectileType = type;
     this.speed = speed;
-    this.damage = damage;
+    this.damageAmount = damageAmount;
+    this.damageOverTime = damageOverTime;
     this.setAngle(angle).setOrigin(0.5, 0.5).setDisplaySize(10, 10);
     if (this.body instanceof Phaser.Physics.Arcade.Body) {
       const xVelocity = Math.cos((angle * Math.PI) / 180) * this.speed;
@@ -43,5 +46,13 @@ export class Projectile extends Phaser.GameObjects.Image {
     ) {
       this.destroy();
     }
+  }
+
+  public setDamageAmount(time: number): void {
+    this.damageAmount = time;
+  }
+
+  public setDamageOverTime(time: number): void {
+    this.damageOverTime = time;
   }
 }

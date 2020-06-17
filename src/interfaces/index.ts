@@ -10,7 +10,13 @@ export {Card} from './Card';
 export * from './Server';
 
 export function instanceOfProjectile(object: Phaser.GameObjects.GameObject): object is Projectile {
-  return 'speed' in object && 'damage' in object && 'id' in object && 'projectileType' in object;
+  return (
+    'speed' in object &&
+    'damageAmount' in object &&
+    'damageOverTime' in object &&
+    'id' in object &&
+    'projectileType' in object
+  );
 }
 
 export function instanceOfImage(object: Phaser.GameObjects.GameObject): object is Phaser.GameObjects.Image {

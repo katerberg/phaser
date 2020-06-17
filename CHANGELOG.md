@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Structures
-
+- Visuals of damage hits
+- Damage from weapon resource types
 
 ## [0.0.6] - 2020-05-31
 ### Added

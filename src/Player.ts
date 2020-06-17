@@ -88,12 +88,13 @@ export class Player extends Phaser.GameObjects.Image {
 
   public addProjectile(projectile: Projectile): void {
     this.projectiles.add(projectile);
-    this.socket.emit('projectileFiring', {
+    this.socket.emit(EVENTS.PROJECTILE_FIRING, {
       x: projectile.x,
       y: projectile.y,
       angle: projectile.angle,
       speed: projectile.speed,
-      damage: projectile.damage,
+      damageAmount: projectile.damageAmount,
+      damageOverTime: projectile.damageOverTime,
       projectileType: projectile.projectileType,
       id: projectile.id,
     });
@@ -103,7 +104,21 @@ export class Player extends Phaser.GameObjects.Image {
     return this.projectiles;
   }
 
-  public handleDamage(damage: number): void {
+  public handleDamage(damage: number, overTime: number): void {
+    if (overTime) {
+      if (this.hp >= 0) {
+        const currentDamage = Math.floor(damage / overTime);
+        this.handleImmediateDamage(currentDamage);
+        setTimeout(() => {
+          this.handleDamage(damage - currentDamage, overTime - 1);
+        }, 1000);
+      }
+    } else {
+      this.handleImmediateDamage(damage);
+    }
+  }
+
+  private handleImmediateDamage(damage: number): void {
     this.hp -= damage;
 
     createFloatingText(this.scene, this.x, this.y, `${damage}`, 'red');

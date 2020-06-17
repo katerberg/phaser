@@ -35,7 +35,12 @@ export class Weapon {
   }
 
   public createProjectile({x, y, angle, scene}: WeaponProjectileOpts): Projectile {
-    const damage = this.resourceTypes.map(getDamageModifier).reduce((a, c) => a + c, DAMAGE[this.weaponImage]);
-    return createProjectile(this.weaponImage, {x, y, angle, key: this.weaponImage, scene, damage}, uuid());
+    const damageAmount = this.resourceTypes.map(getDamageModifier).reduce((a, c) => a + c, DAMAGE[this.weaponImage]);
+    const damageOverTime = 0 + this.resourceTypes.reduce((a, c) => a + (c === 'poison' ? 2 : 0), 0);
+    return createProjectile(
+      this.weaponImage,
+      {x, y, angle, key: this.weaponImage, scene, damageAmount, damageOverTime},
+      uuid(),
+    );
   }
 }

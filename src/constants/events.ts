@@ -21,6 +21,7 @@ export const EVENTS = {
   BOT_DESTROYED: 'botDestroyed',
   PROJECTILE_DESTROYED: 'projectileDestroyed',
   PROJECTILE_FIRED: 'projectileFired',
+  PROJECTILE_FIRING: 'projectileFiring',
   CURRENT_PLAYERS: 'currentPlayers',
   CURRENT_BOTS: 'currentBots',
   CURRENT_STRUCTURES: 'currentStructures',

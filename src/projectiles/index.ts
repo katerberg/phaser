@@ -1,4 +1,4 @@
-import {DAMAGE, SPEED} from '../constants';
+import {SPEED} from '../constants';
 import {ProjectileType, ServerProjectile, ProjectileOpts} from '../interfaces';
 import {Projectile} from './Projectile';
 
@@ -15,7 +15,8 @@ export function getProjectile(projectile: ServerProjectile, scene: Phaser.Scene)
     scene,
     angle: projectile.angle,
     key: projectile.projectileType,
-    damage: DAMAGE[projectile.projectileType],
+    damageAmount: projectile.damageAmount,
+    damageOverTime: projectile.damageOverTime,
   };
   return createProjectile(projectile.projectileType, opts, projectile.id);
 }

@@ -73,7 +73,8 @@ export class Bot extends Phaser.GameObjects.Image {
         y: this.y,
         speed: 20,
         playerId: this.playerId,
-        damage: DAMAGE.laser,
+        damageAmount: DAMAGE.laser,
+        damageOverTime: 4,
       },
       this.scene,
     );
@@ -81,7 +82,21 @@ export class Bot extends Phaser.GameObjects.Image {
     this.player.addProjectile(projectile);
   }
 
-  handleDamage(damage: number): void {
+  public handleDamage(damage: number, overTime: number): void {
+    if (overTime) {
+      if (this.hp >= 0) {
+        const currentDamage = Math.floor(damage / overTime);
+        this.handleImmediateDamage(currentDamage);
+        setTimeout(() => {
+          this.handleDamage(damage - currentDamage, overTime - 1);
+        }, 1000);
+      }
+    } else {
+      this.handleImmediateDamage(damage);
+    }
+  }
+
+  private handleImmediateDamage(damage: number): void {
     this.hp -= damage;
     if (this.hp <= 0) {
       this.scene.events.emit(EVENTS.BOT_DESTROYED, {botId: this.botId, playerId: this.playerId});

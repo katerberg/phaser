@@ -2,7 +2,8 @@ import {ProjectileType} from './ProjectileType';
 
 export interface ServerDamage {
   playerId: string;
-  damage: number;
+  damageAmount: number;
+  damageOverTime: number;
   botId?: string;
 }
 
@@ -37,7 +38,8 @@ export interface ServerProjectile {
   id: string;
   x: number;
   y: number;
-  damage: number;
+  damageAmount: number;
+  damageOverTime: number;
   playerId: string;
   angle: number;
   speed: number;
