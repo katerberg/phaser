@@ -35,3 +35,9 @@ export function getProjectileStartPosition(playerX: number, playerY: number, ang
   const yOffset = Math.sin((angle * Math.PI) / 180) * playerOffset;
   return {x: playerX + xOffset, y: playerY + yOffset};
 }
+
+export function getBotVelocity(angle: number, speed: number): {x: number; y: number} {
+  const xSpeed = Math.cos((angle * Math.PI) / 180) * speed;
+  const ySpeed = Math.sin((angle * Math.PI) / 180) * speed;
+  return {x: xSpeed, y: ySpeed};
+}

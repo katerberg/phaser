@@ -1,10 +1,13 @@
 import * as Phaser from 'phaser';
 import {v4 as uuid} from 'uuid';
-import {EVENTS, DAMAGE} from './constants';
+import {EVENTS, DAMAGE, SPEED} from './constants';
 import {Player} from './player';
 import {getProjectile} from './projectiles';
+import {getBotVelocity} from './utils/trig';
 
 export class Bot extends Phaser.GameObjects.Image {
+  public body!: Phaser.Physics.Arcade.Body; // handled by world.enable
+
   public playerId: string;
 
   public botId: string;
@@ -41,6 +44,8 @@ export class Bot extends Phaser.GameObjects.Image {
     if (!this.scene || !this.isOwned) {
       return;
     }
+    this.body.setVelocity(0);
+    const {x, y} = getBotVelocity(this.angle, SPEED.bot);
     switch (Math.floor(Math.random() * 10)) {
       case 0:
         this.setAngle(90);
@@ -53,6 +58,10 @@ export class Bot extends Phaser.GameObjects.Image {
         break;
       case 3:
         this.setAngle(0);
+        break;
+      case 4:
+      case 5:
+        this.body.setVelocity(x, y);
         break;
       default:
         this.botProjectile();
