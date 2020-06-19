@@ -62,31 +62,20 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor('#FFFFFF');
     this.physics.world.setBounds(PLAY_AREA.xOffset, PLAY_AREA.yOffset, PLAY_AREA.width, PLAY_AREA.height);
-    this.otherPlayers = this.physics.add.group({
+
+    const immovableOptions: {createCallback: Phaser.Types.GameObjects.Group.GroupCallback} = {
       createCallback: (p) => {
         if (p?.body instanceof Phaser.Physics.Arcade.Body) {
           p.body.setImmovable(true);
         }
       },
-    });
+    };
 
-    this.structures = this.physics.add.group({
-      createCallback: (p) => {
-        if (p?.body instanceof Phaser.Physics.Arcade.Body) {
-          p.body.setImmovable(true);
-        }
-      },
-    });
-
-    this.bots = this.physics.add.group({
-      createCallback: (p) => {
-        if (p?.body instanceof Phaser.Physics.Arcade.Body) {
-          p.body.setImmovable(true);
-        }
-      },
-    });
-
+    this.otherPlayers = this.physics.add.group(immovableOptions);
+    this.structures = this.physics.add.group(immovableOptions);
+    this.bots = this.physics.add.group(immovableOptions);
     this.buildPlayArea();
+
     this.socket = io('http://127.0.0.1:8081');
 
     this.socket.on(EVENTS.CURRENT_PLAYERS, this.handlePlayerList.bind(this));
@@ -159,6 +148,8 @@ export class GameScene extends Phaser.Scene {
     }
     this.physics.add.collider(this.otherPlayers, this.player);
     this.physics.add.collider(this.bots, this.player);
+    this.physics.add.collider(this.bots, this.structures);
+    this.physics.add.collider(this.bots, this.otherPlayers);
     this.physics.add.collider(this.structures, this.player);
 
     this.socket.on(EVENTS.NEW_PLAYER, (playerInfo: ServerPlayer) => {
@@ -285,6 +276,11 @@ export class GameScene extends Phaser.Scene {
       this.player,
     );
     this.bots.add(bot);
+    this.bots.getChildren().forEach((unsetBot) => {
+      if (unsetBot instanceof Bot) {
+        unsetBot.body.setCollideWorldBounds();
+      }
+    });
   }
 
   private addStructure(id: string, x: number, y: number, type: string): void {

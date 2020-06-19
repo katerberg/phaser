@@ -28,6 +28,7 @@ export class Bot extends Phaser.GameObjects.Image {
 
     this.setOrigin(0.5, 0.5).setDisplaySize(35, 43);
     scene.physics.world.enable(this);
+    this.body.setCollideWorldBounds();
     scene.add.existing(this);
 
     this.playerId = id;
@@ -44,8 +45,6 @@ export class Bot extends Phaser.GameObjects.Image {
     if (!this.scene || !this.isOwned) {
       return;
     }
-    this.body.setVelocity(0);
-    const {x, y} = getBotVelocity(this.angle, SPEED.bot);
     switch (Math.floor(Math.random() * 10)) {
       case 0:
         this.setAngle(90);
@@ -59,13 +58,11 @@ export class Bot extends Phaser.GameObjects.Image {
       case 3:
         this.setAngle(0);
         break;
-      case 4:
-      case 5:
-        this.body.setVelocity(x, y);
-        break;
       default:
         this.botProjectile();
     }
+    const {x, y} = getBotVelocity(this.angle, SPEED.bot);
+    this.body.setVelocity(x, y);
 
     setTimeout(() => {
       this.botAct();
