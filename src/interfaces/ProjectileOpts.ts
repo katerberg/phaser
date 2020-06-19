@@ -1,5 +1,6 @@
 export interface ProjectileOpts extends WeaponProjectileOpts {
   key: string;
+  speed: number;
   damageAmount: number;
   damageOverTime: number;
 }

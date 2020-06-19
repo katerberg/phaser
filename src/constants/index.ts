@@ -22,7 +22,7 @@ export const SPEED = {
   player: 150,
   bot: 100,
   arrow: 200,
-  laser: 2500,
+  laser: 250,
   bullet: 400,
 };
 

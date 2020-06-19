@@ -3,7 +3,7 @@ import {v4 as uuid} from 'uuid';
 import {EVENTS, DAMAGE, SPEED} from './constants';
 import {Player} from './player';
 import {getProjectile} from './projectiles';
-import {getBotVelocity} from './utils/trig';
+import {getBotVelocity, getProjectileStartPosition} from './utils/trig';
 
 export class Bot extends Phaser.GameObjects.Image {
   public body!: Phaser.Physics.Arcade.Body; // handled by world.enable
@@ -70,17 +70,18 @@ export class Bot extends Phaser.GameObjects.Image {
   }
 
   private botProjectile(): void {
+    const {x, y} = getProjectileStartPosition(this.x, this.y, this.angle);
     const projectile = getProjectile(
       {
         id: uuid(),
         projectileType: 'laser',
         angle: this.angle,
-        x: this.x,
-        y: this.y,
-        speed: 20,
+        x,
+        y,
+        speed: 500,
         playerId: this.playerId,
         damageAmount: DAMAGE.laser,
-        damageOverTime: 4,
+        damageOverTime: 0,
       },
       this.scene,
     );

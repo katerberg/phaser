@@ -1,5 +1,5 @@
 import {v4 as uuid} from 'uuid';
-import {DAMAGE} from './constants';
+import {DAMAGE, SPEED} from './constants';
 import {WeaponName, ResourceType, WeaponProjectileOpts} from './interfaces';
 import {createProjectile, Projectile} from './projectiles';
 import {getDamageModifier} from './utils/weapons';
@@ -39,7 +39,7 @@ export class Weapon {
     const damageOverTime = 0 + this.resourceTypes.reduce((a, c) => a + (c === 'poison' ? 2 : 0), 0);
     return createProjectile(
       this.weaponImage,
-      {x, y, angle, key: this.weaponImage, scene, damageAmount, damageOverTime},
+      {x, y, angle, key: this.weaponImage, scene, damageAmount, damageOverTime, speed: SPEED[this.weaponImage]},
       uuid(),
     );
   }
