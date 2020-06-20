@@ -73,7 +73,7 @@ export class GameScene extends Phaser.Scene {
 
     this.otherPlayers = this.physics.add.group(immovableOptions);
     this.structures = this.physics.add.group(immovableOptions);
-    this.bots = this.physics.add.group(immovableOptions);
+    this.bots = this.physics.add.group();
     this.buildPlayArea();
 
     this.socket = io('http://127.0.0.1:8081');
@@ -115,6 +115,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleStructureList(structureList: {['string']: ServerStructure}): void {
+    console.log('structure list');
     Object.values(structureList).forEach((structure: ServerStructure) => {
       this.addStructure(structure.id, structure.x, structure.y, structure.type);
     });
@@ -125,6 +126,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+    console.log('bot list');
     Object.values(playerList).forEach((botList: {['string']: ServerBot}) => {
       Object.values(botList).forEach((bot: ServerBot) => {
         this.addBot(bot);
