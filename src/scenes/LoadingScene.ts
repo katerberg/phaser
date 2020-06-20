@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import {SCENES} from '../constants';
+import {isDebug} from '../utils/environments';
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -10,10 +11,14 @@ export class LoadingScene extends Phaser.Scene {
 
   update(): void {
     this.cameras.main.setBackgroundColor('#FFFFFF');
-    this.scene.start(SCENES.cards);
-    this.scene.start(SCENES.hud);
-    this.scene.start(SCENES.game);
-    this.scene.bringToTop(SCENES.hud);
-    this.scene.bringToTop(SCENES.cards);
+    if (isDebug()) {
+      this.scene.start(SCENES.cards);
+      this.scene.start(SCENES.hud);
+      this.scene.start(SCENES.game);
+      this.scene.bringToTop(SCENES.hud);
+      this.scene.bringToTop(SCENES.cards);
+    } else {
+      this.scene.start(SCENES.menu);
+    }
   }
 }

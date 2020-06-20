@@ -24,7 +24,12 @@ export class MenuScene extends Phaser.Scene {
 
   update(): void {
     if (this.startKey && this.startKey.isDown) {
-      this.scene.start(SCENES.loading);
+      // this.scene.start(SCENES.loading);
+      this.scene.start(SCENES.cards);
+      this.scene.start(SCENES.hud);
+      this.scene.start(SCENES.game);
+      this.scene.bringToTop(SCENES.hud);
+      this.scene.bringToTop(SCENES.cards);
     }
   }
 }
