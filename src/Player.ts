@@ -125,7 +125,7 @@ export class Player extends Phaser.GameObjects.Image {
     this.scene.registry.set(REGISTRIES.PLAYER_HP, this.hp);
     this.scene.events.emit(EVENTS.HP_CHANGED);
     if (this.hp <= 0) {
-      this.socket.emit('playerDying', {playerId: this.playerId});
+      this.socket.emit(EVENTS.PLAYER_DYING, {playerId: this.playerId});
       this.scene.events.emit(EVENTS.PLAYER_DIED);
       Object.values(EVENTS).forEach((event) => {
         this.scene.events.removeListener(event);
@@ -197,7 +197,7 @@ export class Player extends Phaser.GameObjects.Image {
 
   private handleSpawnEnemy(): void {
     if (this.spawnEnemy.isDown && this.nextSpawnEnemy < this.scene.time.now) {
-      this.socket.emit('spawnBot', {playerId: this.playerId});
+      this.socket.emit(EVENTS.SPAWN_BOT, {playerId: this.playerId});
       this.nextSpawnEnemy = this.scene.time.now + 300;
     }
   }
@@ -208,7 +208,7 @@ export class Player extends Phaser.GameObjects.Image {
 
     const {x, y, angle} = this;
     if (x !== this.oldPosition.x || y !== this.oldPosition.y || angle !== this.oldPosition.angle) {
-      this.socket.emit('playerMovement', {x: this.x, y: this.y, angle: this.angle});
+      this.socket.emit(EVENTS.PLAYER_MOVEMENT, {x: this.x, y: this.y, angle: this.angle});
     }
 
     this.oldPosition = {

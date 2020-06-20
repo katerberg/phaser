@@ -115,7 +115,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleStructureList(structureList: {['string']: ServerStructure}): void {
-    console.log('structure list');
     Object.values(structureList).forEach((structure: ServerStructure) => {
       this.addStructure(structure.id, structure.x, structure.y, structure.type);
     });
@@ -126,7 +125,6 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    console.log('bot list');
     Object.values(playerList).forEach((botList: {['string']: ServerBot}) => {
       Object.values(botList).forEach((bot: ServerBot) => {
         this.addBot(bot);
@@ -334,7 +332,7 @@ export class GameScene extends Phaser.Scene {
     if (!this.socket || !(instanceOfProjectile(projectile) && structure instanceof Structure)) {
       return;
     }
-    this.socket.emit('projectileHit', {
+    this.socket.emit(EVENTS.PROJECTILE_HIT, {
       damageAmount: projectile.damageAmount,
       damageOverTime: projectile.damageOverTime,
       projectileId: projectile.id,
@@ -346,7 +344,7 @@ export class GameScene extends Phaser.Scene {
     if (!this.socket || !(instanceOfProjectile(projectile) && player instanceof Player)) {
       return;
     }
-    this.socket.emit('projectileHit', {
+    this.socket.emit(EVENTS.PROJECTILE_HIT, {
       playerId: player.playerId,
       damageAmount: projectile.damageAmount,
       damageOverTime: projectile.damageOverTime,
@@ -360,7 +358,7 @@ export class GameScene extends Phaser.Scene {
     if (!this.socket || !(instanceOfProjectile(projectile) && (enemy instanceof Enemy || enemy instanceof Bot))) {
       return;
     }
-    this.socket.emit('projectileHit', {
+    this.socket.emit(EVENTS.PROJECTILE_HIT, {
       playerId: enemy.playerId,
       damageAmount: projectile.damageAmount,
       damageOverTime: projectile.damageOverTime,
@@ -385,7 +383,7 @@ export class GameScene extends Phaser.Scene {
 
   private handleBotDestroyed({botId, playerId}: {botId: number; playerId: number}): void {
     if (this.socket) {
-      this.socket.emit('destroyBot', {playerId, botId});
+      this.socket.emit(EVENTS.BOT_DESTROY, {playerId, botId});
     }
   }
 }
