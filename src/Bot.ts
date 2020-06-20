@@ -45,18 +45,13 @@ export class Bot extends Phaser.GameObjects.Image {
     if (!this.scene || !this.isOwned) {
       return;
     }
+    const angle = 45 * Math.floor(Math.random() * 8);
     switch (Math.floor(Math.random() * 10)) {
       case 0:
-        this.setAngle(90);
-        break;
       case 1:
-        this.setAngle(180);
-        break;
       case 2:
-        this.setAngle(270);
-        break;
       case 3:
-        this.setAngle(0);
+        this.setAngle(angle);
         break;
       default:
         this.botProjectile();
