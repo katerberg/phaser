@@ -61,6 +61,7 @@ export const SCENES = {
   loading: 'LoadingScene',
   menu: 'MenuScene',
   cards: 'CardsScene',
+  deckbuild: 'DeckbuildScene',
 };
 
 export const SYMBOLS = {
