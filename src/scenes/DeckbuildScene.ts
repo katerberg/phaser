@@ -6,9 +6,12 @@ import poisonImage from '../assets/resources/poison.png';
 import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
 import {GAME, SCENES} from '../constants';
+import {Deck} from '../deckbuilding/Deck';
 
 export class DeckbuildScene extends Phaser.Scene {
   private doneKey: Phaser.Input.Keyboard.Key | undefined;
+
+  private deck!: Deck;
 
   constructor() {
     super({
@@ -32,10 +35,12 @@ export class DeckbuildScene extends Phaser.Scene {
         fontSize: '32px',
       })
       .setOrigin(0.5, 0);
+    this.deck = new Deck(this);
   }
 
   update(): void {
     this.handleInput();
+    this.deck.update();
   }
 
   private handleInput(): void {
