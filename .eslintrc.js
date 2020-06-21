@@ -111,7 +111,6 @@ module.exports = {
     "eol-last": "error",
     "func-call-spacing": "error",
     "func-name-matching": "error",
-    "indent": ["error", 2, { "SwitchCase": 1 }],
     "jsx-quotes": ["error", "prefer-double"],
     "key-spacing": "error",
     "keyword-spacing": "error",

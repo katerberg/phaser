@@ -25,6 +25,9 @@ export class HandCard extends Phaser.GameObjects.Image {
     this.id = card.id;
     this.costToPlay = card.costToPlay;
     this.card = card;
+    console.log('building card');
+    console.log(card instanceof ResourceCard);
+    console.log(card);
 
     this.setOrigin(1, 1);
     scene.add.existing(this);

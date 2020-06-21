@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import {getStartingDeck, saveDeck} from '../utils/starting';
 
 export class Deck {
   private scene: Phaser.Scene;
@@ -15,6 +16,8 @@ export class Deck {
 
     this.resetKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.nextReset = 0;
+    const startingDeck = getStartingDeck();
+    saveDeck(startingDeck);
   }
 
   private reset(): void {

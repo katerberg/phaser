@@ -1,7 +1,7 @@
-import {BlueprintCard, ResourceCard} from '../cards';
+import {BlueprintCard, ResourceCard, instanceOfCard, instanceOfResource, instanceOfBlueprint} from '../cards';
 import {Card} from '../interfaces';
 
-export function getStartingDeck(): Card[] {
+function getDefaultStartingDeck(): Card[] {
   const startingDeck: Card[] = [];
   startingDeck.push(new ResourceCard(10, 1, 'wood'));
   startingDeck.push(new ResourceCard(10, 1, 'wood'));
@@ -14,4 +14,38 @@ export function getStartingDeck(): Card[] {
   startingDeck.push(new ResourceCard(15, 1, 'iron'));
 
   return startingDeck;
+}
+
+export function getStartingDeck(): Card[] {
+  const storedDeck = localStorage.getItem('deck');
+  try {
+    if (!storedDeck) {
+      return getDefaultStartingDeck();
+    }
+    return JSON.parse(storedDeck).filter((card:any) => { // eslint-disable-line
+        return instanceOfCard(card);
+      })
+      .map((card: Card) => {
+        if (instanceOfResource(card)) {
+          return new ResourceCard(card.costToPlay, card.benefit, card.resourceType);
+        }
+        if (instanceOfBlueprint(card)) {
+          return new BlueprintCard(
+            card.costToPlay,
+            card.weaponType,
+            card.image,
+            card.resourceCost,
+            card.costOfShot,
+            card.rechargeDelay,
+          );
+        }
+        return card;
+      });
+  } catch (e) {
+    return getDefaultStartingDeck();
+  }
+}
+
+export function saveDeck(deck: Card[]): void {
+  localStorage.setItem('deck', JSON.stringify(deck));
 }
