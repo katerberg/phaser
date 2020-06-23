@@ -5,12 +5,12 @@ import ironImage from '../assets/resources/iron.png';
 import poisonImage from '../assets/resources/poison.png';
 import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
+import weaponBulletImage from '../assets/weapon-bullet.png';
+import weaponArrowImage from '../assets/weapon-dart.png';
 import {GAME, SCENES} from '../constants';
 import {Deck} from '../deckbuilding/Deck';
 
 export class DeckbuildScene extends Phaser.Scene {
-  private doneKey: Phaser.Input.Keyboard.Key | undefined;
-
   private deck!: Deck;
 
   constructor() {
@@ -26,12 +26,13 @@ export class DeckbuildScene extends Phaser.Scene {
     this.load.image('resource-water', waterImage);
     this.load.image('resource-iron', ironImage);
     this.load.image('resource-poison', poisonImage);
-    this.doneKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+    this.load.image('card-bullet', weaponBulletImage);
+    this.load.image('card-arrow', weaponArrowImage);
   }
 
   create(): void {
     this.add
-      .text(GAME.width / 2, GAME.height / 2 + 32, 'Press F to Finish', {
+      .text(GAME.width / 2, 64, 'Press F to Finish', {
         fontSize: '32px',
       })
       .setOrigin(0.5, 0);
@@ -39,13 +40,6 @@ export class DeckbuildScene extends Phaser.Scene {
   }
 
   update(): void {
-    this.handleInput();
     this.deck.update();
-  }
-
-  private handleInput(): void {
-    if (this.doneKey?.isDown) {
-      this.scene.start(SCENES.menu);
-    }
   }
 }
