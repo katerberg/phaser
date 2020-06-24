@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Structures
 - Visuals of damage hits
 - Damage from weapon resource types
+- Deckbuilder
 
 ## [0.0.6] - 2020-05-31
 ### Added

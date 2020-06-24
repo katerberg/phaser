@@ -26,6 +26,24 @@ export class Deck {
     this.nextAction = 0;
     this.cards = getStartingDeck();
     this.displayCards = this.cards.map((card) => new DisplayCard({scene, x: 300, y: 500}, card));
+    this.realign();
+    this.displayCards.forEach((card) => {
+      card.setInteractive();
+      // card.on('gameobjectdown', (pointer: any, _a: any, _b: any, event: any) =>
+      //   this.onCardClicked(pointer, card, event),
+      // );
+    });
+    this.scene.input.on('gameobjectdown', this.onCardClicked, this);
+  }
+
+  private onCardClicked(_pointer: unknown, clickedCard: DisplayCard): void {
+    clickedCard.destroy();
+    this.cards = this.cards.filter((card) => clickedCard.id !== card.id);
+    this.displayCards = this.displayCards.filter((card) => clickedCard.id !== card.id);
+    this.realign();
+  }
+
+  private realign(): void {
     Phaser.Actions.GridAlign(this.displayCards, {
       x: 200,
       y: 300,
