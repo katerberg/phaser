@@ -1,8 +1,14 @@
 import * as Phaser from 'phaser';
+import {ResourceCard} from '../cards';
 import {SCENES} from '../constants';
 import {DisplayCard} from '../DisplayCard';
 import {Card} from '../interfaces';
 import {getStartingDeck, saveDeck} from '../utils/starting';
+
+function getCard(scene: Phaser.Scene): DisplayCard {
+  const resource = new ResourceCard(10, 1, 'wood');
+  return new DisplayCard({scene, x: 0, y: 0}, resource);
+}
 
 export class Deck {
   private scene: Phaser.Scene;
@@ -17,14 +23,18 @@ export class Deck {
 
   private displayCards: DisplayCard[];
 
+  private collection: DisplayCard[];
+
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.cards = [];
     this.displayCards = [];
+    this.collection = [];
 
     this.resetKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.saveKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
     this.nextAction = 0;
+    this.drawCollection();
     this.reset();
     this.scene.input.on('gameobjectdown', this.onCardClicked, this);
   }
@@ -36,10 +46,25 @@ export class Deck {
     this.realign();
   }
 
+  private drawCollection(): void {
+    this.collection.push(getCard(this.scene));
+    this.collection.push(getCard(this.scene));
+    this.collection.push(getCard(this.scene));
+    Phaser.Actions.GridAlign(this.collection, {
+      x: 1100,
+      y: 200,
+      width: 2,
+      height: 3,
+      cellWidth: 185,
+      cellHeight: 254,
+    });
+    this.collection.forEach((card) => card.realign());
+  }
+
   private realign(): void {
     Phaser.Actions.GridAlign(this.displayCards, {
-      x: 200,
-      y: 300,
+      x: 100,
+      y: 200,
       width: 5,
       height: 3,
       cellWidth: 185,

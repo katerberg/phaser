@@ -32,7 +32,7 @@ export class DeckbuildScene extends Phaser.Scene {
 
   create(): void {
     this.add
-      .text(GAME.width / 2, 64, 'Press F to Finish', {
+      .text(GAME.width / 2, 32, 'Press F to Finish', {
         fontSize: '32px',
       })
       .setOrigin(0.5, 0);
