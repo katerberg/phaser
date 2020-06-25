@@ -20,19 +20,12 @@ export class Deck {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.cards = [];
+    this.displayCards = [];
 
     this.resetKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.saveKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
     this.nextAction = 0;
-    this.cards = getStartingDeck();
-    this.displayCards = this.cards.map((card) => new DisplayCard({scene, x: 300, y: 500}, card));
-    this.realign();
-    this.displayCards.forEach((card) => {
-      card.setInteractive();
-      // card.on('gameobjectdown', (pointer: any, _a: any, _b: any, event: any) =>
-      //   this.onCardClicked(pointer, card, event),
-      // );
-    });
+    this.reset();
     this.scene.input.on('gameobjectdown', this.onCardClicked, this);
   }
 
@@ -57,6 +50,14 @@ export class Deck {
 
   private reset(): void {
     this.cards = getStartingDeck();
+    this.displayCards.forEach((card) => {
+      card.destroy();
+    });
+    this.displayCards = this.cards.map((card) => new DisplayCard({scene: this.scene, x: 300, y: 500}, card));
+    this.realign();
+    this.displayCards.forEach((card) => {
+      card.setInteractive();
+    });
   }
 
   private save(): void {
