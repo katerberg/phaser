@@ -40,6 +40,24 @@ export class Deck {
   }
 
   private onCardClicked(_pointer: unknown, clickedCard: DisplayCard): void {
+    if (this.collection.some((collectionCard) => collectionCard.id === clickedCard.id)) {
+      this.onCollectionCardClicked(clickedCard);
+    } else {
+      this.onDeckCardClicked(clickedCard);
+    }
+  }
+
+  private onCollectionCardClicked(clickedCard: DisplayCard): void {
+    const index = this.collection.findIndex((collectionCard) => collectionCard.id === clickedCard.id);
+    this.displayCards.push(this.collection[index]);
+    this.cards.push(this.collection[index].getCard());
+    const card = getCard(this.scene);
+    this.collection[index] = card;
+    card.setInteractive();
+    this.realign();
+  }
+
+  private onDeckCardClicked(clickedCard: DisplayCard): void {
     clickedCard.destroy();
     this.cards = this.cards.filter((card) => clickedCard.id !== card.id);
     this.displayCards = this.displayCards.filter((card) => clickedCard.id !== card.id);
@@ -50,15 +68,10 @@ export class Deck {
     this.collection.push(getCard(this.scene));
     this.collection.push(getCard(this.scene));
     this.collection.push(getCard(this.scene));
-    Phaser.Actions.GridAlign(this.collection, {
-      x: 1100,
-      y: 200,
-      width: 2,
-      height: 3,
-      cellWidth: 185,
-      cellHeight: 254,
+    this.collection.forEach((card) => {
+      card.setInteractive();
     });
-    this.collection.forEach((card) => card.realign());
+    this.realign();
   }
 
   private realign(): void {
@@ -70,7 +83,16 @@ export class Deck {
       cellWidth: 185,
       cellHeight: 254,
     });
+    Phaser.Actions.GridAlign(this.collection, {
+      x: 1100,
+      y: 200,
+      width: 2,
+      height: 3,
+      cellWidth: 185,
+      cellHeight: 254,
+    });
     this.displayCards.forEach((card) => card.realign());
+    this.collection.forEach((card) => card.realign());
   }
 
   private reset(): void {
