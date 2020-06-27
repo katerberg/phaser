@@ -5,11 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [unreleased]
+
+## [0.0.7] 2020-06-26
 - Structures
 - Visuals of damage hits
 - Damage from weapon resource types
 - Deckbuilder
+- Lasers...
 
 ## [0.0.6] - 2020-05-31
 ### Added
@@ -49,7 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial commit
 
-[unreleased]: https://github.com/katerberg/phaser/compare/v0.0.6...HEAD
+[0.0.7]: https://github.com/katerberg/phaser/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/katerberg/phaser/releases/tag/v0.0.7
 [0.0.6]: https://github.com/katerberg/phaser/releases/tag/v0.0.6
 [0.0.5]: https://github.com/katerberg/phaser/releases/tag/v0.0.5
 [0.0.4]: https://github.com/katerberg/phaser/releases/tag/v0.0.4
