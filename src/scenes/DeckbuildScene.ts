@@ -7,6 +7,7 @@ import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
 import weaponArrowImage from '../assets/weapon-dart.png';
+import weaponLaserImage from '../assets/weapon-laser.png';
 import {GAME, SCENES} from '../constants';
 import {Deck} from '../deckbuilding/Deck';
 
@@ -28,6 +29,7 @@ export class DeckbuildScene extends Phaser.Scene {
     this.load.image('resource-poison', poisonImage);
     this.load.image('card-bullet', weaponBulletImage);
     this.load.image('card-arrow', weaponArrowImage);
+    this.load.image('card-laser', weaponLaserImage);
   }
 
   create(): void {

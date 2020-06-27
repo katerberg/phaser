@@ -85,7 +85,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   private handleProjectileFired(): void {
-    if (this.currentWeapon.charges !== undefined) {
+    if (this.currentWeapon?.charges !== undefined) {
       this.currentWeapon.charges--;
       const index = this.weaponList.findIndex((weapon) => weapon.id === this.currentWeapon.id);
       this.weaponImages[index].charges?.setText(`Charges: ${this.currentWeapon.charges}`);

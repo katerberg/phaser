@@ -1,13 +1,18 @@
 import * as Phaser from 'phaser';
-import {ResourceCard} from '../cards';
+import {ResourceCard, BlueprintCard} from '../cards';
 import {SCENES} from '../constants';
 import {DisplayCard} from '../DisplayCard';
 import {Card} from '../interfaces';
 import {getStartingDeck, saveDeck} from '../utils/starting';
 
-function getCard(scene: Phaser.Scene): DisplayCard {
-  const resource = new ResourceCard(10, 1, 'wood');
-  return new DisplayCard({scene, x: 0, y: 0}, resource);
+function getCard(scene: Phaser.Scene, index: number): DisplayCard {
+  let card: Card;
+  if (index <= 1) {
+    card = new ResourceCard(10, 1, 'wood');
+  } else {
+    card = new BlueprintCard(50, 'projectile', 'laser', 2, 10, 100);
+  }
+  return new DisplayCard({scene, x: 0, y: 0}, card);
 }
 
 export class Deck {
@@ -51,9 +56,7 @@ export class Deck {
     const index = this.collection.findIndex((collectionCard) => collectionCard.id === clickedCard.id);
     this.displayCards.push(this.collection[index]);
     this.cards.push(this.collection[index].getCard());
-    const card = getCard(this.scene);
-    this.collection[index] = card;
-    card.setInteractive();
+    this.collection[index] = getCard(this.scene, index).setInteractive();
     this.realign();
   }
 
@@ -65,9 +68,9 @@ export class Deck {
   }
 
   private drawCollection(): void {
-    this.collection.push(getCard(this.scene));
-    this.collection.push(getCard(this.scene));
-    this.collection.push(getCard(this.scene));
+    this.collection.push(getCard(this.scene, 0));
+    this.collection.push(getCard(this.scene, 1));
+    this.collection.push(getCard(this.scene, 2));
     this.collection.forEach((card) => {
       card.setInteractive();
     });

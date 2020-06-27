@@ -9,6 +9,7 @@ import waterImage from '../assets/resources/water.png';
 import woodImage from '../assets/resources/wood.png';
 import weaponBulletImage from '../assets/weapon-bullet.png';
 import weaponArrowImage from '../assets/weapon-dart.png';
+import weaponLaserImage from '../assets/weapon-laser.png';
 import {ResourceCard, BlueprintCard} from '../cards';
 import {GAME, EVENTS, REGISTRIES, RULES, SCENES} from '../constants';
 import {Deck} from '../Deck';
@@ -45,6 +46,7 @@ export class CardsScene extends Phaser.Scene {
     this.load.image('resource-poison', poisonImage);
     this.load.image('card-bullet', weaponBulletImage);
     this.load.image('card-arrow', weaponArrowImage);
+    this.load.image('card-laser', weaponLaserImage);
     this.load.image('darkCard', cardDarkImage);
     this.load.image('lightCard', cardLightImage);
     const {KeyCodes} = Phaser.Input.Keyboard;
